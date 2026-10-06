@@ -58,7 +58,8 @@ export default function DashboardPage() {
     itemTemplates,
     recipes,
     playerResources,
-    craftItem
+    craftItem,
+    triggerFloatingText
   } = useGameContext();
 
   // Navigation tab state: 'none' | 'kingdom' | 'army' | 'economy' | 'quests' | 'profile' | 'gather' | 'inventory'
@@ -2372,7 +2373,7 @@ export default function DashboardPage() {
                                 <div className="flex gap-2 text-[8px] text-zinc-500">
                                   <span>HP: {enemy.health}</span>
                                   <span>ATK: {enemy.attack}</span>
-                                  <span className={`font-bold ${enemy.difficulty === 'Hard' ? 'text-red-400' : enemy.difficulty === 'Medium' ? 'text-amber-400' : 'text-emerald-400'}`}>
+                                  <span className={`font-bold ${(enemy.difficulty === 'boss' || enemy.difficulty === 'hard') ? 'text-red-400' : enemy.difficulty === 'epic' ? 'text-purple-400' : 'text-emerald-400'}`}>
                                     {enemy.difficulty}
                                   </span>
                                 </div>
@@ -2718,7 +2719,7 @@ export default function DashboardPage() {
                           { label: 'Battles Lost', val: '12 Defeats' },
                           { label: 'Resources Harvested', val: '1,420 Units' },
                           { label: 'Enemies Defeated', val: '180 Beasts' },
-                          { label: 'Kingdom Wealth', val: `${stats?.currency?.toFixed(2)} Gold` },
+                          { label: 'Kingdom Wealth', val: `${(currencies?.gold ?? 0).toFixed(2)} Gold` },
                           { label: 'Exploration Rate', val: '82%' }
                         ].map((stat, i) => (
                           <div key={i} className="p-2.5 bg-zinc-950/60 border border-zinc-900 flex justify-between items-center text-[10px] font-serif">

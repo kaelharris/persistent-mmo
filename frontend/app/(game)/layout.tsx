@@ -44,8 +44,12 @@ import {
 import { useMusic, TRACKS } from '../../hooks/useMusic';
 import { useSFX } from '../../hooks/useSFX';
 
+type GameContextType = ReturnType<typeof useGame> & {
+  triggerFloatingText: (text: string, colorClass?: string, x?: number, y?: number) => void;
+};
+
 // Create a context to share game state across all game panels
-const GameContext = createContext<ReturnType<typeof useGame> | null>(null);
+const GameContext = createContext<GameContextType | null>(null);
 
 export function useGameContext() {
   const context = useContext(GameContext);
@@ -141,7 +145,7 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
   ];
 
   return (
-    <GameContext.Provider value={game}>
+    <GameContext.Provider value={{ ...game, triggerFloatingText }}>
       <div className="min-h-screen flex bg-zinc-950 text-zinc-100 font-sans">
         
         {/* Mobile Sidebar Overlay */}
