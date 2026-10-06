@@ -12,6 +12,8 @@ import {
 import { useSFX } from '../../../hooks/useSFX';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import TutorialCodex from '../TutorialCodex';
+import TutorialCelebrationModal from '../TutorialCelebrationModal';
 
 interface RoundLog {
   round: number;
@@ -64,6 +66,68 @@ export default function DashboardPage() {
 
   // Navigation tab state: 'none' | 'kingdom' | 'army' | 'economy' | 'quests' | 'profile' | 'gather' | 'inventory'
   const [activeTab, setActiveTab] = useState<'none' | 'kingdom' | 'army' | 'economy' | 'quests' | 'profile' | 'gather' | 'inventory'>('none');
+
+  // Tutorial Journey State
+  const [tutorialStep, setTutorialStep] = useState<number>(1);
+  const [tutorialCompleted, setTutorialCompleted] = useState<boolean>(false);
+  const [isCelebrationOpen, setIsCelebrationOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedStep = localStorage.getItem('mmo_tutorial_step');
+      const savedCompleted = localStorage.getItem('mmo_tutorial_completed');
+      if (savedStep) {
+        setTutorialStep(parseInt(savedStep, 10));
+      }
+      if (savedCompleted === 'true') {
+        setTutorialCompleted(true);
+      }
+    }
+  }, []);
+
+  const advanceTutorial = (fromStep: number) => {
+    if (tutorialCompleted) return;
+    if (tutorialStep === fromStep) {
+      const nextStep = fromStep + 1;
+      if (nextStep > 5) {
+        setTutorialCompleted(true);
+        setIsCelebrationOpen(true);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('mmo_tutorial_completed', 'true');
+        }
+        sfx.playSuccess();
+        confetti({ particleCount: 100, spread: 80, origin: { y: 0.5 } });
+        triggerFloatingText('COMMISSION GRANTED: ARCH-COMMANDER RANK!', 'text-game-gold');
+      } else {
+        setTutorialStep(nextStep);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('mmo_tutorial_step', nextStep.toString());
+        }
+        sfx.playSuccess();
+        triggerFloatingText(`TUTORIAL MILESTONE ${fromStep} COMPLETE!`, 'text-game-emerald');
+      }
+    }
+  };
+
+  const handleSkipTutorial = () => {
+    sfx.playClick();
+    setTutorialCompleted(true);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('mmo_tutorial_completed', 'true');
+    }
+    triggerFloatingText('Tutorial bypassed. Free sandbox active.', 'text-zinc-400');
+  };
+
+  const handleRestartTutorial = () => {
+    sfx.playClick();
+    setTutorialStep(1);
+    setTutorialCompleted(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('mmo_tutorial_step', '1');
+      localStorage.setItem('mmo_tutorial_completed', 'false');
+    }
+    triggerFloatingText('Tutorial codex restarted at Step 1.', 'text-game-gold');
+  };
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -625,6 +689,7 @@ export default function DashboardPage() {
             if (res.success) {
               sfx.playSuccess();
               showStatus('Resource extracted successfully and cargo updated.', true);
+              advanceTutorial(3);
             } else {
               sfx.playError();
               showStatus(res.error || 'Extraction failed.', false);
@@ -923,6 +988,7 @@ export default function DashboardPage() {
     if (combatOutcomeData.isVictory) {
       sfx.playSuccess();
       confetti({ particleCount: 30, spread: 60 });
+      advanceTutorial(5);
     } else {
       sfx.playError();
     }
@@ -950,6 +1016,7 @@ export default function DashboardPage() {
     if (res.success) {
       sfx.playSuccess();
       showStatus('+100 EP claimed at national foundries!', true);
+      advanceTutorial(1);
     } else {
       sfx.playError();
       showStatus(res.error || 'EP claim blocked!', false);
@@ -1047,28 +1114,21 @@ export default function DashboardPage() {
             <div className="absolute inset-0 bg-black/45 backdrop-blur-[0.5px] pointer-events-none z-25 transition-opacity duration-300" />
           )}
 
-          {/* Start Tutorial / Help Codex (Slides in from the left) */}
-          <div 
-            className={`absolute top-4 left-4 z-30 w-72 rpg-panel-stone p-4 shadow-xl flex flex-col gap-2 text-left pointer-events-auto border-[#e5c158]/30 transition-all duration-500 ease-out transform ${
-              (profile?.current_region_id === 1 && !selectedRegion)
-                ? 'translate-x-0 opacity-100' 
-                : '-translate-x-[calc(100%+24px)] opacity-0 pointer-events-none'
-            }`}
-          >
-            <h4 className="text-xs font-bold text-game-gold uppercase tracking-wider flex items-center gap-1.5 font-display">
-              <Compass className="h-4 w-4" /> Aegis Commander Codex
-            </h4>
-            <p className="text-[10px] text-zinc-450 font-serif leading-relaxed">
-              You are currently stationed in **Genesis Capital**. This safe-haven has no wild resources to gather.
-            </p>
-            <div className="bg-zinc-950/60 p-2 border border-zinc-900 text-[9px] text-zinc-450 font-serif">
-              1. Click **Emerald Woodlands** (top-left forest node) on the map.
-              <br />
-              2. Click **Relocate link** (costs 10 Energy EP).
-              <br />
-              3. Once there, click **Gather** in the bottom HUD dock to harvest raw materials!
-            </div>
-          </div>
+          {/* Interactive Tutorial Onboarding Codex */}
+          <TutorialCodex
+            currentStep={tutorialStep}
+            isCompleted={tutorialCompleted}
+            onNavigateTab={(tab) => {
+              setActiveTab(tab);
+              if (tab === 'army') setIsCombatPanelOpen(true);
+            }}
+            onSelectRegion={(regId) => {
+              const reg = regions.find(r => r.id === regId);
+              if (reg) setSelectedRegion(reg);
+            }}
+            onSkipTutorial={handleSkipTutorial}
+            onRestartTutorial={handleRestartTutorial}
+          />
 
           {/* Region Detail Sidebar HUD Card (Slides in from the left) */}
           {activeDetailRegion && (
@@ -1204,6 +1264,7 @@ export default function DashboardPage() {
                                   if (res.success) {
                                     sfx.playSuccess();
                                     showStatus(`Relocated coordinates to ${activeDetailRegion.name}!`, true);
+                                    advanceTutorial(2);
                                   } else {
                                     sfx.playError();
                                     showStatus(res.error || 'Failed to sync travel coordinates.', false);
@@ -1948,6 +2009,7 @@ export default function DashboardPage() {
                                     sfx.playSuccess();
                                     showStatus(`Successfully forged ${resultTemplate.name}!`, true);
                                     confetti({ particleCount: 20, spread: 50 });
+                                    advanceTutorial(4);
                                   } else {
                                     sfx.playError();
                                     showStatus(res.error || "Forging failure. Materials unstable.", false);
@@ -2862,6 +2924,12 @@ export default function DashboardPage() {
         })()}
       </div>
 
+
+      {/* Tutorial Ascension Celebration Modal */}
+      <TutorialCelebrationModal
+        isOpen={isCelebrationOpen}
+        onClose={() => setIsCelebrationOpen(false)}
+      />
     </div>
   );
 }
