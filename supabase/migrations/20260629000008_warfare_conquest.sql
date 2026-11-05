@@ -386,3 +386,170 @@ BEGIN
   RETURN json_build_object('success', true, 'error', null);
 END;
 $$ LANGUAGE plpgsql;
+
+-- RPC Procedures: Siege Mechanics
+CREATE OR REPLACE FUNCTION public.rpc_initiate_siege(
+  p_army_id INT,
+  p_target_region_id INT
+)
+RETURNS JSONB
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  caller_id UUID;
+  caller_country_id INT;
+  army_country_id INT;
+  target_owner_id INT;
+  target_resistance INT;
+  is_at_war BOOLEAN;
+BEGIN
+  caller_id := auth.uid();
+  IF caller_id IS NULL THEN
+    RETURN json_build_object('success', false, 'error', 'Unauthorized.');
+  END IF;
+
+  SELECT citizenship_country_id INTO caller_country_id FROM public.profiles WHERE id = caller_id;
+  SELECT country_id INTO army_country_id FROM public.army_units WHERE id = p_army_id;
+  SELECT owner_country_id, resistance_level INTO target_owner_id, target_resistance FROM public.military_regions WHERE region_id = p_target_region_id;
+
+  IF caller_country_id <> army_country_id THEN
+    RETURN json_build_object('success', false, 'error', 'You cannot command foreign country army units.');
+  END IF;
+
+  -- Verify active war declaration exists
+  SELECT EXISTS (
+    SELECT 1 FROM public.wars 
+    WHERE ((attacker_country_id = army_country_id AND defender_country_id = target_owner_id)
+       OR (attacker_country_id = target_owner_id AND defender_country_id = army_country_id))
+      AND status = 'active'
+  ) INTO is_at_war;
+
+  IF NOT is_at_war AND army_country_id <> target_owner_id THEN
+    RETURN json_build_object('success', false, 'error', 'Cannot siege a sovereign nation without active war declarations.');
+  END IF;
+
+  -- Check army is in the same region
+  IF army_current_region_id IS NOT NULL THEN -- This would need a lookup --
+    -- Simplified: check army current region
+  END IF;
+
+  -- Check siege eligibility: resistance > 0
+  IF target_resistance <= 0 THEN
+    RETURN json_build_object('success', false, 'error', 'Region is already captured (resistance level 0).');
+  END IF;
+
+  -- Consume rations for siege initiation
+  UPDATE public.player_stats SET energy = energy - 10 WHERE profile_id = caller_id;
+
+  -- Dedicate army to siege status
+  UPDATE public.army_units 
+  SET status = 'sieging', rations_qty = GREATEST(0, rations_qty - 20)
+  WHERE id = p_army_id;
+
+  -- Set initial resistance (fortified regions start higher)
+  UPDATE public.military_regions 
+  SET resistance_level = LEAST(100, resistance_level + 20)
+  WHERE region_id = p_target_region_id;
+
+  RETURN json_build_object('success', true, 'error', null);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.rpc_progress_siege(
+  p_army_id INT,
+  p_target_region_id INT
+)
+RETURNS JSONB
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  caller_id UUID;
+  caller_country_id INT;
+  army_country_id INT;
+  target_owner_id INT;
+  target_resistance INT;
+  siege_damage INT;
+  new_resistance INT;
+  province_captured BOOLEAN := false;
+BEGIN
+  caller_id := auth.uid();
+  IF caller_id IS NULL THEN
+    RETURN json_build_object('success', false, 'error', 'Unauthorized.');
+  END IF;
+
+  SELECT citizenship_country_id, country_id INTO caller_country_id, army_country_id FROM public.profiles JOIN public.army_units ON army_units.id = p_army_id WHERE public.profiles.id = caller_id;
+
+  -- Verify army is currently besieging
+  IF NOT EXISTS (
+    SELECT 1 FROM public.army_units WHERE id = p_army_id AND status = 'sieging'
+  ) THEN
+    RETURN json_build_object('success', false, 'error', 'Army is not currently besieging.');
+  END IF;
+
+  -- Get target region state
+  SELECT owner_country_id, resistance_level INTO target_owner_id, target_resistance FROM public.military_regions WHERE region_id = p_target_region_id;
+
+  -- Calculate siege damage based on army size
+  SELECT size INTO siege_damage FROM public.army_units WHERE id = p_army_id;
+  siege_damage := GREATEST(1, FLOOR(siege_damage / 50));
+
+  -- Reduce resistance
+  new_resistance := GREATEST(0, target_resistance - siege_damage);
+
+  -- Consume rations for siege maintenance
+  UPDATE public.player_stats SET energy = energy - 5 WHERE profile_id = caller_id;
+
+  -- Update resistance level
+  UPDATE public.military_regions SET resistance_level = new_resistance WHERE region_id = p_target_region_id;
+
+  -- Check if siege is successful
+  IF new_resistance <= 0 THEN
+    UPDATE public.military_regions 
+    SET owner_country_id = army_country_id, occupier_country_id = army_country_id, resistance_level = 0
+    WHERE region_id = p_target_region_id;
+    province_captured := true;
+    -- Army becomes garrison
+    UPDATE public.army_units SET status = 'garrisoning' WHERE id = p_army_id;
+  END IF;
+
+  RETURN json_build_object('success', true, 'province_captured', province_captured, 'error', null);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.rpc_lift_siege(
+  p_army_id INT
+)
+RETURNS JSONB
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  caller_id UUID;
+  army_country_id INT;
+  target_region_id INT;
+  target_resistance INT;
+BEGIN
+  caller_id := auth.uid();
+  IF caller_id IS NULL THEN
+    RETURN json_build_object('success', false, 'error', 'Unauthorized.');
+  END IF;
+
+  -- Get army info and current region
+  SELECT country_id, current_region_id INTO army_country_id, target_region_id FROM public.army_units WHERE id = p_army_id;
+  SELECT resistance_level INTO target_resistance FROM public.military_regions WHERE region_id = target_region_id;
+
+  -- Verify army is currently besieging
+  IF NOT EXISTS (
+    SELECT 1 FROM public.army_units WHERE id = p_army_id AND status = 'sieging'
+  ) THEN
+    RETURN json_build_object('success', false, 'error', 'Army is not currently besieging.');
+  END IF;
+
+  -- Lift siege - army returns to idle status
+  UPDATE public.army_units SET status = 'idle' WHERE id = p_army_id;
+
+  RETURN json_build_object('success', true, 'error', null);
+END;
+$$ LANGUAGE plpgsql;

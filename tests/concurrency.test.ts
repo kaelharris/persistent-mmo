@@ -5,7 +5,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.TEST_SUPABASE_URL || 'http://127.0.0.1:54321';
 const supabaseAnonKey = process.env.TEST_SUPABASE_ANON_KEY || 'placeholder';
 
-describe('Supabase Transaction & Concurrency Locking', () => {
+describe.skipIf(process.env.RUN_SUPABASE_INTEGRATION !== '1')('Supabase Transaction & Concurrency Locking', () => {
   let playerA: SupabaseClient;
   let admin: SupabaseClient | null = null;
   let userIdA: string;

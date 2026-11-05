@@ -18,6 +18,7 @@ import {
   GatherLog,
   ExperienceThreshold,
   CompanyTemplate,
+  RegionEdge,
   CompanyMember,
   CompanyVault,
   CompanyInventoryItem,
@@ -105,6 +106,11 @@ import {
   SeasonLeaderboard,
   FeatureFlag,
   DeveloperKey,
+  NobleHouse,
+  Dynasty,
+  DynastyMember,
+  RulerLegitimacy,
+  KingdomStability,
 } from '../../types/entities';
 
 // Default static lists
@@ -368,6 +374,18 @@ export class MockGameRepository implements IGameRepository {
         updated_at: new Date().toISOString(),
       };
       this.setStorageItem('mmo_profiles', profiles);
+    }
+
+    // Region edges graph for strategic movement
+    const regionEdges = this.getStorageItem<RegionEdge[]>('mmo_region_edges', []);
+    if (regionEdges.length === 0) {
+      this.setStorageItem('mmo_region_edges', [
+        { id: 1, from_region_id: 1, to_region_id: 2, mode: 'land', cost: 10, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 2, from_region_id: 2, to_region_id: 3, mode: 'mountain_pass', cost: 15, seasonal_restrictions: ['winter'], is_reciprocal: true },
+        { id: 3, from_region_id: 1, to_region_id: 3, mode: 'navigable_sea', cost: 20, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 4, from_region_id: 3, to_region_id: 4, mode: 'land', cost: 12, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 5, from_region_id: 2, to_region_id: 4, mode: 'strait', cost: 18, seasonal_restrictions: ['stormy_season'], is_reciprocal: true }
+      ]);
     }
 
     // Stats
@@ -2375,6 +2393,330 @@ export class MockGameRepository implements IGameRepository {
     return { success: true, isWatched, error: null };
   }
 
+// Phase 5: Dynasties, Kingdom Leadership, and Succession implementations
+
+  async getNobleHouses(): Promise<NobleHouse[]> {
+    // Return static noble houses inspired by medieval civilizations
+    return [
+      { id: 1, name: 'House of York', culture: 'european', founded_at: new Date().toISOString(), motto: 'Forward into battle', is_extant: true },
+      { id: 2, name: 'House of Wittelsbach', culture: 'european', founded_at: new Date().toISOString(), motto: 'Per severa ad alta', is_extant: true },
+      { id: 3, name: 'House of Osman', culture: 'middle_eastern', founded_at: new Date().toISOString(), motto: 'Asar us', is_extant: true },
+      { id: 4, name: 'House of Ming', culture: 'asian', founded_at: new Date().toISOString(), motto: 'The dragon protects', is_extant: true },
+      { id: 5, name: 'House of Chagatai', culture: 'steppe', founded_at: new Date().toISOString(), motto: 'Wind of the steppe', is_extant: false }
+    ];
+  }
+
+  async getDynasty(profileId?: string): Promise<Dynasty | null> {
+    this.ensureInitialized(profileId || 'player_1');
+    const dynasties = this.getStorageItem<Dynasty[]>('mmo_dynasties', []);
+    if (profileId) {
+      return dynasties.find((d) => d.founder_profile_id === profileId) || null;
+    }
+    return dynasties.length > 0 ? dynasties[0] : null;
+  }
+
+  async getDynastyMembers(dynastyId: number): Promise<DynastyMember[]> {
+    this.ensureInitialized('player_1');
+    const members = this.getStorageItem<DynastyMember[]>('mmo_dynasty_members', []);
+    return members.filter((m) => m.dynasty_id === dynastyId && m.is_alive);
+  }
+
+  async getRulerLegitimacy(profileId: string): Promise<RulerLegitimacy | null> {
+    this.ensureInitialized(profileId);
+    const legitimacyRecords = this.getStorageItem<Record<string, RulerLegitimacy>>('mmo_ruler_legitimacy', {});
+    const record = legitimacyRecords[profileId];
+    if (record) {
+      return record;
+    }
+    // Initialize new record
+    const newRecord: RulerLegitimacy = {
+      profile_id: profileId,
+      legitimacy: 100,
+      last_validated_at: new Date().toISOString(),
+      legitimacy_reasons: 'heir_clear',
+      last_succession_event: null
+    };
+    legitimacyRecords[profileId] = newRecord;
+    this.setStorageItem('mmo_ruler_legitimacy', legitimacyRecords);
+    return newRecord;
+  }
+
+  async getKingdomStability(countryId: number): Promise<KingdomStability | null> {
+    this.ensureInitialized('player_1');
+    const stabilities = this.getStorageItem<KingdomStability[]>('mmo_kingdom_stability', []);
+    let record = stabilities.find((s) => s.country_id === countryId);
+    if (record) {
+      return record;
+    }
+    // Initialize new record
+    const newRecord: KingdomStability = {
+      country_id: countryId,
+      stability: 100,
+      legitimacy_modifier: 0,
+      dynasty_prestige_modifier: 0,
+      last_checked_at: new Date().toISOString(),
+      notes: null
+    };
+    stabilities.push(newRecord);
+    this.setStorageItem('mmo_kingdom_stability', stabilities);
+    return newRecord;
+  }
+
+  async establishDynasty(dynastyName: string, nobleHouseName: string, founderTitle: 'King' | 'Queen' | 'Sultan' | 'Shah' | 'Khagan', countryId: number, successionLaw: 'hereditary' | 'elective' | 'appointed'): Promise<{ success: boolean; dynastyId?: number; error: string | null }> {
+    this.ensureInitialized('player_1');
+
+    // Validate founder has a country
+    const countries = this.getStorageItem<Country[]>('mmo_countries', []);
+    const country = countries.find((c) => c.id === countryId);
+    if (!country) {
+      return { success: false, dynastyId: null, error: 'Country not found.' };
+    }
+
+    // Create dynasty
+    const newDynasty: Dynasty = {
+      id: Math.floor(Math.random() * 10000) + 1000,
+      name: dynastyName,
+      noble_house_id: 1, // simplified: always use House of York for now
+      founder_profile_id: 'player_1',
+      founder_title: founderTitle,
+      country_id: countryId,
+      founded_at: new Date().toISOString(),
+      capital_region_id: 1,
+      succession_law: successionLaw,
+      is_active: true,
+      member_count: 1,
+      total_prestige: 0,
+      members: [],
+      historical_rulers: []
+    };
+
+    // Initialize dynasty storage
+    let dynasties = this.getStorageItem<Dynasty[]>('mmo_dynasties', []);
+    dynasties.push(newDynasty);
+    this.setStorageItem('mmo_dynasties', dynasties);
+
+    // Initialize dynasty members
+    let dynastyMembers = this.getStorageItem<DynastyMember[]>('mmo_dynasty_members', []);
+    const founderMember: DynastyMember = {
+      profile_id: 'player_1',
+      name: 'Founder Ruler',
+      title: founderTitle,
+      relationship: 'founder',
+      succession_order: 1,
+      is_alive: true,
+      date_of_birth: new Date().toISOString(),
+      date_of_death: null,
+      notes: 'Founder of the dynasty'
+    };
+    dynastyMembers.push(founderMember);
+    this.setStorageItem('mmo_dynasty_members', dynastyMembers);
+
+    // Initialize ruler legitimacy
+    let legitimacyRecords = this.getStorageItem<RulerLegitimacy[]>('mmo_ruler_legitimacy', {});
+    legitimacyRecords['player_1'] = {
+      profile_id: 'player_1',
+      legitimacy: 100,
+      last_validated_at: new Date().toISOString(),
+      legitimacy_reasons: 'heir_clear',
+      last_succession_event: 'dynasty_established'
+    };
+    this.setStorageItem('mmo_ruler_legitimacy', legitimacyRecords);
+
+    // Initialize kingdom stability
+    let stabilities = this.getStorageItem<KingdomStability[]>('mmo_kingdom_stability', []);
+    const existingIdx = stabilities.findIndex((s) => s.country_id === countryId);
+    if (existingIdx !== -1) {
+      stabilities[existingIdx] = {
+        country_id: countryId,
+        stability: 100,
+        legitimacy_modifier: 0,
+        dynasty_prestige_modifier: 0,
+        last_checked_at: new Date().toISOString(),
+        notes: 'Initialized on dynasty establishment'
+      };
+    } else {
+      stabilities.push({
+        country_id: countryId,
+        stability: 100,
+        legitimacy_modifier: 0,
+        dynasty_prestige_modifier: 0,
+        last_checked_at: new Date().toISOString(),
+        notes: 'Initialized on dynasty establishment'
+      });
+    }
+    this.setStorageItem('mmo_kingdom_stability', stabilities);
+
+    return { success: true, dynastyId: newDynasty.id, error: null };
+  }
+
+  async designateHeir(dynastyId: number, heirProfileId: string, heirTitle: 'King' | 'Queen' | 'Heir', successionLaw: 'hereditary' | 'elective' | 'appointed'): Promise<{ success: boolean; error: string | null }> {
+    this.ensureInitialized('player_1');
+
+    const dynastyMembers = this.getStorageItem<DynastyMember[]>('mmo_dynasty_members', []);
+    const dynasty = this.getStorageItem<Dynasty>('mmo_dynasties', [])?.find((d) => d.id === dynastyId);
+
+    if (!dynasty) {
+      return { success: false, error: 'Dynasty not found.' };
+    }
+
+    // Check if heir already exists in dynasty
+    const existingHeir = dynastyMembers.find((m) => m.profile_id === heirProfileId);
+    if (existingHeir) {
+      return { success: false, error: 'This profile is already a member of the dynasty.' };
+    }
+
+    // Determine succession order based on law
+    let nextOrder = 1;
+    if (dynastyMembers.length > 0) {
+      const maxOrder = Math.max(...dynastyMembers.map((m) => m.succession_order));
+      nextOrder = maxOrder + 1;
+    }
+
+    // If elective, allow designation; if hereditary, eldest child; if appointed, designated
+    const newHeir: DynastyMember = {
+      id: dynastyMembers.length + 1,
+      profile_id: heirProfileId,
+      name: 'Heir Designate', // In production, would look up name from profile
+      title: heirTitle,
+      relationship: 'other',
+      succession_order: nextOrder,
+      is_alive: true,
+      date_of_birth: new Date().toISOString(),
+      date_of_death: null,
+      notes: `Heir designated via ${successionLaw} succession`,
+      dynasty_id: dynastyId
+    };
+
+    dynastyMembers.push(newHeir);
+    this.setStorageItem('mmo_dynasty_members', dynastyMembers);
+
+    return { success: true, error: null };
+  }
+
+  async abdicateThrone(profileId: string, regentProfileId?: string): Promise<{ success: boolean; error: string | null }> {
+    this.ensureInitialized(profileId);
+
+    const legitimacy = this.getStorageItem<RulerLegitimacy>('mmo_ruler_legitimacy', {});
+    const legitimacyRecord = legitimacy[profileId];
+
+    if (!legitimacyRecord) {
+      return { success: false, error: 'No legitimacy record found for this profile.' };
+    }
+
+    // If there's a regent, validate them
+    if (regentProfileId) {
+      const dynastyMembers = this.getStorageItem<DynastyMember[]>('mmo_dynasty_members', []);
+      const regent = dynastyMembers.find((m) => m.profile_id === regentProfileId);
+      if (!regent) {
+        return { success: false, error: 'Regent profile not found in dynasty.' };
+      }
+    }
+
+    // Mark the current ruler as abdicated
+    legitimacyRecord.last_succession_event = 'abdication';
+    legitimacy[profileId] = legitimacyRecord;
+    this.setStorageItem('mmo_ruler_legitimacy', legitimacy);
+
+    // If there's a regent, designate them as the ruling authority
+    if (regentProfileId) {
+      // In a full implementation, we would transfer rule authority
+      return { success: true, error: null };
+    }
+
+    // No regent - succession will be determined by succession law
+    return { success: true, error: null };
+  }
+
+  async resolveSuccession(dynastyId: number, newRulerProfileId: string): Promise<{ success: boolean; newRulerTitle?: string; error: string | null }> {
+    this.ensureInitialized('player_1');
+
+    const dynasty = this.getStorageItem<Dynasty>('mmo_dynasties', [])?.find((d) => d.id === dynastyId);
+    if (!dynasty) {
+      return { success: false, newRulerTitle: null, error: 'Dynasty not found.' };
+    }
+
+    const dynastyMembers = this.getStorageItem<DynastyMember[]>('mmo_dynasty_members', []);
+    const legitimacyRecord = this.getStorageItem<RulerLegitimacy>('mmo_ruler_legitimacy', {})[newRulerProfileId];
+
+    if (!legitimacyRecord) {
+      return { success: false, newRulerTitle: null, error: 'No legitimacy record for new ruler.' };
+    }
+
+    // Determine the new ruler's title based on succession law
+    let newRulerTitle: string | undefined;
+    switch (dynasty.succession_law) {
+      case 'hereditary':
+        // Find the heir (highest succession_order among those alive and related)
+        const eligibleHeirs = dynastyMembers.filter((m) => m.is_alive && m.relationship !== 'founder');
+        if (eligibleHeirs.length > 0) {
+          // Sort by succession order (lower = first)
+          const sorted = eligibleHeirs.sort((a, b) => a.succession_order - b.succession_order);
+          newRulerTitle = sorted[0].title;
+        } else {
+          return { success: false, newRulerTitle: null, error: 'No eligible heirs in hereditary succession.' };
+        }
+        break;
+
+      case 'elective':
+        // In elective succession, the new ruler was already designated
+        newRulerTitle = legitimacyRecord.last_succession_event ? 'King' : 'Elected Ruler';
+        break;
+
+      case 'appointed':
+        newRulerTitle = legitimacyRecord.last_succession_event ? 'Appointed Ruler' : 'Appointed Ruler';
+        break;
+
+      default:
+        newRulerTitle = 'Ruler';
+    }
+
+    // Update legitimacy record with succession event
+    legitimacyRecord.last_succession_event = `succession_resolved_via_${dynasty.succession_law}`;
+    legitimacyRecord.legitimacy = legitimacyRecord.legitimacy; // keep existing
+    legitimacyRecord.last_validated_at = new Date().toISOString();
+    const legitimacyRecords = this.getStorageItem<RulerLegitimacy[]>('mmo_ruler_legitimacy', {});
+    legitimacyRecords[newRulerProfileId] = legitimacyRecord;
+    this.setStorageItem('mmo_ruler_legitimacy', legitimacyRecords);
+
+    // Update dynasty member status - mark previous ruler as deceased or retired
+    // In a full implementation, we'd update the dynasty's historical_rulers
+
+    return { success: true, newRulerTitle, error: null };
+  }
+
+  async updateLegitimacy(profileId: string, legitimacy: number, reason: 'heir_clear' | 'election_verified' | 'appointment_confirmed' | 'usurpation' | 'disputed'): Promise<{ success: boolean; error: string | null }> {
+    this.ensureInitialized(profileId);
+
+    if (legitimacy < 0 || legitimacy > 100) {
+      return { success: false, error: 'Legitimacy must be between 0 and 100.' };
+    }
+
+    let legitimacyRecords = this.getStorageItem<RulerLegitimacy[]>('mmo_ruler_legitimacy', {});
+    const record = legitimacyRecords[profileId] || {
+      profile_id: profileId,
+      legitimacy: 50,
+      last_validated_at: new Date().toISOString(),
+      legitimacy_reasons: 'heir_clear',
+      last_succession_event: null
+    };
+
+    record.legitimacy = legitimacy;
+    record.last_validated_at = new Date().toISOString();
+    record.legitimacy_reasons = reason;
+
+    legitimacyRecords[profileId] = record;
+    this.setStorageItem('mmo_ruler_legitimacy', legitimacyRecords);
+
+    return { success: true, error: null };
+  }
+
+  async getSuccessionOrder(dynastyId: number): Promise<DynastyMember[]> {
+    this.ensureInitialized('player_1');
+    const dynastyMembers = this.getStorageItem<DynastyMember[]>('mmo_dynasty_members', []);
+    return dynastyMembers.sort((a, b) => a.succession_order - b.succession_order);
+  }
+
+  // End Phase 5 implementations
   async getPriceAlerts(userId: string): Promise<PriceAlert[]> {
     const alerts = this.getStorageItem<PriceAlert[]>('mmo_price_alerts', []);
     return alerts.filter((a) => a.profile_id === userId && !a.is_triggered);
@@ -3288,6 +3630,33 @@ export class MockGameRepository implements IGameRepository {
   }
 
   async declareWar(defenderCountryId: number): Promise<{ success: boolean; warId?: number; error: string | null }> {
+    // Consume recruitment resources: 500 grain, 200 iron, 300 rations
+    const recruitmentCost = [
+      { resourceId: 5, quantity: 500 },  // Grain
+      { resourceId: 3, quantity: 200 },  // Iron Ore
+      { resourceId: 6, quantity: 300 },  // Rations (Fish)
+    ];
+
+    const resources = await this.getPlayerResources('user_1');
+    const hasEnough = recruitmentCost.every(({ resourceId, quantity }) => {
+      const item = resources.find((r: any) => r.resource_id === resourceId);
+      return (item?.quantity ?? 0) >= quantity;
+    });
+
+    if (!hasEnough) {
+      return { success: false, warId: null, error: 'Insufficient resources for army recruitment: need 500 Grain, 200 Iron Ore, 300 Rations' };
+    }
+
+    // Consume the resources
+    for (const { resourceId, quantity } of recruitmentCost) {
+      const found = resources.find((r: any) => r.resource_id === resourceId);
+      if (found) {
+        const resIndex = (resources as PlayerResource[]).indexOf(found as PlayerResource);
+        (found as PlayerResource).quantity = ((found as PlayerResource).quantity ?? 0) - quantity;
+      }
+    }
+    await this.setStorageItem('mmo_player_resources', resources);
+
     const wars = await this.getWars();
     const newId = wars.length + 1;
     wars.push({
@@ -3304,6 +3673,32 @@ export class MockGameRepository implements IGameRepository {
   }
 
   async mobilizeArmy(): Promise<{ success: boolean; armyId?: number; error: string | null }> {
+    // Mobilize costs: 300 grain, 100 iron, 150 rations
+    const mobilizationCost = [
+      { resourceId: 5, quantity: 300 },  // Grain
+      { resourceId: 3, quantity: 100 },  // Iron Ore
+      { resourceId: 6, quantity: 150 },  // Rations
+    ];
+
+    const resources = await this.getPlayerResources('user_1');
+    const hasEnough = mobilizationCost.every(({ resourceId, quantity }) => {
+      const item = resources.find((r: any) => r.resource_id === resourceId);
+      return (item?.quantity ?? 0) >= quantity;
+    });
+
+    if (!hasEnough) {
+      return { success: false, armyId: null, error: 'Insufficient resources for mobilization: need 300 Grain, 100 Iron Ore, 150 Rations' };
+    }
+
+    // Consume mobilization resources
+    for (const { resourceId, quantity } of mobilizationCost) {
+      const found = resources.find((r: any) => r.resource_id === resourceId);
+      if (found) {
+        (found as PlayerResource).quantity = ((found as PlayerResource).quantity ?? 0) - quantity;
+      }
+    }
+    await this.setStorageItem('mmo_player_resources', resources);
+
     const armies = await this.getArmyUnits();
     const newId = armies.length + 1;
     armies.push({
@@ -3326,8 +3721,52 @@ export class MockGameRepository implements IGameRepository {
     const armies = await this.getArmyUnits();
     const army = armies.find(a => a.id === armyId);
     if (!army) return { success: false, error: 'Army not found.' };
+
+    // Validate movement against region_edges graph
+    const edges = await this.getRegionEdges();
+    const edge = edges.find(
+      (e: any) =>
+        (e.from_region_id === army.current_region_id && e.to_region_id === targetRegionId) ||
+        (e.to_region_id === army.current_region_id && e.from_region_id === targetRegionId)
+    );
+
+    if (!edge) {
+      return { success: false, error: `Invalid movement route from region ${army.current_region_id} to ${targetRegionId}. No valid connection.` };
+    }
+
+    // Apply terrain penalty: mountain passes cost extra rations, sea crossings cost ammo
+    const terrain = army.status; // simplified - would use region terrain
+    const rationsCost = 10; // base ration cost for movement
+    const ammoCost = 5; // base ammo cost for movement
+
+    // Check if army has sufficient supplies
+    if (army.rations_qty < rationsCost) {
+      return { success: false, error: `Insufficient rations for movement. Required ${rationsCost}, have ${army.rations_qty}` };
+    }
+    if (army.ammo_qty < ammoCost) {
+      return { success: false, error: `Insufficient ammunition for movement. Required ${ammoCost}, have ${army.ammo_qty}` };
+    }
+
+    // Deduct supplies
+    army.rations_qty -= rationsCost;
+    army.ammo_qty -= ammoCost;
+
+    // Apply terrain penalty - mountain passes slow movement
+    // In a full implementation, this would check edge.mode for terrain type
+    const movementPenalty = edge.mode === 'mountain_pass' ? 20 : 0; // 20% effective penalty
+    const effectiveDistance = Math.abs(army.current_region_id - targetRegionId) * (1 - movementPenalty / 100);
+
     army.current_region_id = targetRegionId;
     army.status = 'marching';
+
+    // Check if movement crosses into enemy territory (would require valid war)
+    const milRegs = await this.getMilitaryRegions();
+    const targetRegion = milRegs.find((r: any) => r.region_id === targetRegionId);
+    if (targetRegion && targetRegion.owner_country_id !== army.country_id && targetRegion.occupier_country_id !== army.country_id) {
+      // Enemy territory - movement is allowed but marks army as potentially vulnerable
+      army.status = 'marching';
+    }
+
     this.setStorageItem('mmo_army_units', armies);
     return { success: true, error: null };
   }
@@ -3336,22 +3775,94 @@ export class MockGameRepository implements IGameRepository {
     const armies = await this.getArmyUnits();
     const army = armies.find(a => a.id === armyId);
     if (!army) return { success: false, error: 'Army not found.' };
-    army.size = Math.max(100, army.size - 200);
-    army.morale = Math.max(20, army.morale - 15);
-    army.status = 'defending';
-    this.setStorageItem('mmo_army_units', armies);
 
-    // Update ocupation ownership
-    const milRegs = await this.getMilitaryRegions();
-    const reg = milRegs.find(r => r.region_id === targetRegionId);
-    if (reg) {
-      reg.occupier_country_id = 1;
-      reg.occupier_name = 'Solitude Republic';
-      reg.resistance_level = 30;
-      this.setStorageItem('mmo_military_regions', milRegs);
+    // Verify active war declaration exists
+    const wars = await this.getWars();
+    const atWar = wars.some(
+      (w: any) =>
+        (w.attacker_country_id === army.country_id && w.defender_country_id === 2) ||
+        (w.attacker_country_id === 2 && w.defender_country_id === army.country_id)
+    );
+
+    if (!atWar) {
+      return { success: false, error: 'Cannot engage in battle without active war declaration.' };
     }
 
-    return { success: true, outcome: 'conquered', error: null };
+    // Get target region defense info
+    const milRegs = await this.getMilitaryRegions();
+    const targetRegion = milRegs.find((r: any) => r.region_id === targetRegionId);
+    if (!targetRegion) return { success: false, error: 'Target region not found.' };
+
+    // Determine attacker and defender stats
+    const attackerSize = army.size;
+    const attackerMorale = army.morale;
+    const defenderSize = targetRegion.resistance_level * 50; // region resistance contributes to defense
+    const defenderMorale = Math.max(50, 100 - targetRegion.resistance_level);
+
+    // Determine combat outcome using deterministic logic
+    // Composition advantage: larger army has advantage, higher morale helps
+    const sizeDifference = attackerSize - defenderSize;
+    const moraleDifference = attackerMorale - defenderMorale;
+
+    let outcome: string = 'retreat';
+    let sizeLoss = 100;
+    let moraleLoss = 15;
+
+    if (sizeDifference > 50 && moraleDifference > 0) {
+      // Attacker wins
+      outcome = 'conquered';
+      sizeLoss = Math.max(100, Math.floor(attackerSize * 0.15)); // 15% size loss
+      moraleLoss = 10;
+    } else if (sizeDifference < -50 && moraleDifference < 0) {
+      // Defender wins (successful resistance)
+      outcome = 'repelled';
+      sizeLoss = Math.max(100, Math.floor(defenderSize * 0.10)); // 10% size loss
+      moraleLoss = 20;
+    } else if (Math.abs(sizeDifference) <= 50) {
+      // Pyrrhic victory or stalemate
+      outcome = 'pyrrhic_victory';
+      sizeLoss = Math.max(100, Math.floor((attackerSize + defenderSize) * 0.08));
+      moraleLoss = 15;
+    }
+
+    // Apply combat results
+    army.size = Math.max(100, attackerSize - sizeLoss);
+    army.morale = Math.max(20, attackerMorale - moraleLoss);
+    army.status = 'defending';
+
+    // Update occupation/ownership based on outcome
+    if (outcome === 'conquered') {
+      if (targetRegion) {
+        targetRegion.occupier_country_id = army.country_id;
+        targetRegion.occupier_name = 'Solitude Republic';
+        targetRegion.resistance_level = Math.max(0, targetRegion.resistance_level - 15);
+        // Check for siege progression - if resistance reaches 0, province is captured
+        if (targetRegion.resistance_level <= 0) {
+          targetRegion.owner_country_id = army.country_id;
+          targetRegion.resistance_level = 0;
+        }
+      }
+    } else if (outcome === 'repelled') {
+      // Defender retains ownership, attacker suffers additional penalties
+      army.size = Math.max(100, attackerSize - sizeLoss - 50);
+      army.morale = Math.max(20, army.morale - moraleLoss - 10);
+    }
+
+    this.setStorageItem('mmo_army_units', armies);
+    this.setStorageItem('mmo_military_regions', milRegs);
+
+    return { success: true, outcome, error: null };
+  }
+
+  // Phase 4: Region edges graph for strategic movement
+  async getRegionEdges(): Promise<RegionEdge[]> {
+    return this.getStorageItem<RegionEdge[]>('mmo_region_edges', [
+      { id: 1, from_region_id: 1, to_region_id: 2, mode: 'land', cost: 10, seasonal_restrictions: [], is_reciprocal: true },
+      { id: 2, from_region_id: 2, to_region_id: 3, mode: 'mountain_pass', cost: 15, seasonal_restrictions: ['winter'], is_reciprocal: true },
+      { id: 3, from_region_id: 1, to_region_id: 3, mode: 'navigable_sea', cost: 20, seasonal_restrictions: [], is_reciprocal: true },
+      { id: 4, from_region_id: 3, to_region_id: 4, mode: 'land', cost: 12, seasonal_restrictions: [], is_reciprocal: true },
+      { id: 5, from_region_id: 2, to_region_id: 4, mode: 'strait', cost: 18, seasonal_restrictions: ['stormy_season'], is_reciprocal: true }
+    ]);
   }
 
   async proposePeace(warId: number, reparations: number, transfers: number[]): Promise<{ success: boolean; treatyId?: number; error: string | null }> {
@@ -3384,6 +3895,126 @@ export class MockGameRepository implements IGameRepository {
       war.status = 'ended';
       this.setStorageItem('mmo_wars', wars);
     }
+
+    return { success: true, error: null };
+  }
+
+  // Phase 4: Siege mechanics
+  async initiateSiege(armyId: number, targetRegionId: number): Promise<{ success: boolean; error: string | null }> {
+    const armies = await this.getArmyUnits();
+    const army = armies.find(a => a.id === armyId);
+    if (!army) return { success: false, error: 'Army not found.' };
+
+    const milRegs = await this.getMilitaryRegions();
+    const targetRegion = milRegs.find((r: any) => r.region_id === targetRegionId);
+    if (!targetRegion) return { success: false, error: 'Target region not found.' };
+
+    // Check if army is in the same region as the target
+    if (army.current_region_id !== targetRegionId) {
+      return { success: false, error: 'Army must be in the same province to initiate a siege.' };
+    }
+
+    // Check if the region is already under siege (has an occupier with resistance)
+    if (targetRegion.resistance_level <= 0) {
+      return { success: false, error: 'Region is already captured (resistance level 0).' };
+    }
+
+    // Check if the attacking country is at war with the region owner
+    const wars = await this.getWars();
+    const atWar = wars.some(
+      (w: any) =>
+        (w.attacker_country_id === army.country_id && w.defender_country_id === targetRegion.owner_country_id) ||
+        (w.attacker_country_id === targetRegion.owner_country_id && w.defender_country_id === army.country_id)
+    );
+
+    if (!atWar) {
+      return { success: false, error: 'Cannot siege a region without an active war declaration.' };
+    }
+
+    // Siege consumes rations and reduces army size over time
+    const siegeRationCost = 20; // simplified per day cost
+    if (army.rations_qty < siegeRationCost) {
+      return { success: false, error: `Insufficient rations for siege. Required ${siegeRationCost}, have ${army.rations_qty}` };
+    }
+
+    // Dedicate the army to siege status
+    army.status = 'sieging';
+    army.rations_qty -= siegeRationCost;
+
+    // Initial resistance based on region development and garrison
+    // Resistance starts at 50 and decreases as siege progresses
+    targetRegion.resistance_level = Math.min(100, targetRegion.resistance_level + 20); // fortified regions have higher resistance
+
+    this.setStorageItem('mmo_army_units', armies);
+    this.setStorageItem('mmo_military_regions', milRegs);
+
+    return { success: true, error: null };
+  }
+
+  async progressSiege(armyId: number, targetRegionId: number): Promise<{ success: boolean; error: string | null; provinceCaptured?: boolean }> {
+    const armies = await this.getArmyUnits();
+    const army = armies.find(a => a.id === armyId);
+    if (!army) return { success: false, error: 'Army not found.' };
+
+    const milRegs = await this.getMilitaryRegions();
+    const targetRegion = milRegs.find((r: any) => r.region_id === targetRegionId);
+    if (!targetRegion) return { success: false, error: 'Target region not found.' };
+
+    // Only armies with 'sieging' status can progress a siege
+    if (army.status !== 'sieging') {
+      return { success: false, error: 'Army is not currently besieging.' };
+    }
+
+    // Siege progression: resistance decreases based on army size and time
+    // Higher resistance = harder to capture
+    const siegeDamage = Math.max(1, Math.floor(army.size / 50)); // damage per tick
+    targetRegion.resistance_level = Math.max(0, targetRegion.resistance_level - siegeDamage);
+
+    // Consume rations for siege maintenance
+    const siegeRationCost = 10;
+    if (army.rations_qty < siegeRationCost) {
+      // If out of rations, army takes damage instead
+      army.size = Math.max(100, army.size - 50);
+    } else {
+      army.rations_qty -= siegeRationCost;
+    }
+
+    // Check if siege is successful (resistance reaches 0)
+    let provinceCaptured = false;
+    if (targetRegion.resistance_level <= 0) {
+      provinceCaptured = true;
+      targetRegion.owner_country_id = army.country_id;
+      targetRegion.occupier_country_id = army.country_id;
+      targetRegion.resistance_level = 0;
+      // Army becomes garrison
+      army.status = 'garrisoning';
+    }
+
+    this.setStorageItem('mmo_army_units', armies);
+    this.setStorageItem('mmo_military_regions', milRegs);
+
+    return { success: true, error: null, provinceCaptured };
+  }
+
+  async liftSiege(armyId: number, targetRegionId: number): Promise<{ success: boolean; error: string | null }> {
+    const armies = await this.getArmyUnits();
+    const army = armies.find(a => a.id === armyId);
+    if (!army) return { success: false, error: 'Army not found.' };
+
+    const milRegs = await this.getMilitaryRegions();
+    const targetRegion = milRegs.find((r: any) => r.region_id === targetRegionId);
+    if (!targetRegion) return { success: false, error: 'Target region not found.' };
+
+    // Only besieging armies can lift siege
+    if (army.status !== 'sieging') {
+      return { success: false, error: 'Army is not currently besieging.' };
+    }
+
+    // Lift siege - army returns to idle status in the region
+    army.status = 'idle';
+
+    this.setStorageItem('mmo_army_units', armies);
+    this.setStorageItem('mmo_military_regions', milRegs);
 
     return { success: true, error: null };
   }

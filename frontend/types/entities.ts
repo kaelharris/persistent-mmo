@@ -660,7 +660,7 @@ export interface ArmyUnit {
   morale: number;
   ammo_qty: number;
   rations_qty: number;
-  status: 'idle' | 'marching' | 'defending' | 'attacking';
+  status: 'idle' | 'marching' | 'defending' | 'attacking' | 'sieging' | 'garrisoning';
   created_at: string;
   region_name?: string;
 }
@@ -984,7 +984,80 @@ export interface CommunityLog {
   created_at: string;
 }
 
-// Phase 12 Launch & Live Ops structures
+/*──────────────────────────── Phase 5: Dynasties, Kingdom Leadership, and Succession ────────────────────────────*/
+
+export interface NobleHouse {
+  id: number;
+  name: string; // e.g. "House of York", "House of Wittelsbach", "House of Osman"
+  culture: 'european' | 'middle_eastern' | 'asian' | 'steppe' | 'other';
+  coat_of_arms?: string; // URL or heraldic description
+  founded_at: string;
+  motto?: string;
+  is_extant: boolean; // whether the house still exists
+}
+
+export interface DynastyMember {
+  id: number;
+  profile_id: string;
+  name: string;
+  title: 'King' | 'Queen' | 'Heir' | ' Regent' | 'Lord' | 'Lady' | 'Councilor' | 'Knight';
+  relationship: 'founder' | 'spouse' | 'child' | 'sibling' | 'cousin' | 'other';
+  succession_order: number; // lower = higher priority
+  is_alive: boolean;
+  date_of_death?: string | null;
+  date_of_birth?: string | null;
+  notes?: string;
+  dynasty_id: number; // references Dynasty.id
+}
+
+export interface Dynasty {
+  id: number;
+  name: string; // e.g. "House of York Dynasty"
+  noble_house_id: number; // references NobleHouse.id
+  founder_profile_id: string;
+  founder_title: 'King' | 'Queen' | 'Sultan' | 'Shah' | 'Khagan';
+  country_id: number; // ruling kingdom
+  founded_at: string;
+  capital_region_id: number;
+  succession_law: 'hereditary' | 'elective' | 'appointed';
+  is_active: boolean;
+  member_count: number;
+  total_prestige: number;
+  members: DynastyMember[];
+  historical_rulers: DynastyRulerRecord[];
+}
+
+export interface DynastyRulerRecord {
+  rule_id: number;
+  ruler_profile_id: string;
+  title: 'King' | 'Queen' | 'Sultan' | 'Shah' | 'Khagan';
+  ascended_at: string;
+  abdicated_at?: string | null;
+  deceased_at?: string | null;
+  legitimacy: number; // 0-100, influences stability
+  dynasty_prestige_gain: number; // prestige added during reign
+  notes?: string;
+}
+
+export interface RulerLegitimacy {
+  profile_id: string;
+  legitimacy: number; // 0-100
+  last_validated_at: string;
+  legitimacy_reasons: 'heir_clear' | 'election_verified' | 'appointment_confirmed' | 'usurpation' | 'disputed';
+  last_succession_event?: string | null;
+}
+
+export interface KingdomStability {
+  country_id: number;
+  stability: number; // 0-100, influences rebellion chance, tax efficiency, military effectiveness
+  legitimacy_modifier: number; // derived from ruler legitimacy
+  dynasty_prestige_modifier: number; // derived from dynasty prestige
+  last_checked_at: string;
+  notes?: string;
+}
+
+/*──────────────────────────── Phase 12 Launch & Live Ops structures ────────────────────────────*/
+
 export interface LiveOpsConfig {
   id: number;
   emergency_shutdown: boolean;
@@ -1150,6 +1223,100 @@ export interface DeveloperKey {
   label?: string | null;
   rate_limit_per_min: number;
   is_active: boolean;
+  created_at: string;
+}
+
+/*──────────────────────────── Phase 2: Deterministic Simulation Kernel ────────────────────────────*/
+
+export interface SimulationTick {
+  tick_id: number;
+  world_id: string;
+  ruleset_version: string;
+  seed: number;
+  status: 'pending' | 'applied' | 'failed' | 'skipped';
+  started_at?: string | null;
+  ended_at?: string | null;
+  created_at: string;
+}
+
+export interface SimulationCommand {
+  command_id: string;
+  idempotency_key: string;
+  actor_id: string;
+  command_type: string;
+  payload: Record<string, any>;
+  status: 'pending' | 'applied' | 'rejected' | 'skipped';
+  applied_tick_id?: number | null;
+  error_message?: string | null;
+  created_at: string;
+  applied_at?: string | null;
+}
+
+export interface OutboxEvent {
+  event_id: number;
+  tick_id: number;
+  seq: number;
+  event_type: string;
+  payload: Record<string, any>;
+  published: boolean;
+  published_at?: string | null;
+  created_at: string;
+}
+
+export interface SimulationRuleset {
+  id: string;
+  version: string;
+  seed: number;
+  energy_regen_per_tick: number;
+  energy_regen_interval_seconds: number;
+  tick_interval_seconds: number;
+  travel_domestic_cost: number;
+  travel_international_cost: number;
+  max_energy: number;
+  combat_health_cost: number;
+  combat_energy_cost: number;
+  production_points_per_tick: number;
+  created_at: string;
+}
+
+export interface SimulationCommandInput {
+  idempotency_key: string;
+  command_type: string;
+  payload: Record<string, any>;
+}
+
+export interface SimulationCommandResult {
+  success: boolean;
+  command_id?: string | null;
+  applied_tick_id?: number | null;
+  error?: string | null;
+  events?: OutboxEvent[];
+  newEnergy?: number | null;
+  victory?: boolean | null;
+}
+
+/* Region types for the medieval map */
+export interface RegionEdge {
+  id: number;
+  from_region_id: number;
+  to_region_id: number;
+  mode: 'land' | 'mountain_pass' | 'navigable_sea' | 'strait';
+  cost: number;
+  seasonal_restrictions: string[];
+  is_reciprocal: boolean;
+}
+
+export interface RegionGeography {
+  region_id: number;
+  code?: string;
+  terrain: 'plains' | 'forest' | 'mountain' | 'desert' | 'coastal' | 'marine' | 'volcanic' | 'island';
+  climate: 'arid' | 'temperate' | 'mediterranean' | 'continental' | 'marine' | 'tropical';
+  culture: string;
+  development: number;
+  capital: boolean;
+  is_port: boolean;
+  geometry_ref?: string | null;
+  display_name_local?: string | null;
   created_at: string;
 }
 

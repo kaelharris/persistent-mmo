@@ -223,12 +223,12 @@ VALUES
 ('Tutorial: First Steps', 'Gather 5 iron ore and explore the local region maps.', 'tutorial', '{"currency": 100, "xp": 20}'::jsonb, '{"gather_iron": 5}'::jsonb),
 ('Daily: Production Drive', 'Craft any tool template in your regional factory hub.', 'daily', '{"currency": 250, "xp": 50}'::jsonb, '{"craft_item": 1}'::jsonb);
 
-INSERT INTO achievements (title, description, category, points, requirements_json)
+INSERT INTO achievements (name, description, category, points, requirements_json)
 VALUES 
 ('First Harvest', 'Perform a successful manual resource gather action.', 'economy', 10, '{"gathers": 1}'::jsonb),
 ('Gladiator Elite', 'Defeat 5 PvE creature spawns or enemy armies.', 'combat', 20, '{"wins": 5}'::jsonb);
 
-INSERT INTO feature_flags (name, description, is_enabled, rollout_percentage)
+INSERT INTO feature_flags (key, name, description, is_enabled, rollout_percentage)
 VALUES 
-('experimental_combat', 'Enable active dodge and combat system rules.', false, 0),
-('marketplace_v2', 'Enable automated limit orders on exchange listings.', true, 100);
+('experimental_combat', 'Enable active dodge and combat system rules.', 'Enable active dodge and combat system rules.', false, 0),
+('marketplace_v2', 'Enable automated limit orders on exchange listings.', 'Enable automated limit orders on exchange listings.', true, 100);

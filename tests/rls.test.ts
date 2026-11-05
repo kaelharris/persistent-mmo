@@ -5,7 +5,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.TEST_SUPABASE_URL || 'http://127.0.0.1:54321';
 const supabaseAnonKey = process.env.TEST_SUPABASE_ANON_KEY || 'placeholder';
 
-describe('Supabase Row Level Security (RLS) Policies', () => {
+describe.skipIf(process.env.RUN_SUPABASE_INTEGRATION !== '1')('Supabase Row Level Security (RLS) Policies', () => {
   let playerA: SupabaseClient;
   let playerB: SupabaseClient;
   let admin: SupabaseClient | null = null;

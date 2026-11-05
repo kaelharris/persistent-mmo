@@ -252,7 +252,7 @@ BEGIN
       ELSE 'Guild Alliance Level ' || i
     END;
 
-    INSERT INTO public.achievements (id, title, description, category, points, requirements_json)
+    INSERT INTO public.achievements (id, name, description, category, points, requirements_json)
     VALUES (
       i,
       v_title,
@@ -290,9 +290,8 @@ BEGIN
       ELSE 'Kingdom Storyline ' || i
     END;
 
-    INSERT INTO public.quests (id, title, description, category, rewards_json, requirements_json)
+    INSERT INTO public.quests (title, description, category, rewards_json, requirements_json)
     VALUES (
-      i,
       v_title,
       'Fulfill the structural requirements of quest ' || i || ' for raw materials or combat victory.',
       v_cat,

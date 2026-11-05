@@ -1,0 +1,145 @@
+{
+  "note": "Captured from an authenticated session. Player: Kaelharris (id 6a4164be5155ab5fecbc74ff).",
+  "inventory": {
+    "_id": "6a4164be5155ab5fecbc7505",
+    "user": "6a4164be5155ab5fecbc74ff",
+    "money": 425.8158,
+    "items": {
+      "basics": {
+        "bread": 18,
+        "case1": 10,
+        "concrete": 50,
+        "lightAmmo": 100,
+        "limestone": 122,
+        "steak": 4,
+        "steel": 40
+      },
+      "equipments": [
+        {"_id": "6a41653666d6bd6f274b2d43", "code": "helmet3", "maxState": 100, "quantity": 1, "skills": {"criticalDamages": 32}, "state": 69, "type": "equipment"},
+        {"_id": "6a41653866d6bd6f274b3124", "code": "pants1", "maxState": 100, "quantity": 1, "skills": {"armor": 3}, "state": 69, "type": "equipment"},
+        {"_id": "6a41653e0b34ff85d0fe1776", "code": "helmet2", "maxState": 100, "quantity": 1, "skills": {"criticalDamages": 20}, "state": 100, "type": "equipment"},
+        {"_id": "6a4165409769a48571c852f0", "code": "helmet1", "maxState": 100, "quantity": 1, "skills": {"criticalDamages": 2}, "state": 100, "type": "equipment"}
+      ],
+      "weapons": [
+        {"_id": "6a416533889cfa8e2dd5c345", "code": "knife", "maxState": 100, "quantity": 1, "skills": {"attack": 23, "criticalChance": 1}, "state": 69}
+      ]
+    },
+    "managers": ["6a4164be5155ab5fecbc74ff"],
+    "estimatedValues": {"basicItems": 248.006, "equipments": 18.232, "money": 20.816, "total": 288.396, "weapons": 1.343}
+  },
+  "equippedItems": {},
+  "manageableCompanies": [
+    {
+      "_id": "6a4164be5155ab5fecbc7510",
+      "user": "6a4164be5155ab5fecbc74ff",
+      "region": "6813b7069403bc4170a5d822",
+      "itemCode": "limestone",
+      "name": "My first company",
+      "concreteInvested": 50,
+      "production": 200,
+      "isFull": true,
+      "estimatedValue": 91.17608752353094,
+      "freeMoves": 1,
+      "activeUpgradeLevels": {"automatedEngine": 1, "breakRoom": 1, "storage": 1}
+    }
+  ],
+  "kits": {
+    "_id": "6aeb4d24dba6e922832d074b",
+    "user": "6a4164be5155ab5fecbc74ff",
+    "kits": [{"_id": "6aeb4d24dba6e922832d074d", "ammoCode": "lightAmmo", "bootsTier": 2, "chestTier": 2, "glovesTier": 2, "helmetTier": 2, "pantsTier": 2, "weaponTier": 2}]
+  },
+  "milestones": [
+    {"type": "reachXp", "tier": 0, "count": 200, "progress": 1180, "claimableTiers": 4, "claimableXp": 100},
+    {"type": "participateInBattle", "tier": 0, "count": 2, "progress": 7, "claimableTiers": 3, "claimableXp": 60},
+    {"type": "hit", "tier": 0, "count": 100, "progress": 43},
+    {"type": "openCases", "tier": 0, "count": 25, "progress": 5},
+    {"type": "loot", "tier": 0, "count": 20, "progress": 2},
+    {"type": "dealDamages", "tier": 0, "count": 200000, "progress": 4765},
+    {"type": "lootBattleItems", "tier": 0, "count": 1, "progress": 0},
+    {"type": "resist", "tier": 0, "count": 2, "progress": 0},
+    {"type": "craft", "tier": 0, "count": 3, "progress": 0},
+    {"type": "dismantle", "tier": 0, "count": 20, "progress": 0},
+    {"type": "eat", "tier": 0, "count": 10, "progress": 0},
+    {"type": "donate", "tier": 0, "count": 2, "progress": 0},
+    {"type": "helpMuMembers", "tier": 0, "count": 5, "progress": 0},
+    {"type": "regionsCrossed", "tier": 0, "count": 10, "progress": 0},
+    {"type": "collectMapLoot", "tier": 0, "count": 5, "progress": 0},
+    {"type": "employeeProduction", "tier": 0, "count": 2600, "progress": 0},
+    {"type": "trainEmployee", "tier": 0, "count": 8, "progress": 0},
+    {"type": "resolveEmployeeEvent", "tier": 0, "count": 1, "progress": 0},
+    {"type": "findToolboxes", "tier": 0, "count": 4, "progress": 0},
+    {"type": "careForEmployee", "tier": 0, "count": 1, "progress": 0}
+  ],
+  "tutorialProgress": {
+    "running": "economy",
+    "chapters": {
+      "economy": {"step": 8, "visited": [1, 8]},
+      "gear": {"isFinished": true},
+      "map": {"isFinished": true},
+      "military": {"isFinished": true},
+      "progression": {"isFinished": true},
+      "social": {"isFinished": true}
+    }
+  },
+  "whatsUp": {
+    "unreadArticlesCount": 10,
+    "unreadCitizenshipApplicationsCount": 0,
+    "unreadEventsCount": 0,
+    "unreadGameEventsCount": 19,
+    "unreadLawsCount": 0,
+    "unreadMessagesCount": 0,
+    "unreadNotificationsCount": 15
+  },
+  "battleOrders": [
+    {
+      "_id": "6aeb372a1cc674dafb005ed3",
+      "battle": "6aeb0d0b1cc674dafbf49808",
+      "country": "6813b6d546e731854c7ac835",
+      "side": "defender",
+      "sideCountry": "6813b6d546e731854c7ac8c1",
+      "text": "Diarias",
+      "priority": "low",
+      "rank": 1,
+      "isActive": true,
+      "user": "682a31db2b7638095657739e"
+    }
+  ],
+  "conversationsSample": {
+    "items": [
+      {
+        "_id": "6813b76281eaf369669a27d2",
+        "type": "global",
+        "tag": "global",
+        "name": "Global Chat",
+        "memberCount": 242244,
+        "myRole": "member",
+        "isGlobalChat": true,
+        "isMainGlobal": true,
+        "languageCode": "en"
+      },
+      {
+        "_id": "6a0b420531e214815bd5c6bf",
+        "type": "global",
+        "tag": "help",
+        "name": "Help",
+        "memberCount": 110310,
+        "myRole": "member"
+      },
+      {
+        "_id": "6813b6f03e57e0601e792d04",
+        "type": "country",
+        "tag": "country-uy",
+        "chatOfCountry": "6813b6d546e731854c7ac835",
+        "memberCount": 1033,
+        "myRole": "member"
+      },
+      {
+        "_id": "6a50fce706f4cdedf4eb288a",
+        "type": "direct",
+        "participants": ["696d5ff9d4f5c12ba726b56b", "6a4164be5155ab5fecbc74ff"],
+        "memberCount": 2,
+        "myRole": "member"
+      }
+    ]
+  }
+}

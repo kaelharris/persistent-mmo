@@ -1,0 +1,992 @@
+{
+  "type": "Topology",
+  "version": "v1-western-mediterranean",
+  "description": "Western Mediterranean medieval map slice (54 provinces). Original geographic assets derived from public-domain Natural Earth coastline reference; province boundaries are original gameplay-friendly approximations.",
+  "arcs": [
+    [[-8.90, 42.70], [-8.10, 42.70], [-8.10, 43.30], [-8.90, 43.30], [-8.90, 42.70]],
+    [[-6.10, 43.20], [-5.50, 43.20], [-5.50, 43.80], [-6.10, 43.80], [-6.10, 43.20]],
+    [[-4.30, 43.00], [-3.70, 43.00], [-3.70, 43.60], [-4.30, 43.60], [-4.30, 43.00]],
+    [[-3.10, 42.90], [-2.50, 42.90], [-2.50, 43.50], [-3.10, 43.50], [-3.10, 42.90]],
+    [[-2.10, 42.50], [-1.50, 42.50], [-1.50, 43.10], [-2.10, 43.10], [-2.10, 42.50]],
+    [[-1.10, 41.20], [-0.50, 41.20], [-0.50, 41.80], [-1.10, 41.80], [-1.10, 41.20]],
+    [[1.50, 41.50], [2.10, 41.50], [2.10, 42.10], [1.50, 42.10], [1.50, 41.50]],
+    [[-0.70, 39.20], [0.10, 39.20], [0.10, 39.80], [-0.70, 39.80], [-0.70, 39.20]],
+    [[-1.60, 37.70], [-1.00, 37.70], [-1.00, 38.30], [-1.60, 38.30], [-1.60, 37.70]],
+    [[-5.10, 36.90], [-4.50, 36.90], [-4.50, 37.50], [-5.10, 37.50], [-5.10, 36.90]],
+    [[-6.10, 38.70], [-5.50, 38.70], [-5.50, 39.30], [-6.10, 39.30], [-6.10, 38.70]],
+    [[-4.80, 41.20], [-4.20, 41.20], [-4.20, 41.80], [-4.80, 41.80], [-4.80, 41.20]],
+    [[-3.80, 39.20], [-3.20, 39.20], [-3.20, 39.80], [-3.80, 39.80], [-3.80, 39.20]],
+    [[-4.00, 40.10], [-3.40, 40.10], [-3.40, 40.70], [-4.00, 40.70], [-4.00, 40.10]],
+    [[-9.50, 38.50], [-8.90, 38.50], [-8.90, 39.10], [-9.50, 39.10], [-9.50, 38.50]],
+    [[-8.10, 38.20], [-7.50, 38.20], [-7.50, 38.80], [-8.10, 38.80], [-8.10, 38.20]],
+    [[-8.30, 36.90], [-7.70, 36.90], [-7.70, 37.50], [-8.30, 37.50], [-8.30, 36.90]],
+    [[5.20, 43.50], [5.80, 43.50], [5.80, 44.10], [5.20, 44.10], [5.20, 43.50]],
+    [[3.20, 43.00], [3.80, 43.00], [3.80, 43.60], [3.20, 43.60], [3.20, 43.00]],
+    [[-1.10, 43.90], [-0.50, 43.90], [-0.50, 44.50], [-1.10, 44.50], [-1.10, 43.90]],
+    [[4.50, 44.70], [5.10, 44.70], [5.10, 45.30], [4.50, 45.30], [4.50, 44.70]],
+    [[8.50, 44.10], [9.10, 44.10], [9.10, 44.70], [8.50, 44.70], [8.50, 44.10]],
+    [[7.50, 44.90], [8.10, 44.90], [8.10, 45.50], [7.50, 45.50], [7.50, 44.90]],
+    [[8.90, 45.20], [9.50, 45.20], [9.50, 45.80], [8.90, 45.80], [8.90, 45.20]],
+    [[11.70, 45.20], [12.30, 45.20], [12.30, 45.80], [11.70, 45.80], [11.70, 45.20]],
+    [[11.20, 44.20], [11.80, 44.20], [11.80, 44.80], [11.20, 44.80], [11.20, 44.20]],
+    [[10.70, 43.20], [11.30, 43.20], [11.30, 43.80], [10.70, 43.80], [10.70, 43.20]],
+    [[12.20, 41.70], [12.80, 41.70], [12.80, 42.30], [12.20, 42.30], [12.20, 41.70]],
+    [[14.20, 40.50], [14.80, 40.50], [14.80, 41.10], [14.20, 41.10], [14.20, 40.50]],
+    [[16.20, 40.20], [16.80, 40.20], [16.80, 40.80], [16.20, 40.80], [16.20, 40.20]],
+    [[15.90, 38.70], [16.50, 38.70], [16.50, 39.30], [15.90, 39.30], [15.90, 38.70]],
+    [[13.90, 37.20], [14.50, 37.20], [14.50, 37.80], [13.90, 37.80], [13.90, 37.20]],
+    [[8.70, 39.90], [9.30, 39.90], [9.30, 40.50], [8.70, 40.50], [8.70, 39.90]],
+    [[8.70, 41.90], [9.30, 41.90], [9.30, 42.50], [8.70, 42.50], [8.70, 41.90]],
+    [[10.00, 42.50], [10.60, 42.50], [10.60, 43.10], [10.00, 43.10], [10.00, 42.50]],
+    [[2.70, 39.30], [3.30, 39.30], [3.30, 39.90], [2.70, 39.90], [2.70, 39.30]],
+    [[14.20, 35.60], [14.80, 35.60], [14.80, 36.20], [14.20, 36.20], [14.20, 35.60]],
+    [[11.70, 36.50], [12.30, 36.50], [12.30, 37.10], [11.70, 37.10], [11.70, 36.50]],
+    [[10.60, 33.50], [11.20, 33.50], [11.20, 34.10], [10.60, 34.10], [10.60, 33.50]],
+    [[1.20, 38.60], [1.80, 38.60], [1.80, 39.20], [1.20, 39.20], [1.20, 38.60]],
+    [[3.90, 39.60], [4.50, 39.60], [4.50, 40.20], [3.90, 40.20], [3.90, 39.60]],
+    [[-5.60, 35.60], [-5.00, 35.60], [-5.00, 36.20], [-5.60, 36.20], [-5.60, 35.60]],
+    [[-6.10, 35.50], [-5.50, 35.50], [-5.50, 36.10], [-6.10, 36.10], [-6.10, 35.50]],
+    [[-4.30, 33.70], [-3.70, 33.70], [-3.70, 34.30], [-4.30, 34.30], [-4.30, 33.70]],
+    [[-8.30, 31.30], [-7.70, 31.30], [-7.70, 31.90], [-8.30, 31.90], [-8.30, 31.30]],
+    [[-10.30, 30.10], [-9.70, 30.10], [-9.70, 30.70], [-10.30, 30.70], [-10.30, 30.10]],
+    [[2.90, 36.50], [3.50, 36.50], [3.50, 37.10], [2.90, 37.10], [2.90, 36.50]],
+    [[-0.90, 35.40], [-0.30, 35.40], [-0.30, 36.00], [-0.90, 36.00], [-0.90, 35.40]],
+    [[3.90, 36.20], [4.50, 36.20], [4.50, 36.80], [3.90, 36.80], [3.90, 36.20]],
+    [[6.30, 36.10], [6.90, 36.10], [6.90, 36.70], [6.30, 36.70], [6.30, 36.10]],
+    [[9.90, 36.50], [10.50, 36.50], [10.50, 37.10], [9.90, 37.10], [9.90, 36.50]],
+    [[9.60, 37.00], [10.20, 37.00], [10.20, 37.60], [9.60, 37.60], [9.60, 37.00]],
+    [[10.50, 34.40], [11.10, 34.40], [11.10, 35.00], [10.50, 35.00], [10.50, 34.40]],
+    [[12.90, 32.60], [13.50, 32.60], [13.50, 33.20], [12.90, 33.20], [12.90, 32.60]]
+  ],
+  "objects": {
+    "provinces": {
+      "type": "GeometryCollection",
+      "geometries": [
+        {
+          "type": "Polygon",
+          "id": "region-1000",
+          "arcs": [[0]],
+          "properties": {
+            "name": "Galicia",
+            "code": "gal",
+            "country_id": 100,
+            "terrain": "coastal",
+            "climate": "temperate",
+            "culture": "iberian",
+            "development": 12.5,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Galiza"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1001",
+          "arcs": [[1]],
+          "properties": {
+            "name": "Asturias",
+            "code": "ast",
+            "country_id": 100,
+            "terrain": "mountain",
+            "climate": "temperate",
+            "culture": "iberian",
+            "development": 10.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Asturies"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1002",
+          "arcs": [[2]],
+          "properties": {
+            "name": "Cantabria",
+            "code": "can",
+            "country_id": 100,
+            "terrain": "coastal",
+            "climate": "temperate",
+            "culture": "iberian",
+            "development": 11.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Cantabria"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1003",
+          "arcs": [[3]],
+          "properties": {
+            "name": "Basque Country",
+            "code": "bsc",
+            "country_id": 100,
+            "terrain": "mountain",
+            "climate": "temperate",
+            "culture": "iberian",
+            "development": 14.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Euskal Herria"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1004",
+          "arcs": [[4]],
+          "properties": {
+            "name": "Navarre",
+            "code": "nav",
+            "country_id": 100,
+            "terrain": "mountain",
+            "climate": "continental",
+            "culture": "iberian",
+            "development": 11.5,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Nafarroa"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1005",
+          "arcs": [[5]],
+          "properties": {
+            "name": "Aragon",
+            "code": "ara",
+            "country_id": 100,
+            "terrain": "plains",
+            "climate": "continental",
+            "culture": "iberian",
+            "development": 13.0,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Aragón"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1006",
+          "arcs": [[6]],
+          "properties": {
+            "name": "Catalonia",
+            "code": "cat",
+            "country_id": 100,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "iberian",
+            "development": 18.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Catalunya"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1007",
+          "arcs": [[7]],
+          "properties": {
+            "name": "Valencia",
+            "code": "val",
+            "country_id": 100,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "iberian",
+            "development": 15.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "València"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1008",
+          "arcs": [[8]],
+          "properties": {
+            "name": "Murcia",
+            "code": "mur",
+            "country_id": 100,
+            "terrain": "coastal",
+            "climate": "arid",
+            "culture": "iberian",
+            "development": 11.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Murcia"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1009",
+          "arcs": [[9]],
+          "properties": {
+            "name": "Andalusia",
+            "code": "and",
+            "country_id": 100,
+            "terrain": "plains",
+            "climate": "mediterranean",
+            "culture": "iberian",
+            "development": 16.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Andalucía"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1010",
+          "arcs": [[10]],
+          "properties": {
+            "name": "Extremadura",
+            "code": "ext",
+            "country_id": 100,
+            "terrain": "plains",
+            "climate": "mediterranean",
+            "culture": "iberian",
+            "development": 9.0,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Extremadura"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1011",
+          "arcs": [[11]],
+          "properties": {
+            "name": "Castile and Leon",
+            "code": "cle",
+            "country_id": 100,
+            "terrain": "plains",
+            "climate": "continental",
+            "culture": "iberian",
+            "development": 12.0,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Castilla y León"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1012",
+          "arcs": [[12]],
+          "properties": {
+            "name": "Castile-La Mancha",
+            "code": "clm",
+            "country_id": 100,
+            "terrain": "plains",
+            "climate": "continental",
+            "culture": "iberian",
+            "development": 10.5,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Castilla-La Mancha"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1013",
+          "arcs": [[13]],
+          "properties": {
+            "name": "Madrid",
+            "code": "mad",
+            "country_id": 100,
+            "terrain": "plains",
+            "climate": "continental",
+            "culture": "iberian",
+            "development": 22.0,
+            "capital": true,
+            "is_port": false,
+            "display_name_local": "Madrid"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1014",
+          "arcs": [[14]],
+          "properties": {
+            "name": "Lisbon Region",
+            "code": "lis",
+            "country_id": 100,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "iberian",
+            "development": 20.0,
+            "capital": true,
+            "is_port": true,
+            "display_name_local": "Lisboa"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1015",
+          "arcs": [[15]],
+          "properties": {
+            "name": "Alentejo",
+            "code": "ale",
+            "country_id": 100,
+            "terrain": "plains",
+            "climate": "mediterranean",
+            "culture": "iberian",
+            "development": 9.5,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Alentejo"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1016",
+          "arcs": [[16]],
+          "properties": {
+            "name": "Algarve",
+            "code": "alg",
+            "country_id": 100,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "iberian",
+            "development": 13.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Algarve"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1017",
+          "arcs": [[17]],
+          "properties": {
+            "name": "Provence",
+            "code": "prov",
+            "country_id": 102,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "occitan",
+            "development": 17.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Provença"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1018",
+          "arcs": [[18]],
+          "properties": {
+            "name": "Languedoc",
+            "code": "lud",
+            "country_id": 102,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "occitan",
+            "development": 14.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Lengadòc"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1019",
+          "arcs": [[19]],
+          "properties": {
+            "name": "Aquitaine",
+            "code": "aqu",
+            "country_id": 102,
+            "terrain": "plains",
+            "climate": "temperate",
+            "culture": "occitan",
+            "development": 15.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Akitània"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1020",
+          "arcs": [[20]],
+          "properties": {
+            "name": "Rhone Valley",
+            "code": "rhone",
+            "country_id": 102,
+            "terrain": "plains",
+            "climate": "continental",
+            "culture": "occitan",
+            "development": 16.0,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Vallée du Rhône"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1021",
+          "arcs": [[21]],
+          "properties": {
+            "name": "Liguria",
+            "code": "lig",
+            "country_id": 102,
+            "terrain": "mountain",
+            "climate": "mediterranean",
+            "culture": "italian",
+            "development": 15.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Liguria"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1022",
+          "arcs": [[22]],
+          "properties": {
+            "name": "Piedmont",
+            "code": "pmt",
+            "country_id": 102,
+            "terrain": "mountain",
+            "climate": "continental",
+            "culture": "italian",
+            "development": 16.0,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Piemont"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1023",
+          "arcs": [[23]],
+          "properties": {
+            "name": "Lombardy",
+            "code": "lom",
+            "country_id": 102,
+            "terrain": "plains",
+            "climate": "continental",
+            "culture": "italian",
+            "development": 20.0,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Lombardia"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1024",
+          "arcs": [[24]],
+          "properties": {
+            "name": "Veneto",
+            "code": "ven",
+            "country_id": 102,
+            "terrain": "coastal",
+            "climate": "continental",
+            "culture": "italian",
+            "development": 18.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Veneto"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1025",
+          "arcs": [[25]],
+          "properties": {
+            "name": "Emilia-Romagna",
+            "code": "emr",
+            "country_id": 102,
+            "terrain": "plains",
+            "climate": "continental",
+            "culture": "italian",
+            "development": 17.0,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Emilia-Romagna"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1026",
+          "arcs": [[26]],
+          "properties": {
+            "name": "Tuscany",
+            "code": "tus",
+            "country_id": 102,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "italian",
+            "development": 18.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Toscana"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1027",
+          "arcs": [[27]],
+          "properties": {
+            "name": "Lazio",
+            "code": "laz",
+            "country_id": 102,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "italian",
+            "development": 21.0,
+            "capital": true,
+            "is_port": true,
+            "display_name_local": "Lazio"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1028",
+          "arcs": [[28]],
+          "properties": {
+            "name": "Campania",
+            "code": "cam",
+            "country_id": 102,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "italian",
+            "development": 17.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Campania"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1029",
+          "arcs": [[29]],
+          "properties": {
+            "name": "Apulia",
+            "code": "pug",
+            "country_id": 102,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "italian",
+            "development": 15.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Puglia"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1030",
+          "arcs": [[30]],
+          "properties": {
+            "name": "Calabria",
+            "code": "cal",
+            "country_id": 102,
+            "terrain": "mountain",
+            "climate": "mediterranean",
+            "culture": "italian",
+            "development": 11.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Calabria"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1031",
+          "arcs": [[31]],
+          "properties": {
+            "name": "Sicily",
+            "code": "sic",
+            "country_id": 102,
+            "terrain": "plains",
+            "climate": "mediterranean",
+            "culture": "italian",
+            "development": 16.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Sicilia"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1032",
+          "arcs": [[32]],
+          "properties": {
+            "name": "Sardinia",
+            "code": "sar",
+            "country_id": 102,
+            "terrain": "plains",
+            "climate": "mediterranean",
+            "culture": "italian",
+            "development": 13.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Sardegna"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1033",
+          "arcs": [[33]],
+          "properties": {
+            "name": "Corsica",
+            "code": "cos",
+            "country_id": 102,
+            "terrain": "mountain",
+            "climate": "mediterranean",
+            "culture": "italian",
+            "development": 11.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Corsica"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1034",
+          "arcs": [[34]],
+          "properties": {
+            "name": "Elba Island",
+            "code": "elb",
+            "country_id": 102,
+            "terrain": "mountain",
+            "climate": "mediterranean",
+            "culture": "italian",
+            "development": 8.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Elba"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1035",
+          "arcs": [[35]],
+          "properties": {
+            "name": "Balearic Islands (Mallorca)",
+            "code": "bal",
+            "country_id": 100,
+            "terrain": "island",
+            "climate": "mediterranean",
+            "culture": "iberian",
+            "development": 14.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Mallorca"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1036",
+          "arcs": [[36]],
+          "properties": {
+            "name": "Malta",
+            "code": "mlt",
+            "country_id": 103,
+            "terrain": "island",
+            "climate": "mediterranean",
+            "culture": "mediterranean",
+            "development": 12.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Malta"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1037",
+          "arcs": [[37]],
+          "properties": {
+            "name": "Pantelleria",
+            "code": "pan",
+            "country_id": 103,
+            "terrain": "island",
+            "climate": "mediterranean",
+            "culture": "mediterranean",
+            "development": 7.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Pantelleria"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1038",
+          "arcs": [[38]],
+          "properties": {
+            "name": "Djerba",
+            "code": "dje",
+            "country_id": 101,
+            "terrain": "island",
+            "climate": "arid",
+            "culture": "berber",
+            "development": 8.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Jarzis"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1039",
+          "arcs": [[39]],
+          "properties": {
+            "name": "Ibiza",
+            "code": "ibz",
+            "country_id": 100,
+            "terrain": "island",
+            "climate": "mediterranean",
+            "culture": "iberian",
+            "development": 11.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Eivissa"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1040",
+          "arcs": [[40]],
+          "properties": {
+            "name": "Menorca",
+            "code": "men",
+            "country_id": 100,
+            "terrain": "island",
+            "climate": "mediterranean",
+            "culture": "iberian",
+            "development": 10.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Menorca"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1041",
+          "arcs": [[41]],
+          "properties": {
+            "name": "Ceuta",
+            "code": "ceu",
+            "country_id": 100,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "iberian",
+            "development": 13.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Ceuta"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1042",
+          "arcs": [[42]],
+          "properties": {
+            "name": "Tangier",
+            "code": "tan",
+            "country_id": 101,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "berber",
+            "development": 15.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Tanja"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1043",
+          "arcs": [[43]],
+          "properties": {
+            "name": "Fez",
+            "code": "fez",
+            "country_id": 101,
+            "terrain": "mountain",
+            "climate": "continental",
+            "culture": "berber",
+            "development": 16.0,
+            "capital": true,
+            "is_port": false,
+            "display_name_local": "Fas"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1044",
+          "arcs": [[44]],
+          "properties": {
+            "name": "Marrakech",
+            "code": "mar",
+            "country_id": 101,
+            "terrain": "mountain",
+            "climate": "arid",
+            "culture": "berber",
+            "development": 17.0,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Marrakesh"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1045",
+          "arcs": [[45]],
+          "properties": {
+            "name": "Sous",
+            "code": "sus",
+            "country_id": 101,
+            "terrain": "plains",
+            "climate": "arid",
+            "culture": "berber",
+            "development": 11.0,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Souss"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1046",
+          "arcs": [[45]],
+          "properties": {
+            "name": "Algiers",
+            "code": "alg",
+            "country_id": 101,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "berber",
+            "development": 18.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Al-Jaza'ir"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1047",
+          "arcs": [[46]],
+          "properties": {
+            "name": "Oran",
+            "code": "oran",
+            "country_id": 101,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "berber",
+            "development": 14.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Wahran"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1048",
+          "arcs": [[47]],
+          "properties": {
+            "name": "Kabylie",
+            "code": "kab",
+            "country_id": 101,
+            "terrain": "mountain",
+            "climate": "mediterranean",
+            "culture": "berber",
+            "development": 12.0,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Tamurt n Leqvayel"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1049",
+          "arcs": [[48]],
+          "properties": {
+            "name": "Constantine",
+            "code": "const",
+            "country_id": 101,
+            "terrain": "plains",
+            "climate": "mediterranean",
+            "culture": "berber",
+            "development": 14.0,
+            "capital": false,
+            "is_port": false,
+            "display_name_local": "Qusanṭinah"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1050",
+          "arcs": [[49]],
+          "properties": {
+            "name": "Tunis",
+            "code": "tun",
+            "country_id": 101,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "berber",
+            "development": 19.0,
+            "capital": true,
+            "is_port": true,
+            "display_name_local": "Tūnis"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1051",
+          "arcs": [[50]],
+          "properties": {
+            "name": "Bizerte",
+            "code": "biz",
+            "country_id": 101,
+            "terrain": "coastal",
+            "climate": "mediterranean",
+            "culture": "berber",
+            "development": 13.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Banzart"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1052",
+          "arcs": [[51]],
+          "properties": {
+            "name": "Sfax",
+            "code": "sfx",
+            "country_id": 101,
+            "terrain": "coastal",
+            "climate": "arid",
+            "culture": "berber",
+            "development": 14.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Ṣafāqis"
+          }
+        },
+        {
+          "type": "Polygon",
+          "id": "region-1053",
+          "arcs": [[52]],
+          "properties": {
+            "name": "Tripoli (Western)",
+            "code": "trp",
+            "country_id": 101,
+            "terrain": "coastal",
+            "climate": "arid",
+            "culture": "berber",
+            "development": 12.0,
+            "capital": false,
+            "is_port": true,
+            "display_name_local": "Ṭarābulus al-Gharb"
+          }
+        }
+      ]
+    }
+  },
+  "bbox": [
+    -10.30,
+    30.10,
+    16.80,
+    45.80
+  ]
+}

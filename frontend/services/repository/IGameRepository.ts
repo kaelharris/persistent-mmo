@@ -99,6 +99,11 @@ import {
   SeasonLeaderboard,
   FeatureFlag,
   DeveloperKey,
+  NobleHouse,
+  Dynasty,
+  DynastyMember,
+  RulerLegitimacy,
+  KingdomStability,
 } from '../../types/entities';
 
 export interface IGameRepository {
@@ -343,6 +348,19 @@ export interface IGameRepository {
   getDirectMessages(threadId: number): Promise<DirectMessage[]>;
   getPlayerMail(userId: string): Promise<PlayerMail[]>;
   getPlayerReputation(userId: string): Promise<PlayerReputation | null>;
+  // Phase 5: Dynasties, Kingdom Leadership, and Succession signatures
+  getNobleHouses(): Promise<NobleHouse[]>;
+  getDynasty(profileId?: string): Promise<Dynasty | null>;
+  getDynastyMembers(dynastyId: number): Promise<DynastyMember[]>;
+  getRulerLegitimacy(profileId: string): Promise<RulerLegitimacy | null>;
+  getKingdomStability(countryId: number): Promise<KingdomStability | null>;
+  establishDynasty(dynastyName: string, nobleHouseName: string, founderTitle: 'King' | 'Queen' | 'Sultan' | 'Shah' | 'Khagan', countryId: number, successionLaw: 'hereditary' | 'elective' | 'appointed'): Promise<{ success: boolean; dynastyId?: number; error: string | null }>;
+  designateHeir(dynastyId: number, heirProfileId: string, heirTitle: 'King' | 'Queen' | 'Heir', successionLaw: 'hereditary' | 'elective' | 'appointed'): Promise<{ success: boolean; error: string | null }>;
+  abdicateThrone(profileId: string, regentProfileId?: string): Promise<{ success: boolean; error: string | null }>;
+  resolveSuccession(dynastyId: number, newRulerProfileId: string): Promise<{ success: boolean; newRulerTitle?: string; error: string | null }>;
+  updateLegitimacy(profileId: string, legitimacy: number, reason: 'heir_clear' | 'election_verified' | 'appointment_confirmed' | 'usurpation' | 'disputed'): Promise<{ success: boolean; error: string | null }>;
+  getSuccessionOrder(dynastyId: number): Promise<DynastyMember[]>;
+
   getPlayerTitles(userId: string): Promise<PlayerTitle[]>;
   getPlayerBadges(userId: string): Promise<PlayerBadge[]>;
   getContracts(): Promise<Contract[]>;

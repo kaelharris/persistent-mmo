@@ -1,0 +1,99 @@
+{
+  "war": {
+    "_id": "6ad7b1c770529669ea516461",
+    "attacker": {"country": "6813b6d546e731854c7ac8c1", "damages": 81386401, "wonBattlesCount": 6, "wonRoundsCount": 12},
+    "defender": {"country": "6813b6d546e731854c7ac868", "damages": 41964748, "wonBattlesCount": 1, "wonRoundsCount": 2},
+    "battles": [],
+    "isActive": true,
+    "priority": "6813b6d546e731854c7ac868",
+    "priorityEndAt": "2026-11-05T00:32:02.837Z"
+  },
+  "law": {
+    "_id": "6aea464d900929a1ada3c438",
+    "country": "6813b6d546e731854c7ac835",
+    "data": {"discordUrl": "", "govType": "republic", "taxType": "income", "type": "set_gov_type"},
+    "endAt": "2026-11-04T20:38:37.256Z",
+    "processingAt": "2026-11-03T21:08:26.020Z",
+    "status": "accepted",
+    "text": "Desarrollo es lo que mas plata da y no tenemos regiones conquistadas",
+    "user": "685449d1abdc210cf8b50486",
+    "vicePresidentVoted": true,
+    "votes": {"abstain": [], "accept": ["685449d1abdc210cf8b50486", "682a31db2b7638095657739e", "6819a8f9dc610e77402f70ae"], "reject": []}
+  },
+  "election": {
+    "_id": "6ae6816c1849058456f4f842",
+    "candidates": [{"isElected": true, "party": "698cf9c2b4565ead9fa2f49c", "user": "685449d1abdc210cf8b50486", "voteCount": 0}],
+    "country": "6813b6d546e731854c7ac835",
+    "electedCandidates": [],
+    "electedCount": 1,
+    "isActive": false,
+    "status": "finished",
+    "type": "president",
+    "votes": {"685449d1abdc210cf8b50486": 11},
+    "votesCount": 11,
+    "votesStartAt": "2026-11-02T00:02:02.890Z",
+    "votesEndAt": "2026-11-03T00:02:02.890Z"
+  },
+  "mercenaryAuction": {
+    "_id": "6aeb4d575b3ce2e28163dfff",
+    "battle": "6aeb4ad014605b39184ca6f9",
+    "bids": [],
+    "budget": 208.53,
+    "country": "6813b6d446e731854c7ac7bc",
+    "createdBy": "6a555dc3462719aec3787b5d",
+    "currentPayout": 208.53,
+    "currentPerK": 0.07,
+    "duration": 5,
+    "expiresAt": "2026-11-04T15:25:55.149Z",
+    "forCountry": "6813b6d446e731854c7ac7bc",
+    "forCountrySide": "defender",
+    "initialPerK": 0.07,
+    "minimumDamage": 2979000,
+    "professionalsOnly": false,
+    "status": "active"
+  },
+  "mercenaryContract": {
+    "_id": "6aeb4d7d16788eb743f1a1d5",
+    "acceptanceFee": 49.99,
+    "activity": [
+      {"actionAt": "2026-11-04T15:21:33.548Z", "money": 499.9, "type": "auctionWon", "userId": "6a1ad23902bbdafe9409dc4d"},
+      {"actionAt": "2026-11-04T15:21:33.548Z", "money": 49.99, "type": "feePaid", "userId": "6a1ad23902bbdafe9409dc4d"}
+    ],
+    "auction": "6aeb4bcfa5a90fbff9fd6307",
+    "battle": "6aeae9fd0796f70e099e2e41",
+    "country": "6813b6d446e731854c7ac7ef",
+    "currentDamages": 0,
+    "forCountry": "6813b6d446e731854c7ac7ef",
+    "forCountrySide": "attacker",
+    "minimumDamage": 4999000,
+    "moneyPer1kDamages": 0.1,
+    "moneyPool": 499.9,
+    "mu": "69c954d4a95d5546a3ddeb9c",
+    "status": "active"
+  },
+  "rankingEnums": [
+    "weeklyCountryDamages", "weeklyCountryDamagesPerCitizen", "countryRegionDiff", "countryDevelopment",
+    "countryActivePopulation", "countryDamages", "countryWealth", "countryBounty", "weeklyUserDamages",
+    "userDamages", "userWealth", "userLevel", "userReferrals", "userSubscribers", "userTerrain",
+    "userPremiumMonths", "userPremiumGifts", "userCasesOpened", "userGemsPurchased", "userBounty",
+    "userSkinsOwned", "userMilestoneTiers", "userMissionsClaimed", "muWeeklyDamages", "muDamages",
+    "muTerrain", "muWealth", "muBounty", "muReputation", "allianceInitialDevelopment", "allianceDevelopment",
+    "allianceWeeklyDamages", "allianceDamages", "alliancePopulation", "allianceWeeklyDamagesPerCitizen"
+  ],
+  "articleTypes": ["daily", "weekly", "top", "my", "subscriptions", "last", "saved"],
+  "colorSchemes": ["red","deepOrange","orange","lightOrange","amber","yellow","olive","lime","lightGreen","green","emerald","teal","cyan","lightBlue","blue","indigo","purple","violet","pink","deepPink","brown","sand","gray"],
+  "fonts": ["Default","Caesar Dressing","Kode Mono","Lacquer","Pixelify Sans","Skranji","Texturina","Tiny5","Black Ops One","Orbitron","Audiowide","Michroma","Silkscreen","VT323","Monoton","Bangers","Bungee","Permanent Marker","Rock Salt","Creepster","Metal Mania","Pirata One","MedievalSharp","Cinzel Decorative","Special Elite"],
+  "orderType": ["buy", "sell"],
+  "side": ["attacker", "defender"],
+  "articleSample": {
+    "_id": "694b331040e3a562f55b8154",
+    "author": "6813b758efecdf9bab195068",
+    "category": "official",
+    "title": "v0.21.0-beta (Happy Christmas)",
+    "language": "en",
+    "slug": "v0-21-0-beta-happy-christmas-5b8154",
+    "isPublished": true,
+    "publishedAt": "2025-12-26T00:27:30.936Z",
+    "stats": {"comments": 183, "dislikes": 9, "likes": 3346, "score": 3337, "subs": 139, "tips": 560, "views": 8575}
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "battle": {
+    "_id": "6aeb0d0b1cc674dafbf49808",
+    "war": "6ad7b1c770529669ea516461",
+    "type": "resistance",
+    "defender": {
+      "region": "696a81f5882256e1db118220",
+      "country": "6813b6d546e731854c7ac8c1",
+      "wonRoundsCount": 0,
+      "countryOrders": ["6813b6d546e731854c7ac8c1", "6873d0ea1758b40e712b5f3a", "6813b6d546e731854c7ac835"],
+      "muOrders": ["6a57e5c91e7202527ada2b8b", "68ce667823b29d24d9ed3601", "6ac6c850ea60583babfe8a7d", "69b8413cca9a42b7ef75a41f", "688194888ed720aa962341e1"],
+      "damages": 0,
+      "hitCount": 2067,
+      "moneyPer1kDamages": 0.1
+    },
+    "attacker": {
+      "country": "6813b6d546e731854c7ac868",
+      "wonRoundsCount": 0,
+      "countryOrders": ["6813b6d546e731854c7ac868", "6813b6d546e731854c7ac8a9"],
+      "muOrders": ["6a7c405381c278ad62074934", "696792485579e725100d6329", "6a32f2833c16e06241834629", "6a17be0cd2350c83548317ff"],
+      "damages": 0,
+      "hitCount": 2356
+    },
+    "rounds": ["6aeb0d0b1cc674dafbf4980a"],
+    "roundsHistory": [],
+    "isActive": true,
+    "roundsToWin": 2,
+    "currentRound": "6aeb0d0b1cc674dafbf4980a",
+    "stats": {"hitCount": 0}
+  },
+  "live": {
+    "battle": {
+      "attackerCountryOrders": ["6813b6d546e731854c7ac868", "6813b6d546e731854c7ac8a9"],
+      "defenderCountryOrders": ["6813b6d546e731854c7ac8c1", "6873d0ea1758b40e712b5f3a", "6813b6d546e731854c7ac835"],
+      "defenderMoneyPer1kDamages": 0.1,
+      "isActive": true,
+      "roundHistory": [],
+      "roundIds": ["6aeb0d0b1cc674dafbf4980a"]
+    },
+    "round": {
+      "actualTickPoints": 2,
+      "attackerDamages": 12551351,
+      "attackerPoints": 111,
+      "defenderDamages": 7880853,
+      "defenderPoints": 63,
+      "isActive": true,
+      "nextTickAt": "2026-11-04T15:23:00.363Z",
+      "roundId": "6aeb0d0b1cc674dafbf4980a"
+    }
+  },
+  "round": {
+    "_id": "6aeb0d0b1cc674dafbf4980a",
+    "battle": "6aeb0d0b1cc674dafbf49808",
+    "attacker": {"country": "6813b6d546e731854c7ac868", "damages": 12551351, "hitCount": 2356, "points": 111},
+    "defender": {"country": "6813b6d546e731854c7ac8c1", "damages": 7880853, "hitCount": 2067, "points": 63}
+  },
+  "hit": {
+    "_id": "6aeb4d71d2430c806d83fa84",
+    "user": "69611d6d5d9c9cdb1fc3f1c8",
+    "mu": "6a7c405381c278ad62074934",
+    "damages": 10431,
+    "isCriticalHit": true,
+    "isMissed": false,
+    "ammo": "lightAmmo",
+    "hitAt": "2026-11-04T15:21:21.378Z",
+    "weapon": {"_id": "6ade81ff9d14f37eecfa118d", "code": "sniper", "maxState": 100, "skills": {"attack": 119, "criticalChance": 16}, "state": 69, "quantity": 1},
+    "equipments": [
+      {"code": "helmet4", "skills": {"criticalDamages": 88}, "state": 11},
+      {"code": "chest4", "skills": {"armor": 30}, "state": 27},
+      {"code": "pants4", "skills": {"armor": 30}, "state": 31},
+      {"code": "boots4", "skills": {"dodge": 25}, "state": 90},
+      {"code": "gloves4", "skills": {"precision": 25}, "state": 88}
+    ]
+  },
+  "battleRankingItem": {
+    "_id": "6aeb4d5f2fd89168be59e26c",
+    "badge": "battleTop1",
+    "lootItem": {"code": "pants5", "skills": {"armor": 46}, "state": 100, "quantity": 1},
+    "rank": 1,
+    "ranking": "6aeb0d9e210e1f6adecd1ea7",
+    "user": "690091ec4864a132a2daac08",
+    "value": 3179624
+  }
+}

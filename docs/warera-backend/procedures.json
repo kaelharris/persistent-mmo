@@ -1,0 +1,460 @@
+{
+ "adminLog": [
+  "destroyItem",
+  "fineUser",
+  "giveMoneyToCountry",
+  "giveMoneyToMu",
+  "giveMoneyToUser",
+  "muteUser",
+  "removeAllUserOffers",
+  "removeMoneyFromCountry",
+  "removeMoneyFromMu",
+  "removeUserDescription",
+  "requestPhoneVerification",
+  "unmuteUser",
+  "warnUser"
+ ],
+ "alliance": [
+  "getById",
+  "getByIds"
+ ],
+ "allianceLaw": [
+  "getById",
+  "getPaginated",
+  "vote"
+ ],
+ "announcement": [
+  "create",
+  "getActive",
+  "markSeen",
+  "remove",
+  "toggleLike"
+ ],
+ "article": [
+  "getArticleById",
+  "getArticleLiteById"
+ ],
+ "articleInteraction": [
+  "getArticleDislikers",
+  "getArticleGemTippers",
+  "getArticleLikers",
+  "getArticleTippers"
+ ],
+ "asset": [
+  "getUserAssets",
+  "removeBanner",
+  "removeSkin",
+  "setBanner",
+  "setSkin",
+  "setSkinPack"
+ ],
+ "assetProposition": [
+  "approveProposition",
+  "deleteProposition",
+  "downVote",
+  "getProposition",
+  "upVote",
+  "updatePropositionStatus"
+ ],
+ "auth": [
+  "logout"
+ ],
+ "badgeCollection": [
+  "giveBadge"
+ ],
+ "ban": [
+  "banUser",
+  "unbanUser"
+ ],
+ "banner": [
+  "createFromProposition",
+  "getBannerById",
+  "getBannersByIds"
+ ],
+ "battle": [
+  "getActiveBattlesByCountry",
+  "getById",
+  "getDamageBonuses",
+  "getGroupedActiveBattles",
+  "getLiveBattleData",
+  "getSortedActiveBattles",
+  "getViewersCount",
+  "removeMercenaryContract",
+  "setMercenaryContractData"
+ ],
+ "battleLootSummary": [
+  "getByBattle"
+ ],
+ "battleOrder": [
+  "disableOrder",
+  "getActiveOrders",
+  "getByBattle",
+  "setOrder",
+  "setOrderRanks",
+  "updateOrder"
+ ],
+ "centrifugo": [
+  "getJWT",
+  "getOnlineCount",
+  "getSubscriptionToken"
+ ],
+ "company": [
+  "changeProducedItem",
+  "getActiveCompaniesCount",
+  "getById",
+  "getCompanies",
+  "getCompaniesCount",
+  "getManageableCompanies",
+  "moveCompany",
+  "moveToTop",
+  "renameCompany",
+  "sellCompany",
+  "toggleActivation"
+ ],
+ "conversation": [
+  "banParticipant",
+  "createPrivateConversation",
+  "deleteConversation",
+  "demoteAdmin",
+  "editConversation",
+  "findOrCreateConversation",
+  "getBannedMembers",
+  "getConversationById",
+  "getConversationByIdAdmin",
+  "getConversationByTag",
+  "getConversationsPaginated",
+  "getJoinableConversations",
+  "getParticipantsPaginated",
+  "joinBattleConversation",
+  "joinConversation",
+  "kickParticipant",
+  "leaveConversation",
+  "markAllAsRead",
+  "muteConversation",
+  "pinConversation",
+  "pinMessage",
+  "promoteToAdmin",
+  "setTag",
+  "transferOwnership",
+  "unbanParticipant",
+  "unpinMessage"
+ ],
+ "conversationCheck": [
+  "getConversationCheck"
+ ],
+ "conversationInvitation": [
+  "acceptInvitation",
+  "declineInvitation",
+  "getPendingInvitations",
+  "inviteUser"
+ ],
+ "country": [
+  "getAllCountries",
+  "getCountryById"
+ ],
+ "countryFocus": [
+  "getMine"
+ ],
+ "dot": [
+  "read",
+  "readByReference"
+ ],
+ "election": [
+  "candidateToElection",
+  "getElection",
+  "getElections",
+  "kickCandidate",
+  "vote",
+  "withdrawFromElection"
+ ],
+ "employee": [
+  "acknowledgeLeave",
+  "claimAllFoundToolboxes",
+  "claimFoundToolboxes",
+  "getById",
+  "getCompanyRoster",
+  "getManagerPointValue",
+  "previewTraining",
+  "resetName"
+ ],
+ "employeeEvent": [
+  "getMine",
+  "getPendingCount",
+  "markSeen",
+  "resolve"
+ ],
+ "gameConfig": [
+  "getDates",
+  "getGameConfig",
+  "getMaxBountyRate"
+ ],
+ "gameStat": [
+  "getBadgeStats",
+  "getEquipmentAvgByCode",
+  "getMilestoneStats",
+  "getPpMoneyValue",
+  "getPpMoneyValueByItem"
+ ],
+ "government": [
+  "fireMember",
+  "getByCountryId",
+  "nominateMember",
+  "startAttack"
+ ],
+ "inventory": [
+  "donate",
+  "equippedItems",
+  "fetchCurrentEquipment",
+  "getById",
+  "getManageableInventories",
+  "getManageableInventoriesEntitiesIds"
+ ],
+ "itemTrading": [
+  "cancelOrderById",
+  "getItemTrading"
+ ],
+ "klipy": [
+  "search",
+  "trending"
+ ],
+ "law": [
+  "getLaw",
+  "getPaginatedLaws",
+  "proposeLaw",
+  "voteLaw"
+ ],
+ "manager": [
+  "acceptRateReduction",
+  "careForEmployee",
+  "changeRate",
+  "claimPay",
+  "fire",
+  "getByCompanyId",
+  "getMyContracts",
+  "getMyJob",
+  "quit",
+  "rejectRateReduction",
+  "transfer"
+ ],
+ "managerOffer": [
+  "applyToOffer",
+  "create",
+  "edit",
+  "getByCompanyId",
+  "getMyProfile",
+  "getWageStats",
+  "remove"
+ ],
+ "map": [
+  "getMapData"
+ ],
+ "mercenaryContract": [
+  "adminDeleteContract",
+  "cancelContract",
+  "getActiveForBattle",
+  "getById",
+  "getContracts"
+ ],
+ "mercenaryContractAuction": [
+  "createAuction",
+  "getActiveAuctions",
+  "placeBid"
+ ],
+ "message": [
+  "createMessage",
+  "getMessageById",
+  "getMessagesPaginated",
+  "getReportedMessageById",
+  "softDeleteMessage",
+  "upVoteMessage"
+ ],
+ "milestone": [
+  "claimMilestone",
+  "getMyMilestones",
+  "getUserMilestones"
+ ],
+ "mission": [
+  "claimFinishedMissionsReward",
+  "claimMissionReward",
+  "generateMissions",
+  "getMissionsResumee",
+  "getMyMissions",
+  "getUserMissions",
+  "getUserMissionsResumee",
+  "rerollMission"
+ ],
+ "mu": [
+  "buyReputation",
+  "getById",
+  "getReputationBuyStatus",
+  "leave",
+  "removeAvatar",
+  "rename",
+  "resetName"
+ ],
+ "party": [
+  "getById",
+  "leave",
+  "removeAvatar",
+  "rename",
+  "resetDescription",
+  "resetName",
+  "updateDescription"
+ ],
+ "partyApplication": [
+  "cancel",
+  "create",
+  "getMyPendingApplicationForParty"
+ ],
+ "region": [
+  "getById",
+  "getRegionsObject"
+ ],
+ "round": [
+  "getById",
+  "getLastHits"
+ ],
+ "roundDamages": [
+  "getMyDamageInBattle",
+  "hit"
+ ],
+ "search": [
+  "searchAnything",
+  "searchChannels",
+  "searchUsers"
+ ],
+ "shop": [
+  "createCheckoutSession",
+  "createCustomerPortalSession",
+  "giftSub"
+ ],
+ "skin": [
+  "getSkinsByKeys"
+ ],
+ "skinPack": [
+  "getCollectionPacks"
+ ],
+ "skinStudio": [
+  "getImageVersions"
+ ],
+ "tool": [
+  "getMine"
+ ],
+ "tournament": [
+  "getById"
+ ],
+ "tournamentTeam": [
+  "getById"
+ ],
+ "tradingOrder": [
+  "createOrder",
+  "getTopOrders",
+  "getTopOrdersPerItemCode"
+ ],
+ "transaction": [
+  "getPaginatedTransactions",
+  "getTransactionById",
+  "markAsProcessedByMod",
+  "unmarkAsProcessedByMod"
+ ],
+ "tutorialProgress": [
+  "claimChapter",
+  "getMyClaimedChapters",
+  "getMyProgress",
+  "saveMyProgress"
+ ],
+ "upgrade": [
+  "getMapUpgrades",
+  "getUpgradeByTypeAndEntity",
+  "increaseUpgradeLevel"
+ ],
+ "upgradeConstruction": [
+  "getMapConstructions"
+ ],
+ "user": [
+  "acceptWarning",
+  "buyCheapestFoodAndConsume",
+  "claimComebackReward",
+  "claimDailyReward",
+  "consumeBuff",
+  "consumeFood",
+  "equipItems",
+  "getComebackReward",
+  "getMe",
+  "getPhoneVerification",
+  "getTodayClaimCount",
+  "getUserById",
+  "getUserLite",
+  "moveHome",
+  "moveToHomeRegion",
+  "moveToRegion",
+  "removeAvatar",
+  "removeDescription",
+  "resetUsername",
+  "saveFirebaseToken",
+  "sendGdprData",
+  "sendPhoneCode",
+  "unequipAll",
+  "updateColorScheme",
+  "updateDescription",
+  "updateFont",
+  "updatePreferences",
+  "updateUsername",
+  "updateUsernameEffect",
+  "verifyPhoneCode"
+ ],
+ "userBlocks": [
+  "block",
+  "get",
+  "unblock"
+ ],
+ "userEquipmentSet": [
+  "add",
+  "equipSet",
+  "getAll",
+  "remove",
+  "update"
+ ],
+ "userFavoriteBattle": [
+  "addFavorite",
+  "getFavoriteByBattleId",
+  "removeFavorite"
+ ],
+ "userFavoriteGif": [
+  "add",
+  "list",
+  "remove"
+ ],
+ "userKits": [
+  "addKit",
+  "deleteKit",
+  "equipKit",
+  "get",
+  "updateKit"
+ ],
+ "userMapLoot": [
+  "getMine",
+  "moveAndCollect"
+ ],
+ "userReports": [
+  "create",
+  "getAllReportsPaginated",
+  "getAllReportsStats",
+  "getMyReportsPaginated",
+  "getOtherActiveReportsCount",
+  "getUnreadReportsCountForAdmin",
+  "markAsReadByAdmin",
+  "markAsUnreadByAdmin"
+ ],
+ "war": [
+  "getActiveWarBetweenCountries",
+  "getById",
+  "getPaginatedWars"
+ ],
+ "whatsUp": [
+  "getWhatsUp",
+  "getWhatsUpDates",
+  "getWhatsUpDeckDates",
+  "updateUserCheck"
+ ]
+}

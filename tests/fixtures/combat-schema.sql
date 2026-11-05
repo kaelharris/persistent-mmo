@@ -1,0 +1,26 @@
+-- Isolated RPC fixture using the columns referenced by the production migrations.
+CREATE ROLE anon; CREATE ROLE authenticated;
+CREATE SCHEMA auth;
+CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$ SELECT nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+CREATE TABLE profiles(id uuid PRIMARY KEY, current_region_id int);
+CREATE TABLE player_stats(profile_id uuid PRIMARY KEY, energy int CHECK(energy BETWEEN 0 AND 100), health int, max_health int DEFAULT 100, strength numeric, defense int, speed int, crit_chance numeric, experience bigint DEFAULT 0, level int DEFAULT 1, xp_pve bigint DEFAULT 0, kills int DEFAULT 0, deaths int DEFAULT 0, damage_dealt bigint DEFAULT 0, damage_taken bigint DEFAULT 0, updated_at timestamptz DEFAULT now());
+CREATE TABLE currencies(profile_id uuid PRIMARY KEY, gold numeric DEFAULT 0, local_currency_balance numeric DEFAULT 0);
+CREATE TABLE enemy_templates(id int PRIMARY KEY, name text, health int, attack int, defense int, speed int, xp_reward int, currency_reward numeric);
+CREATE TABLE equipment(profile_id uuid PRIMARY KEY, weapon_id uuid, chest_id uuid, helmet_id uuid);
+CREATE TABLE item_templates(id int PRIMARY KEY, name text);
+CREATE TABLE item_instances(id uuid PRIMARY KEY DEFAULT gen_random_uuid(), template_id int, current_durability int, max_durability int, quality int);
+CREATE TABLE inventories(id uuid PRIMARY KEY DEFAULT gen_random_uuid(), owner_id uuid, item_template_id int, item_instance_id uuid, quantity int DEFAULT 1, quality int DEFAULT 1, updated_at timestamptz DEFAULT now(), UNIQUE(owner_id,item_template_id,quality));
+CREATE TABLE item_attributes(id int PRIMARY KEY, name text);
+CREATE TABLE item_template_attributes(template_id int, attribute_id int, value numeric);
+CREATE TABLE resources(id int PRIMARY KEY, name text);
+CREATE TABLE player_resources(profile_id uuid, resource_id int, quantity int, PRIMARY KEY(profile_id,resource_id));
+CREATE TABLE enemy_loot_tables(enemy_template_id int, resource_id int, item_template_id int, chance_percent numeric, min_qty int, max_qty int);
+CREATE FUNCTION public.rpc_execute_pve_battle(int) RETURNS jsonb LANGUAGE sql AS $$ SELECT '{}'::jsonb $$;
+INSERT INTO profiles VALUES ('00000000-0000-0000-0000-000000000001',2),('00000000-0000-0000-0000-000000000002',2);
+INSERT INTO player_stats(profile_id,energy,health,strength,defense,speed,crit_chance) SELECT id,100,100,1,10,10,0 FROM profiles;
+INSERT INTO currencies(profile_id,gold) SELECT id,10 FROM profiles;
+INSERT INTO enemy_templates VALUES (1,'Forest Wolf',50,10,4,12,10,3.5),(2,'Boss',500,200,40,20,200,100);
+INSERT INTO item_templates VALUES(2,'Iron Sword'); INSERT INTO item_attributes VALUES(1,'attack'); INSERT INTO item_template_attributes VALUES(2,1,20);
+INSERT INTO inventories(id,owner_id,item_template_id,quantity) VALUES ('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000001',2,1);
+INSERT INTO equipment(profile_id,weapon_id) VALUES('00000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000001');
+INSERT INTO resources VALUES(6,'Fish'); INSERT INTO enemy_loot_tables VALUES(1,6,NULL,100,2,2);
