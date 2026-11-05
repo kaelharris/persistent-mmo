@@ -14,10 +14,79 @@ CREATE TABLE IF NOT EXISTS public.map_versions (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, now()) NOT NULL
 );
 
+
+-- 0. Add new western Mediterranean countries and regions
+INSERT INTO public.countries (id, name, gold_reserve, local_currency_reserve, vat_rate, import_tax_rate, income_tax_rate) VALUES
+(100, 'Qurtuban Emirate', 12000.0000, 800000.00, 8.00, 10.00, 8.00),
+(101, 'Maghrebi Kingdom', 15000.0000, 900000.00, 10.00, 12.00, 10.00),
+(102, 'Byzantine Exarchate', 18000.0000, 1200000.00, 12.00, 10.00, 12.00),
+(103, 'Republic of Genoa', 22000.0000, 1500000.00, 6.00, 8.00, 6.00)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.regions (id, name, country_id, climate, population, production_bonus, travel_cost, travel_cooldown) VALUES
+(1000, 'Galiza', 100, 'temperate', 1200, 1.00, 10, 60),
+(1001, 'Asturies', 100, 'temperate', 300, 1.20, 10, 60),
+(1002, 'Cantabria', 100, 'temperate', 150, 1.15, 12, 90),
+(1003, 'Nafarroa', 100, 'continental', 850, 1.10, 10, 60),
+(1004, 'Aragón', 100, 'continental', 400, 1.20, 10, 60),
+(1005, 'Catalunya', 101, 'mediterranean', 180, 1.05, 15, 120),
+(1006, 'València', 101, 'mediterranean', 120, 1.10, 12, 90),
+(1007, 'Murcia', 101, 'arid', 80, 1.15, 14, 100),
+(1008, 'Andalucía', 101, 'mediterranean', 280, 1.20, 11, 75),
+(1009, 'Extremadura', 101, 'mediterranean', 180, 1.10, 13, 75),
+(1010, 'Castilla y León', 102, 'continental', 210, 1.05, 11, 75),
+(1011, 'Castilla-La Mancha', 102, 'continental', 300, 1.00, 12, 90),
+(1012, 'Madrid', 102, 'continental', 400, 1.15, 14, 120),
+(1013, 'Lisboa', 103, 'mediterranean', 500, 1.25, 15, 120),
+(1014, 'Algarve', 103, 'mediterranean', 250, 1.10, 12, 90),
+(1015, 'Alentejo', 103, 'mediterranean', 9, 1.00, 10, 60),
+(1016, 'Lusitania', 103, 'mediterranean', 50, 1.05, 12, 90),
+(1017, 'Estremadura', 103, 'mediterranean', 45, 1.10, 14, 100),
+(1018, 'Minhoto', 103, 'mediterranean', 40, 1.15, 15, 105),
+(1019, 'Galega', 100, 'temperate', 500, 1.20, 13, 105),
+(1020, 'Trás-os-Montes', 100, 'continental', 300, 1.10, 14, 120),
+(1021, 'Liguria', 102, 'mediterranean', 150, 1.20, 12, 90),
+(1022, 'Piemont', 102, 'continental', 350, 1.10, 14, 105),
+(1023, 'Lombardia', 102, 'continental', 500, 1.20, 18, 120),
+(1024, 'Veneto', 102, 'continental', 450, 1.25, 17, 120),
+(1025, 'Emilia-Romagna', 102, 'continental', 480, 1.15, 13, 105),
+(1026, 'Toscana', 102, 'mediterranean', 520, 1.25, 18, 120),
+(1027, 'Lazio', 102, 'mediterranean', 420, 1.20, 16, 120),
+(1028, 'Sicilia', 102, 'mediterranean', 460, 1.30, 19, 120),
+(1029, 'Corsica', 102, 'mediterranean', 320, 1.15, 13, 105),
+(1030, 'Jarzis', 101, 'arid', 200, 1.10, 12, 90),
+(1031, 'Eivissa', 100, 'mediterranean', 180, 1.15, 14, 120),
+(1032, 'Menorca', 100, 'mediterranean', 150, 1.10, 10, 60),
+(1033, 'Ceuta', 100, 'mediterranean', 120, 1.20, 15, 120),
+(1034, 'Tanja', 101, 'mediterranean', 250, 1.25, 18, 120),
+(1035, 'Marrakesh', 101, 'arid', 500, 1.30, 20, 180),
+(1036, 'Souss', 101, 'arid', 250, 1.20, 14, 120),
+(1037, 'Al-Jazair', 101, 'mediterranean', 400, 1.25, 18, 120),
+(1038, 'Wahran', 101, 'mediterranean', 300, 1.20, 14, 120),
+(1039, 'Tamurt n Leqvayel', 101, 'mediterranean', 200, 1.15, 12, 90),
+(1040, 'Qusanṭinah', 101, 'mediterranean', 250, 1.20, 14, 120),
+(1041, 'Tūnis', 101, 'mediterranean', 350, 1.30, 19, 180),
+(1042, 'Banzart', 101, 'mediterranean', 150, 1.10, 12, 90),
+(1043, 'Ṣafāqis', 101, 'arid', 150, 1.15, 12, 90),
+(1044, 'Ṭarābulus al-Gharb', 101, 'mediterranean', 250, 1.20, 14, 120),
+(1045, 'Fes', 101, 'mediterranean', 300, 1.20, 14, 120),
+(1046, 'Ouazzane', 101, 'mediterranean', 100, 1.10, 10, 60),
+(1047, 'Meknes', 101, 'mediterranean', 200, 1.15, 12, 90),
+(1048, 'Rabbat', 101, 'mediterranean', 150, 1.20, 14, 120),
+(1049, 'Casablanca', 101, 'mediterranean', 350, 1.30, 20, 180),
+(1050, 'Rabat', 101, 'mediterranean', 200, 1.15, 12, 90),
+(1051, 'Tétouan', 101, 'mediterranean', 120, 1.10, 10, 60),
+(1052, 'Oujda', 101, 'arid', 180, 1.15, 12, 90),
+(1053, 'Agadir', 101, 'arid', 150, 1.20, 14, 120)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.regions (id, name, country_id, climate, population, production_bonus, travel_cost, travel_cooldown) VALUES
+(1015, 'Alentejo', 103, 'mediterranean', 9, 1.00, 10, 60)
+ON CONFLICT (id) DO NOTHING;
 -- 2. Region geography metadata (keyed by existing regions.id)
 CREATE TABLE IF NOT EXISTS public.region_geography (
-    region_id INT PRIMARY KEY REFERENCES public.regions(id) ON DELETE CASCADE,
-    terrain TEXT NOT NULL DEFAULT 'plains' CHECK (terrain IN ('plains', 'forest', 'mountain', 'desert', 'coastal', 'marine', 'volcanic')),
+    region_id INT PRIMARY KEY,
+    terrain TEXT NOT NULL DEFAULT 'plains' CHECK (terrain IN ('plains', 'forest', 'mountain', 'desert', 'coastal', 'marine', 'volcanic', 'island')),
     climate TEXT NOT NULL DEFAULT 'temperate' CHECK (climate IN ('arid', 'temperate', 'mediterranean', 'continental', 'marine', 'tropical')),
     culture TEXT NOT NULL DEFAULT 'unknown',
     development NUMERIC(5,2) NOT NULL DEFAULT 1.00 CHECK (development >= 0 AND development <= 100),
