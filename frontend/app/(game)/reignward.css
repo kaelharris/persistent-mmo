@@ -1,0 +1,186 @@
+/* REIGNWARD: route-specific Gilded Ruin presentation.
+   Imported by the game layout so the dock and panel styles travel with every game route. */
+.rw-panel {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid #795f3d;
+  background:
+    repeating-linear-gradient(135deg, rgba(238, 209, 159, .014) 0 1px, transparent 1px 5px),
+    radial-gradient(ellipse at 50% -20%, rgba(216, 174, 104, .12), transparent 65%),
+    linear-gradient(150deg, #1b2d39, #111d28 68%, #101721);
+  box-shadow: inset 0 0 0 2px rgba(216, 174, 104, .20), inset 0 0 0 5px rgba(10, 16, 25, .65), 0 18px 38px rgba(0, 0, 0, .48);
+}
+
+.rw-panel::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgba(216, 174, 104, .16);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.rw-drawer { animation: rw-slide-in 260ms cubic-bezier(.2, .7, .2, 1) both; }
+
+@keyframes rw-slide-in {
+  from { transform: translate3d(28px, 0, 0); opacity: .65; }
+  to { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
+/* The artwork is a complete 16:9 panel; it never fills an arbitrary-height crop. */
+.rw-scene {
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(16px, 4vw, 32px);
+  padding: 11px;
+  border: 1px solid rgba(216, 174, 104, .28);
+  background: linear-gradient(95deg, rgba(8, 14, 23, .86), rgba(22, 36, 46, .48));
+}
+
+.rw-banner {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  background: #0a1019;
+  border: 2px solid #a6804b;
+  outline: 1px solid #332919;
+  outline-offset: -6px;
+  box-shadow: 0 0 0 3px #0b1119, inset 0 0 0 2px rgba(255, 223, 163, .12), 0 8px 22px rgba(0, 0, 0, .38);
+}
+
+.rw-banner::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(216, 174, 104, .32);
+  pointer-events: none;
+}
+
+.rw-banner img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #0a1019;
+}
+
+.rw-scene-caption { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.rw-scene-kicker { color: #8d9b99; font: 600 10px var(--font-sans); letter-spacing: .23em; }
+.rw-scene-label { color: #e4c38f; font: 400 clamp(20px, 2.7vw, 31px) var(--font-display); text-transform: uppercase; letter-spacing: .035em; }
+.rw-scene-line { display: block; width: min(180px, 75%); height: 1px; background: linear-gradient(90deg, #ad8248, transparent); }
+.rw-scene-foot { color: #b6ae9b; font: 400 11px var(--font-serif); }
+
+/* Pressed bronze button with an inset metal frame, without raster borders. */
+.rw-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 9px 13px;
+  border: 1px solid #e0ba77;
+  color: #121923;
+  background: linear-gradient(180deg, #e7c993 0%, #c59b57 50%, #ad7835 100%);
+  box-shadow: inset 0 0 0 2px rgba(64, 40, 17, .28), inset 0 1px 0 rgba(255, 240, 204, .52), 0 4px 12px rgba(0, 0, 0, .4);
+  font: 700 11px var(--font-display);
+  letter-spacing: .06em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  text-align: center;
+  transition: filter 140ms ease, transform 140ms ease;
+}
+
+.rw-btn::after { content: ''; position: absolute; inset: 4px; border: 1px solid rgba(68, 46, 25, .25); pointer-events: none; }
+.rw-btn:hover:not(:disabled) { filter: brightness(1.13); }
+.rw-btn:active:not(:disabled) { transform: translateY(1px); }
+.rw-btn:focus-visible { outline: 2px solid #f2e8d5; outline-offset: 3px; }
+.rw-btn:disabled { opacity: .48; filter: saturate(.55); cursor: not-allowed; }
+.rw-btn[data-variant='bronze'] { background: linear-gradient(180deg, #526372, #263c49); color: #f2e8d5; border-color: #a78553; }
+.rw-btn[data-variant='dark'] { background: linear-gradient(180deg, #2a3a48, #111d28); color: #f2e8d5; border-color: #87704d; }
+.rw-btn[data-variant='green'] { background: linear-gradient(180deg, #7fa08d, #3e5a4d); color: #f2e8d5; border-color: #9cbd9e; }
+.rw-btn[data-variant='red'] { background: linear-gradient(180deg, #b45a58, #722d2d); color: #f2e8d5; border-color: #d68c77; }
+.rw-btn[data-variant='icon'] { min-height: 36px; min-width: 36px; padding: 8px; }
+
+.rw-command-card {
+  position: relative;
+  min-width: 0;
+  border: 1px solid #796144;
+  background:
+    repeating-linear-gradient(90deg, rgba(235, 203, 155, .013) 0 1px, transparent 1px 4px),
+    linear-gradient(157deg, #263640, #15232e 55%, #101a23);
+  box-shadow: inset 0 0 0 3px rgba(11, 17, 25, .9), inset 0 0 0 4px rgba(212, 169, 103, .16), 0 7px 19px rgba(0, 0, 0, .28);
+}
+
+.rw-command-card::before { content: ''; position: absolute; inset: 8px; border: 1px solid rgba(216, 174, 104, .14); pointer-events: none; }
+.rw-command-card > h2 { position: relative; padding-bottom: 9px; border-bottom: 1px solid rgba(216, 174, 104, .26); }
+.rw-control {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #6c604e;
+  border-radius: 0;
+  color: #f2e8d5;
+  background: #101b25;
+  font: 400 12px var(--font-sans);
+  outline-offset: 2px;
+}
+.rw-control:focus-visible { outline: 2px solid #d8ae68; }
+
+/* The navigation stays on-screen even as keyed pages animate beneath it. */
+.rw-dock {
+  position: fixed;
+  z-index: 60;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  width: max-content;
+  max-width: calc(100vw - 20px);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  padding: 7px;
+  border: 1px solid #a98758;
+  background: linear-gradient(180deg, rgba(35, 51, 60, .98), rgba(12, 23, 33, .98));
+  box-shadow: inset 0 0 0 2px rgba(213, 173, 104, .17), 0 12px 36px rgba(0, 0, 0, .76);
+}
+
+.rw-dock::-webkit-scrollbar { display: none; }
+.rw-dock a {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 63px;
+  min-height: 55px;
+  padding: 5px 8px;
+  border: 1px solid transparent;
+  color: #b6ae9b;
+  font: 500 9px var(--font-display);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+}
+.rw-dock a:hover { color: #f2e8d5; background: rgba(216, 174, 104, .08); }
+.rw-dock a[aria-current='page'] { color: #f0c987; border-color: rgba(216, 174, 104, .65); background: linear-gradient(180deg, rgba(159, 102, 53, .24), rgba(37, 50, 57, .42)); }
+.rw-dock a:focus-visible { outline: 2px solid #f2e8d5; outline-offset: -2px; }
+
+@media (max-width: 700px) {
+  .rw-scene { display: block; padding: 7px; }
+  .rw-banner { width: min(100%, 380px); margin-inline: auto; }
+  .rw-scene-caption { display: none; }
+  .rw-dock { padding: 5px; }
+  .rw-dock a { min-width: 62px; min-height: 53px; padding: 4px 7px; font-size: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rw-drawer { animation: none; }
+  .rw-btn { transition: none; }
+}
