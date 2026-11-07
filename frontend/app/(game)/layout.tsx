@@ -46,57 +46,6 @@ import { useSFX } from '../../hooks/useSFX';
 
 type GameContextType = ReturnType<typeof useGame> & {
   triggerFloatingText: (text: string, colorClass?: string, x?: number, y?: number) => void;
-  setError: (error: string) => void;
-  setSuccessMsg: (msg: string) => void;
-  realmResources: any[];
-  getPriceAlerts: (userId: string) => Promise<any>;
-  createPriceAlert: (userId: string, assetType: string, assetId: string, targetPrice: number, condition: string) => Promise<any>;
-  deletePriceAlert: (userId: string, alertId: string) => Promise<any>;
-  playerReputation: number;
-  playerTitles: string[];
-  playerBadges: string[];
-  contracts: any[];
-  recruitmentPosts: any[];
-  newspapers: any[];
-  articles: any[];
-  announcements: any[];
-  calendarEvents: any[];
-  liveOpsConfig: any;
-  playerQuests: any[];
-  playerAchievements: any[];
-  seasons: any[];
-  seasonLeaderboard: any[];
-  developerKeys: any[];
-  supportTickets: any[];
-  featureFlags: any[];
-  closedAlphaInvites: any[];
-  toggleWatch: () => void;
-  equipItem: (profileId: string, itemId: string) => Promise<any>;
-  unequipItem: (profileId: string, itemId: string) => Promise<any>;
-  consumeItem: (profileId: string, itemId: string) => Promise<any>;
-  craftItem: (profileId: string, recipeId: string, quantity: number) => Promise<any>;
-  repairItem: (profileId: string, itemId: string) => Promise<any>;
-  unlockBlueprint: (profileId: string, blueprintId: string) => Promise<any>;
-  handleDeclareWar: (attackerProfileId: string, defenderProfileId: string) => Promise<any>;
-  handleMobilizeArmy: (profileId: string) => Promise<any>;
-  handleCommandArmyMovement: (armyId: number, targetRegionId: number) => Promise<any>;
-  handleEngageMilitaryBattle: (armyId: number, targetRegionId: number) => Promise<any>;
-  handleProposePeace: (warId: string, proposerProfileId: string) => Promise<any>;
-  handleAcceptPeace: (warId: string, acceptorProfileId: string) => Promise<any>;
-  travelToRegion: (userId: string, targetRegionId: number) => Promise<any>;
-  workAtCompany: (userId: string, companyId: string) => Promise<any>;
-  trainStrength: (userId: string) => Promise<any>;
-  cheatResourcesAndCurrencies: () => void;
-  getNobleHouses: () => Promise<any[]>;
-  getDynasty: (dynastyId: string) => Promise<any>;
-  getDynastyMembers: (dynastyId: string) => Promise<any[]>;
-  getRulerLegitimacy: (profileId: string) => Promise<any>;
-  getKingdomStability: (profileId: string) => Promise<any>;
-  establishDynasty: (profileId: string, kingdomName: string, founderProfileId: string) => Promise<any>;
-  designateHeir: (dynastyId: string, heirProfileId: string, heirTitle: string) => Promise<any>;
-  resolveSuccession: (dynastyId: string, newRulerProfileId: string) => Promise<any>;
-  updateLegitimacy: (profileId: string, legitimacy: number, reason: string) => Promise<any>;
-  getSuccessionOrder: (dynastyId: string) => Promise<any[]>;
 };
 
 // Create a context to share game state across all game panels
@@ -187,12 +136,15 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
   const playerLevel = game.stats?.level || 1;
 
   const navItems = [
-    { name: 'World', href: '/dashboard', icon: Map, requiredLevel: 1 },
-    { name: 'Kingdom', href: '/dashboard?tab=kingdom', icon: Landmark, requiredLevel: 1 },
-    { name: 'Army', href: '/dashboard?tab=army', icon: Swords, requiredLevel: 1 },
-    { name: 'Economy', href: '/dashboard?tab=economy', icon: Coins, requiredLevel: 1 },
-    { name: 'Quests', href: '/dashboard?tab=quests', icon: FileText, requiredLevel: 1 },
-    { name: 'Profile', href: '/dashboard?tab=profile', icon: UserIcon, requiredLevel: 1 },
+    { name: 'World', href: '/world', icon: Map, requiredLevel: 1 },
+    { name: 'Character', href: '/character', icon: UserIcon, requiredLevel: 1 },
+    { name: 'Economy', href: '/economy', icon: Coins, requiredLevel: 1 },
+    { name: 'Marketplace', href: '/marketplace', icon: Landmark, requiredLevel: 1 },
+    { name: 'Military', href: '/military', icon: Swords, requiredLevel: 1 },
+    { name: 'Kingdom', href: '/kingdom', icon: Shield, requiredLevel: 1 },
+    { name: 'Dynasty', href: '/dynasty', icon: BookOpen, requiredLevel: 1 },
+    { name: 'Quests', href: '/quests', icon: FileText, requiredLevel: 1 },
+    { name: 'Profile', href: '/profile', icon: Compass, requiredLevel: 1 },
   ];
 
   return (
@@ -209,7 +161,7 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
 
         {/* Sidebar Panel - Redesigned as Ornate Wood Frame */}
         <aside
-          className={`fixed inset-y-0 left-0 z-50 w-64 rpg-panel-wood flex flex-col justify-between transform transition-transform duration-300 md:relative md:transform-none border-none ${
+          className={`!fixed inset-y-0 left-0 z-50 w-64 rpg-panel-wood flex flex-col justify-between transform transition-transform duration-300 md:!relative md:transform-none border-none ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
           }`}
         >
@@ -424,7 +376,7 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
               </div>
 
               {/* Currency: Local Balances */}
-              <div className="flex flex-col items-end">
+              <div className="hidden sm:flex flex-col items-end">
                 <span className="text-[8px] text-zinc-500 uppercase font-bold tracking-widest font-display">Local Currency</span>
                 <span className="text-sm font-bold text-game-emerald font-pixel tracking-wide filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
                   {game.currencies?.local_currency_balance.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-[9px] text-zinc-650 font-sans">LC</span>
@@ -432,7 +384,7 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
               </div>
 
               {/* Currency: Gold Balances */}
-              <div className="flex flex-col items-end border-l border-zinc-800/80 pl-3 sm:pl-4">
+              <div className="hidden sm:flex flex-col items-end border-l border-zinc-800/80 pl-3 sm:pl-4">
                 <span className="text-[8px] text-zinc-500 uppercase font-bold tracking-widest font-display">Gold Reserves</span>
                 <span className="text-sm font-bold text-game-gold font-pixel tracking-wide flex items-center gap-1 filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
                   <Coins className="h-3.5 w-3.5 text-game-gold-dark" />
@@ -443,19 +395,19 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
               {/* Quick Profile Info */}
               <div className="flex items-center gap-3 pl-3 sm:pl-4 border-l border-zinc-800/80">
                 <div className="hidden md:flex flex-col text-right">
-                  <span className="text-xs font-bold font-display text-zinc-200 tracking-wide">{game.profile?.username}</span>
-                  <span className="text-[8px] font-bold text-game-gold-dark font-sans uppercase tracking-wider capitalize">{game.profile?.role}</span>
+                  <span className="text-xs font-bold font-display text-zinc-200 tracking-wide">{(game as any).playerCharacter?.name || game.profile?.username}</span>
+                  <span className="text-[8px] font-bold text-game-gold-dark font-sans uppercase tracking-wider capitalize">{(game as any).playerCharacter?.profession || game.profile?.role}</span>
                 </div>
                 <div className="h-8 w-8 rounded-none border-2 border-game-gold bg-game-wood text-game-gold flex items-center justify-center font-bold font-display text-xs shadow-[0_0_8px_rgba(229,193,88,0.25)] select-none">
-                  {game.profile?.username[0].toUpperCase()}
+                  {(((game as any).playerCharacter?.name || game.profile?.username || 'A')[0].toUpperCase())}
                 </div>
               </div>
             </div>
           </header>
 
-          {/* Core Game Body */}
-          <main className={`flex-1 relative bg-zinc-950 ${pathname === '/dashboard' ? 'p-0 overflow-hidden' : 'p-6 md:p-8 overflow-y-auto'}`}>
-            <div className={`${pathname === '/dashboard' ? 'w-full h-full max-w-none' : 'max-w-6xl mx-auto'} flex flex-col h-full`}>
+          {/* Core Game Body — /world is full-bleed so the map is the stage */}
+          <main className={`flex-1 relative bg-zinc-950 ${(pathname === '/dashboard' || pathname === '/world') ? 'p-0 overflow-hidden' : 'p-6 md:p-8 overflow-y-auto'}`}>
+            <div className={`${(pathname === '/dashboard' || pathname === '/world') ? 'w-full h-full max-w-none' : 'max-w-6xl mx-auto'} flex flex-col h-full`}>
               
               {/* Renders the sub page view */}
               <div className="animate-card-slide relative z-10 w-full h-full flex-1 flex flex-col">{children}</div>

@@ -574,6 +574,36 @@ export interface CombatRanking {
   deaths: number;
 }
 
+export interface CombatEvent {
+  turn: number;
+  actor: 'player' | 'enemy';
+  damage: number;
+  isCrit: boolean;
+  playerHpRemaining: number;
+  enemyHpRemaining: number;
+}
+
+export interface CombatResult {
+  outcome: 'victory' | 'defeat';
+  log: CombatEvent[];
+  rewards: {
+    xp: number;
+    gold: number;
+    loot: CombatRewardItem[];
+  };
+  initialPlayerHp: number;
+  initialEnemyHp: number;
+  updatedPlayerState: {
+    stats: PlayerStats;
+  };
+}
+
+export interface CombatResponse {
+  success: boolean;
+  result?: CombatResult;
+  error?: string | null;
+}
+
 export interface PoliticalParty {
   id: number;
   name: string;
@@ -1054,6 +1084,45 @@ export interface KingdomStability {
   dynasty_prestige_modifier: number; // derived from dynasty prestige
   last_checked_at: string;
   notes?: string;
+}
+
+export type ProfessionId =
+  | 'farmer'
+  | 'miner'
+  | 'woodsman'
+  | 'smith'
+  | 'merchant'
+  | 'scholar';
+
+export interface PlayerCharacter {
+  id: string;
+  profile_id: string;
+  name: string;
+  epithet: string;
+  kingdom_id: number;
+  profession: ProfessionId;
+  profession_rank: number;
+  origin: string;
+  motto: string;
+  banner_seed: number;
+  onboarding_completed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MilitaryBattleReport {
+  outcome: 'conquered' | 'repelled' | 'pyrrhic_victory' | 'retreat';
+  attackerSizeBefore: number;
+  defenderSizeBefore: number;
+  attackerSizeAfter: number;
+  defenderSizeAfter: number;
+  casualties: number;
+  moraleAfter: number;
+  rounds: string[];
+  regionName: string;
+  resistanceAfter: number;
+  siegeRequired: boolean;
+  provinceCaptured: boolean;
 }
 
 /*──────────────────────────── Phase 12 Launch & Live Ops structures ────────────────────────────*/

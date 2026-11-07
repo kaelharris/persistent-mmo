@@ -12,7 +12,7 @@ export default function LandingPage() {
   useEffect(() => {
     if (!loading) {
       if (userId) {
-        router.replace('/dashboard');
+        router.replace('/world');
       } else {
         router.replace('/login');
       }

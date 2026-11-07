@@ -111,26 +111,29 @@ import {
   DynastyMember,
   RulerLegitimacy,
   KingdomStability,
+  PlayerCharacter,
+  ProfessionId,
+  MilitaryBattleReport,
 } from '../../types/entities';
 
 // Default static lists
 const DEFAULT_COUNTRIES: Country[] = [
-  { id: 1, name: 'Genesis Land', gold_reserve: 5000.0, local_currency_reserve: 500000.0, vat_rate: 10.0, import_tax_rate: 10.0, income_tax_rate: 10.0, created_at: new Date().toISOString() },
-  { id: 2, name: 'Iron Union', gold_reserve: 8000.0, local_currency_reserve: 800000.0, vat_rate: 12.0, import_tax_rate: 15.0, income_tax_rate: 8.0, created_at: new Date().toISOString() },
-  { id: 3, name: 'Grain Republic', gold_reserve: 4000.0, local_currency_reserve: 400000.0, vat_rate: 8.0, import_tax_rate: 8.0, income_tax_rate: 12.0, created_at: new Date().toISOString() },
+  { id: 1, name: 'Taifa of Qurtuba', gold_reserve: 5000.0, local_currency_reserve: 500000.0, vat_rate: 10.0, import_tax_rate: 10.0, income_tax_rate: 10.0, created_at: new Date().toISOString() },
+  { id: 2, name: 'Taifa of Ishbiliya', gold_reserve: 8000.0, local_currency_reserve: 800000.0, vat_rate: 12.0, import_tax_rate: 15.0, income_tax_rate: 8.0, created_at: new Date().toISOString() },
+  { id: 3, name: 'Taifa of Gharnata', gold_reserve: 4000.0, local_currency_reserve: 400000.0, vat_rate: 8.0, import_tax_rate: 8.0, income_tax_rate: 12.0, created_at: new Date().toISOString() },
 ];
 
 let DEFAULT_REGIONS: Region[] = [
-  { id: 1, name: 'Genesis Capital', country_id: 1, climate: 'temperate', population: 1200, production_bonus: 1.00, travel_cost: 10, travel_cooldown: 60, created_at: new Date().toISOString() },
-  { id: 2, name: 'Emerald Woodlands', country_id: 1, climate: 'temperate', population: 300, production_bonus: 1.20, travel_cost: 10, travel_cooldown: 60, created_at: new Date().toISOString() },
-  { id: 3, name: 'Granite Quarry', country_id: 1, climate: 'rocky', population: 150, production_bonus: 1.15, travel_cost: 12, travel_cooldown: 90, created_at: new Date().toISOString() },
-  { id: 4, name: 'Great Ocean', country_id: 1, climate: 'marine', population: 50, production_bonus: 1.05, travel_cost: 15, travel_cooldown: 120, created_at: new Date().toISOString() },
-  { id: 5, name: 'Steel Bastion', country_id: 2, climate: 'cold', population: 850, production_bonus: 1.10, travel_cost: 10, travel_cooldown: 60, created_at: new Date().toISOString() },
-  { id: 6, name: 'Rust Coast', country_id: 2, climate: 'coastal', population: 400, production_bonus: 1.00, travel_cost: 12, travel_cooldown: 90, created_at: new Date().toISOString() },
-  { id: 7, name: 'Obsidian Peaks', country_id: 2, climate: 'volcanic', population: 120, production_bonus: 1.35, travel_cost: 18, travel_cooldown: 180, created_at: new Date().toISOString() },
-  { id: 8, name: 'Agraria Meadows', country_id: 3, climate: 'lush', population: 700, production_bonus: 1.25, travel_cost: 10, travel_cooldown: 60, created_at: new Date().toISOString() },
-  { id: 9, name: 'Flatbeds', country_id: 3, climate: 'arid', population: 180, production_bonus: 1.10, travel_cost: 14, travel_cooldown: 100, created_at: new Date().toISOString() },
-  { id: 10, name: 'Whispering Forests', country_id: 3, climate: 'forest', population: 280, production_bonus: 1.15, travel_cost: 11, travel_cooldown: 75, created_at: new Date().toISOString() },
+  { id: 1, name: 'Qurtuba', country_id: 1, climate: 'temperate', population: 1200, production_bonus: 1.00, travel_cost: 10, travel_cooldown: 60, created_at: new Date().toISOString() },
+  { id: 2, name: 'Jayyan', country_id: 1, climate: 'temperate', population: 300, production_bonus: 1.20, travel_cost: 10, travel_cooldown: 60, created_at: new Date().toISOString() },
+  { id: 3, name: 'Tulaytula', country_id: 1, climate: 'rocky', population: 150, production_bonus: 1.15, travel_cost: 12, travel_cooldown: 90, created_at: new Date().toISOString() },
+  { id: 4, name: 'Qadiz', country_id: 2, climate: 'marine', population: 50, production_bonus: 1.05, travel_cost: 15, travel_cooldown: 120, created_at: new Date().toISOString() },
+  { id: 5, name: 'Saragusta', country_id: 2, climate: 'cold', population: 850, production_bonus: 1.10, travel_cost: 10, travel_cooldown: 60, created_at: new Date().toISOString() },
+  { id: 6, name: 'Ishbiliya', country_id: 2, climate: 'coastal', population: 400, production_bonus: 1.00, travel_cost: 12, travel_cooldown: 90, created_at: new Date().toISOString() },
+  { id: 7, name: 'Sierra Nevada', country_id: 3, climate: 'volcanic', population: 120, production_bonus: 1.35, travel_cost: 18, travel_cooldown: 180, created_at: new Date().toISOString() },
+  { id: 8, name: 'Gharnata', country_id: 3, climate: 'lush', population: 700, production_bonus: 1.25, travel_cost: 10, travel_cooldown: 60, created_at: new Date().toISOString() },
+  { id: 9, name: 'Almiriya', country_id: 3, climate: 'arid', population: 180, production_bonus: 1.10, travel_cost: 14, travel_cooldown: 100, created_at: new Date().toISOString() },
+  { id: 10, name: 'Balansiya', country_id: 3, climate: 'forest', population: 280, production_bonus: 1.15, travel_cost: 11, travel_cooldown: 75, created_at: new Date().toISOString() },
 ];
 
 let DEFAULT_ITEM_TEMPLATES: ItemTemplate[] = [
@@ -353,6 +356,23 @@ export class MockGameRepository implements IGameRepository {
     localStorage.setItem(key, JSON.stringify(value));
   }
 
+  private getSessionUserId(): string {
+    if (typeof window === 'undefined') return 'player_1';
+    try { return localStorage.getItem('mmo_auth_session') || 'player_1'; } catch { return 'player_1'; }
+  }
+
+  private npcName(id: string): string | undefined {
+    const map: Record<string, string> = {
+      npc_miller: 'Miller Tom',
+      npc_smith: 'Smith Bruna',
+      npc_fisher: 'Fisher Elian',
+      npc_miner: 'Miner Katal',
+      npc_carver: 'Carver Simone',
+      npc_herbalist: 'Herbalist Ana',
+    };
+    return map[id];
+  }
+
   // Lifecycle & Initializer
   private ensureInitialized(userId: string) {
     if (typeof window === 'undefined') return;
@@ -376,15 +396,26 @@ export class MockGameRepository implements IGameRepository {
       this.setStorageItem('mmo_profiles', profiles);
     }
 
-    // Region edges graph for strategic movement
+    // Region edges graph for strategic movement — connected graph across the ten core provinces
     const regionEdges = this.getStorageItem<RegionEdge[]>('mmo_region_edges', []);
-    if (regionEdges.length === 0) {
+    if (regionEdges.length < 15) {
       this.setStorageItem('mmo_region_edges', [
         { id: 1, from_region_id: 1, to_region_id: 2, mode: 'land', cost: 10, seasonal_restrictions: [], is_reciprocal: true },
-        { id: 2, from_region_id: 2, to_region_id: 3, mode: 'mountain_pass', cost: 15, seasonal_restrictions: ['winter'], is_reciprocal: true },
-        { id: 3, from_region_id: 1, to_region_id: 3, mode: 'navigable_sea', cost: 20, seasonal_restrictions: [], is_reciprocal: true },
-        { id: 4, from_region_id: 3, to_region_id: 4, mode: 'land', cost: 12, seasonal_restrictions: [], is_reciprocal: true },
-        { id: 5, from_region_id: 2, to_region_id: 4, mode: 'strait', cost: 18, seasonal_restrictions: ['stormy_season'], is_reciprocal: true }
+        { id: 2, from_region_id: 2, to_region_id: 3, mode: 'land', cost: 14, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 3, from_region_id: 1, to_region_id: 6, mode: 'land', cost: 12, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 4, from_region_id: 6, to_region_id: 4, mode: 'land', cost: 12, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 5, from_region_id: 1, to_region_id: 8, mode: 'land', cost: 14, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 6, from_region_id: 8, to_region_id: 7, mode: 'mountain_pass', cost: 12, seasonal_restrictions: ['winter'], is_reciprocal: true },
+        { id: 7, from_region_id: 8, to_region_id: 9, mode: 'land', cost: 12, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 8, from_region_id: 9, to_region_id: 10, mode: 'land', cost: 14, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 9, from_region_id: 10, to_region_id: 5, mode: 'land', cost: 16, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 10, from_region_id: 5, to_region_id: 3, mode: 'land', cost: 15, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 11, from_region_id: 2, to_region_id: 8, mode: 'land', cost: 13, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 12, from_region_id: 2, to_region_id: 6, mode: 'land', cost: 14, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 13, from_region_id: 3, to_region_id: 5, mode: 'mountain_pass', cost: 17, seasonal_restrictions: ['winter'], is_reciprocal: true },
+        { id: 14, from_region_id: 4, to_region_id: 9, mode: 'navigable_sea', cost: 20, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 15, from_region_id: 6, to_region_id: 8, mode: 'land', cost: 16, seasonal_restrictions: [], is_reciprocal: true },
+        { id: 16, from_region_id: 1, to_region_id: 3, mode: 'land', cost: 16, seasonal_restrictions: [], is_reciprocal: true },
       ]);
     }
 
@@ -453,19 +484,151 @@ export class MockGameRepository implements IGameRepository {
         { profile_id: userId, resource_id: 5, quantity: 10 }, // Seed some grains too
         { profile_id: userId, resource_id: 7, quantity: 10 }, // Seed some water too
         { profile_id: userId, resource_id: 4, quantity: 10 }, // Seed some coal too
+        { profile_id: userId, resource_id: 3, quantity: 5 }, // Starting iron for 1031
+        { profile_id: userId, resource_id: 6, quantity: 5 }, // Starting fish
       ];
       this.setStorageItem('mmo_player_resources', [...playerResources, ...initialResources]);
+    } else {
+      // Backfill iron/fish for saves created before 1031 (without altering test-critical quantities)
+      const missing: PlayerResource[] = [];
+      if (!playerResources.some((r) => r.profile_id === userId && r.resource_id === 3)) missing.push({ profile_id: userId, resource_id: 3, quantity: 5 });
+      if (!playerResources.some((r) => r.profile_id === userId && r.resource_id === 6)) missing.push({ profile_id: userId, resource_id: 6, quantity: 5 });
+      if (missing.length) this.setStorageItem('mmo_player_resources', [...playerResources, ...missing]);
+    }
+
+    // --- Phase 6.5 seeds: dynasty, military provinces, NPC market depth ---
+    // Dynasty (seeded once per user; linked to the session user)
+    const dynSeed = this.getStorageItem<Dynasty[]>('mmo_dynasties', []);
+    if (!dynSeed.some((d) => d.founder_profile_id === userId)) {
+      const dynasty: Dynasty = {
+        id: 101,
+        name: 'House of Aegis',
+        noble_house_id: 1,
+        founder_profile_id: userId,
+        founder_title: 'King',
+        country_id: 1,
+        founded_at: '1031-01-01T00:00:00.000Z',
+        capital_region_id: 1,
+        succession_law: 'hereditary',
+        is_active: true,
+        member_count: 3,
+        total_prestige: 120,
+        members: [],
+        historical_rulers: [
+          { rule_id: 1, ruler_profile_id: userId, title: 'King', ascended_at: '1031-01-01T00:00:00.000Z', legitimacy: 86, dynasty_prestige_gain: 120, notes: 'Founder and first sovereign in 1031.' },
+        ] as any,
+      };
+      const membersSeed = this.getStorageItem<DynastyMember[]>('mmo_dynasty_members', []);
+      if (!membersSeed.some((m) => m.dynasty_id === 101 && m.profile_id === userId)) {
+        const profilesNow = this.getStorageItem<Record<string, Profile>>('mmo_profiles', {});
+        const founderName = profilesNow[userId]?.username || 'Founder';
+        membersSeed.push(
+          { id: 101, profile_id: userId, name: founderName, title: 'King', relationship: 'founder', succession_order: 1, is_alive: true, dynasty_id: 101 },
+          { id: 102, profile_id: 'npc_heir_01', name: 'Princess Isabel', title: 'Heir', relationship: 'child', succession_order: 2, is_alive: true, dynasty_id: 101 },
+          { id: 103, profile_id: 'npc_heir_02', name: 'Prince Corvin', title: 'Heir', relationship: 'child', succession_order: 3, is_alive: true, dynasty_id: 101 },
+        );
+        this.setStorageItem('mmo_dynasty_members', membersSeed);
+      }
+      this.setStorageItem('mmo_dynasties', [...dynSeed, dynasty]);
+      // Legitimacy + stability
+      const leg = this.getStorageItem<Record<string, RulerLegitimacy>>('mmo_ruler_legitimacy', {});
+      if (!leg[userId]) {
+        leg[userId] = { profile_id: userId, legitimacy: 86, last_validated_at: new Date().toISOString(), legitimacy_reasons: 'heir_clear', last_succession_event: 'dynasty_established' };
+        this.setStorageItem('mmo_ruler_legitimacy', leg);
+      }
+      const stab = this.getStorageItem<KingdomStability[]>('mmo_kingdom_stability', []);
+      if (!stab.some((s) => s.country_id === 1)) {
+        stab.push({ country_id: 1, stability: 78, legitimacy_modifier: 6, dynasty_prestige_modifier: 4, last_checked_at: new Date().toISOString(), notes: 'Hereditary succession with a clear heir.' });
+        this.setStorageItem('mmo_kingdom_stability', stab);
+      }
+    }
+
+    // Military provinces — coherent names from DEFAULT_REGIONS, 10 core provinces
+    const milRegs = this.getStorageItem<MilitaryRegion[]>('mmo_military_regions', []);
+    if (milRegs.length < 10) {
+      const seeded: MilitaryRegion[] = DEFAULT_REGIONS.slice(0, 10).map((r) => ({
+        region_id: r.id,
+        owner_country_id: r.country_id,
+        occupier_country_id: r.country_id,
+        resistance_level: r.id === 5 ? 70 : r.country_id === 2 ? 60 : r.country_id === 3 ? 55 : 40,
+        supply_status: 'supplied',
+        region_name: r.name,
+        owner_name: r.country_id === 1 ? 'Taifa of Qurtuba' : r.country_id === 2 ? 'Taifa of Ishbiliya' : 'Taifa of Gharnata',
+        occupier_name: r.country_id === 1 ? 'Taifa of Qurtuba' : r.country_id === 2 ? 'Taifa of Ishbiliya' : 'Taifa of Gharnata',
+      }));
+      this.setStorageItem('mmo_military_regions', seeded);
+    } else {
+      // Controlled migration: reconcile legacy owners with new geography (keep player captures)
+      let changed = false;
+      for (const row of milRegs) {
+        const fresh = DEFAULT_REGIONS.slice(0, 10).find((r) => r.id === row.region_id);
+        if (!fresh) continue;
+        if (row.resistance_level <= 0 && row.owner_country_id !== fresh.country_id) continue; // player capture
+        if (row.owner_country_id !== fresh.country_id || row.region_name !== fresh.name) {
+          row.owner_country_id = fresh.country_id;
+          row.region_name = fresh.name;
+          row.owner_name = fresh.country_id === 1 ? 'Taifa of Qurtuba' : fresh.country_id === 2 ? 'Taifa of Ishbiliya' : 'Taifa of Gharnata';
+          if (row.occupier_country_id !== 1) row.occupier_name = row.owner_name;
+          changed = true;
+        }
+      }
+      if (changed) this.setStorageItem('mmo_military_regions', milRegs);
+    }
+
+    // NPC market depth: listings to buy and orders to sell into — only for real sessions (not isolated unit tests)
+    const _sid = (() => { try { return typeof window !== 'undefined' ? localStorage.getItem('mmo_auth_session') : null; } catch { return null; } })();
+    const _isRealSession = !!_sid && _sid === userId;
+    const npcListings = this.getStorageItem<MarketListing[]>('mmo_market_listings', []);
+    if (_isRealSession && !npcListings.some((l) => String(l.seller_id).startsWith('npc_'))) {
+      const now = new Date().toISOString();
+      const seeds: MarketListing[] = [
+        { id: 'npc-lst-1', seller_id: 'npc_miller', seller_company_id: null, region_id: 8, asset_type: 'resource', resource_id: 5, quantity: 60, price_per_unit: 1.6, currency_type: 'local', status: 'active', created_at: now, updated_at: now, seller_name: 'Miller Tom', resource_name: 'Grain' },
+        { id: 'npc-lst-2', seller_id: 'npc_smith', seller_company_id: null, region_id: 5, asset_type: 'resource', resource_id: 11, quantity: 12, price_per_unit: 17.5, currency_type: 'local', status: 'active', created_at: now, updated_at: now, seller_name: 'Smith Bruna', resource_name: 'Steel' },
+        { id: 'npc-lst-3', seller_id: 'npc_fisher', seller_company_id: null, region_id: 4, asset_type: 'resource', resource_id: 6, quantity: 40, price_per_unit: 2.4, currency_type: 'local', status: 'active', created_at: now, updated_at: now, seller_name: 'Fisher Elian', resource_name: 'Fish' },
+        { id: 'npc-lst-4', seller_id: 'npc_miner', seller_company_id: null, region_id: 3, asset_type: 'resource', resource_id: 3, quantity: 35, price_per_unit: 4.8, currency_type: 'local', status: 'active', created_at: now, updated_at: now, seller_name: 'Miner Katal', resource_name: 'Iron Ore' },
+        { id: 'npc-lst-5', seller_id: 'npc_carver', seller_company_id: null, region_id: 2, asset_type: 'resource', resource_id: 1, quantity: 80, price_per_unit: 1.8, currency_type: 'local', status: 'active', created_at: now, updated_at: now, seller_name: 'Carver Simone', resource_name: 'Wood' },
+        { id: 'npc-lst-6', seller_id: 'npc_herbalist', seller_company_id: null, region_id: 10, asset_type: 'resource', resource_id: 1, quantity: 25, price_per_unit: 2.0, currency_type: 'local', status: 'active', created_at: now, updated_at: now, seller_name: 'Herbalist Ana', resource_name: 'Wood' },
+      ];
+      this.setStorageItem('mmo_market_listings', [...npcListings, ...seeds]);
+    }
+    const npcOrders = this.getStorageItem<MarketOrder[]>('mmo_market_orders', []);
+    if (_isRealSession && !npcOrders.some((o) => String(o.buyer_id).startsWith('npc_'))) {
+      const now = new Date().toISOString();
+      const oSeeds: MarketOrder[] = [
+        { id: 'npc-ord-1', buyer_id: 'npc_smith', buyer_company_id: null, region_id: 5, asset_type: 'resource', resource_id: 3, quantity: 30, price_per_unit: 4.5, currency_type: 'local', status: 'active', created_at: now, updated_at: now, buyer_name: 'Smith Bruna', resource_name: 'Iron Ore' },
+        { id: 'npc-ord-2', buyer_id: 'npc_miller', buyer_company_id: null, region_id: 8, asset_type: 'resource', resource_id: 14, quantity: 20, price_per_unit: 5.5, currency_type: 'local', status: 'active', created_at: now, updated_at: now, buyer_name: 'Miller Tom', resource_name: 'Bread' },
+        { id: 'npc-ord-3', buyer_id: 'npc_fisher', buyer_company_id: null, region_id: 4, asset_type: 'resource', resource_id: 7, quantity: 45, price_per_unit: 0.6, currency_type: 'local', status: 'active', created_at: now, updated_at: now, buyer_name: 'Fisher Elian', resource_name: 'Water' },
+        { id: 'npc-ord-4', buyer_id: 'npc_carver', buyer_company_id: null, region_id: 2, asset_type: 'resource', resource_id: 2, quantity: 50, price_per_unit: 1.2, currency_type: 'local', status: 'active', created_at: now, updated_at: now, buyer_name: 'Carver Simone', resource_name: 'Stone' },
+        { id: 'npc-ord-5', buyer_id: 'npc_miller', buyer_company_id: null, region_id: 8, asset_type: 'item', resource_id: null, item_template_id: 1, quantity: 20, price_per_unit: 5.5, currency_type: 'local', status: 'active', created_at: now, updated_at: now, buyer_name: 'Miller Tom', resource_name: 'Wheat Bread' } as any,
+      ];
+      this.setStorageItem('mmo_market_orders', [...npcOrders, ...oSeeds]);
+    }
+    // Backfill for saves seeded before the item bid existed
+    if (_isRealSession && !npcOrders.some((o) => (o as any).id === 'npc-ord-5')) {
+      const now = new Date().toISOString();
+      npcOrders.push({ id: 'npc-ord-5', buyer_id: 'npc_miller', buyer_company_id: null, region_id: 8, asset_type: 'item', resource_id: null, item_template_id: 1, quantity: 20, price_per_unit: 5.5, currency_type: 'local', status: 'active', created_at: now, updated_at: now, buyer_name: 'Miller Tom', resource_name: 'Wheat Bread' } as any);
+      this.setStorageItem('mmo_market_orders', npcOrders);
+    }
+
+    // Battle report slot (deterministic, overwritten per engagement)
+    const br = this.getStorageItem<any>('mmo_last_battle_report', null);
+    if (br === null && !this.getStorageItem<string>('mmo_last_battle_report_init', '')) {
+      this.setStorageItem('mmo_last_battle_report', null);
+      this.setStorageItem('mmo_last_battle_report_init', '1');
     }
 
     // Quests
     const quests = this.getStorageItem<Quest[]>('mmo_quests', []);
     if (quests.length === 0) {
       const initialQuests: Quest[] = [
-        { id: 1, title: 'Tutorial: First Steps', description: 'Gather 5 iron ore and explore the local region maps.', category: 'tutorial', rewards_json: { currency: 100, xp: 20 }, requirements_json: { gather_iron: 5 }, is_active: true },
-        { id: 2, title: 'Daily: Production Drive', description: 'Craft any tool template in your regional factory hub.', category: 'daily', rewards_json: { currency: 250, xp: 50 }, requirements_json: { craft_item: 1 }, is_active: true }
+        { id: 1, title: 'The Roads of al-Andalus', description: 'Travel from Qurtuba to a neighbouring province (Jayyan, Tulaytula, Ishbiliya or Gharnata) along a marching road.', category: 'tutorial', rewards_json: { currency: 100, xp: 20 }, requirements_json: { travel: 1 }, is_active: true },
+        { id: 2, title: 'Timber for the Walls', description: 'Gather 1 Wood in Jayyan (Sierra Morena march) for the settlement defences.', category: 'tutorial', rewards_json: { currency: 100, xp: 25 }, requirements_json: { gather_wood: 1 }, is_active: true },
+        { id: 3, title: 'Bread for the Household', description: 'Craft 1 Wheat Bread in the workshop (2 Grain + 1 Water).', category: 'tutorial', rewards_json: { currency: 120, xp: 30 }, requirements_json: { craft_bread: 1 }, is_active: true },
+        { id: 4, title: 'First Coin of the Coffer', description: 'Complete 1 sale in the Marketplace (Iron Ore or a crafted good).', category: 'tutorial', rewards_json: { currency: 150, xp: 40 }, requirements_json: { trade_sale: 1 }, is_active: true },
+        { id: 5, title: 'Spears for the Taifa', description: 'Recruit 1 host in the Military (5 Grain, 2 Iron, 3 Fish), then issue a march order along a road.', category: 'daily', rewards_json: { currency: 250, xp: 50 }, requirements_json: { recruit_army: 1 }, is_active: true }
       ];
 
-      for (let i = 3; i <= 102; i++) {
+      for (let i = 6; i <= 102; i++) {
         const categories = ['tutorial', 'daily', 'weekly', 'seasonal', 'story'];
         const cat = categories[i % 5];
         const title = cat === 'tutorial' ? `Onboarding Path ${i}` : cat === 'daily' ? `Daily Grind ${i}` : cat === 'weekly' ? `Weekly Initiative ${i}` : cat === 'seasonal' ? `Seasonal Chapter ${i}` : `Kingdom Storyline ${i}`;
@@ -1424,7 +1587,15 @@ export class MockGameRepository implements IGameRepository {
   }
 
   async getCountries(): Promise<Country[]> {
-    return this.getStorageItem<Country[]>('mmo_countries', DEFAULT_COUNTRIES);
+    this.ensureInitialized(this.getSessionUserId());
+    const rows = this.getStorageItem<Country[]>('mmo_countries', DEFAULT_COUNTRIES);
+    // Controlled rename migration (keep currency/VAT contracts, update display names)
+    for (const r of rows) {
+      const fresh = DEFAULT_COUNTRIES.find((d) => d.id === r.id);
+      if (fresh && r.name !== fresh.name) r.name = fresh.name;
+    }
+    this.setStorageItem('mmo_countries', rows);
+    return rows;
   }
 
   async getInventory(userId: string): Promise<InventoryItem[]> {
@@ -1977,6 +2148,7 @@ export class MockGameRepository implements IGameRepository {
 
   // Marketplace Getters
   async getMarketListings(): Promise<MarketListing[]> {
+    this.ensureInitialized(this.getSessionUserId());
     const listings = this.getStorageItem<MarketListing[]>('mmo_market_listings', []);
     const active = listings.filter((l) => l.status === 'active');
     
@@ -1990,14 +2162,15 @@ export class MockGameRepository implements IGameRepository {
       
       return {
         ...l,
-        seller_name: sellerProfile?.username || 'Unknown Seller',
+        seller_name: sellerProfile?.username || this.npcName(l.seller_id) || l.seller_name || 'Unknown Seller',
         seller_company_name: sellerCompany?.name || undefined,
-        resource_name: res?.name || undefined,
+        resource_name: res?.name || l.resource_name || undefined,
       };
     });
   }
 
   async getMarketOrders(): Promise<MarketOrder[]> {
+    this.ensureInitialized(this.getSessionUserId());
     const orders = this.getStorageItem<MarketOrder[]>('mmo_market_orders', []);
     const active = orders.filter((o) => o.status === 'active');
     
@@ -2011,9 +2184,9 @@ export class MockGameRepository implements IGameRepository {
       
       return {
         ...o,
-        buyer_name: buyerProfile?.username || 'Unknown Buyer',
+        buyer_name: buyerProfile?.username || this.npcName(o.buyer_id) || o.buyer_name || 'Unknown Buyer',
         buyer_company_name: buyerCompany?.name || undefined,
-        resource_name: res?.name || undefined,
+        resource_name: res?.name || o.resource_name || undefined,
       };
     });
   }
@@ -2407,7 +2580,8 @@ export class MockGameRepository implements IGameRepository {
   }
 
   async getDynasty(profileId?: string): Promise<Dynasty | null> {
-    this.ensureInitialized(profileId || 'player_1');
+    const sid = profileId || this.getSessionUserId();
+    this.ensureInitialized(sid);
     const dynasties = this.getStorageItem<Dynasty[]>('mmo_dynasties', []);
     if (profileId) {
       return dynasties.find((d) => d.founder_profile_id === profileId) || null;
@@ -2416,7 +2590,7 @@ export class MockGameRepository implements IGameRepository {
   }
 
   async getDynastyMembers(dynastyId: number): Promise<DynastyMember[]> {
-    this.ensureInitialized('player_1');
+    this.ensureInitialized(this.getSessionUserId());
     const members = this.getStorageItem<DynastyMember[]>('mmo_dynasty_members', []);
     return members.filter((m) => m.dynasty_id === dynastyId && m.is_alive);
   }
@@ -2434,7 +2608,7 @@ export class MockGameRepository implements IGameRepository {
       legitimacy: 100,
       last_validated_at: new Date().toISOString(),
       legitimacy_reasons: 'heir_clear',
-      last_succession_event: null
+      last_succession_event: undefined
     };
     legitimacyRecords[profileId] = newRecord;
     this.setStorageItem('mmo_ruler_legitimacy', legitimacyRecords);
@@ -2442,7 +2616,7 @@ export class MockGameRepository implements IGameRepository {
   }
 
   async getKingdomStability(countryId: number): Promise<KingdomStability | null> {
-    this.ensureInitialized('player_1');
+    this.ensureInitialized(this.getSessionUserId());
     const stabilities = this.getStorageItem<KingdomStability[]>('mmo_kingdom_stability', []);
     let record = stabilities.find((s) => s.country_id === countryId);
     if (record) {
@@ -2455,7 +2629,7 @@ export class MockGameRepository implements IGameRepository {
       legitimacy_modifier: 0,
       dynasty_prestige_modifier: 0,
       last_checked_at: new Date().toISOString(),
-      notes: null
+      notes: undefined
     };
     stabilities.push(newRecord);
     this.setStorageItem('mmo_kingdom_stability', stabilities);
@@ -2463,13 +2637,14 @@ export class MockGameRepository implements IGameRepository {
   }
 
   async establishDynasty(dynastyName: string, nobleHouseName: string, founderTitle: 'King' | 'Queen' | 'Sultan' | 'Shah' | 'Khagan', countryId: number, successionLaw: 'hereditary' | 'elective' | 'appointed'): Promise<{ success: boolean; dynastyId?: number; error: string | null }> {
-    this.ensureInitialized('player_1');
+    const sid = this.getSessionUserId();
+    this.ensureInitialized(sid);
 
     // Validate founder has a country
-    const countries = this.getStorageItem<Country[]>('mmo_countries', []);
+    const countries = this.getStorageItem<Country[]>('mmo_countries', DEFAULT_COUNTRIES);
     const country = countries.find((c) => c.id === countryId);
     if (!country) {
-      return { success: false, dynastyId: null, error: 'Country not found.' };
+      return { success: false, dynastyId: undefined, error: 'Country not found.' };
     }
 
     // Create dynasty
@@ -2477,7 +2652,7 @@ export class MockGameRepository implements IGameRepository {
       id: Math.floor(Math.random() * 10000) + 1000,
       name: dynastyName,
       noble_house_id: 1, // simplified: always use House of York for now
-      founder_profile_id: 'player_1',
+      founder_profile_id: sid,
       founder_title: founderTitle,
       country_id: countryId,
       founded_at: new Date().toISOString(),
@@ -2498,23 +2673,25 @@ export class MockGameRepository implements IGameRepository {
     // Initialize dynasty members
     let dynastyMembers = this.getStorageItem<DynastyMember[]>('mmo_dynasty_members', []);
     const founderMember: DynastyMember = {
-      profile_id: 'player_1',
+      id: dynastyMembers.length + 1,
+      dynasty_id: newDynasty.id,
+      profile_id: sid,
       name: 'Founder Ruler',
-      title: founderTitle,
+      title: (founderTitle === 'Queen' ? 'Queen' : 'King') as any,
       relationship: 'founder',
       succession_order: 1,
       is_alive: true,
       date_of_birth: new Date().toISOString(),
-      date_of_death: null,
+      date_of_death: undefined,
       notes: 'Founder of the dynasty'
     };
     dynastyMembers.push(founderMember);
     this.setStorageItem('mmo_dynasty_members', dynastyMembers);
 
     // Initialize ruler legitimacy
-    let legitimacyRecords = this.getStorageItem<RulerLegitimacy[]>('mmo_ruler_legitimacy', {});
-    legitimacyRecords['player_1'] = {
-      profile_id: 'player_1',
+    let legitimacyRecords = this.getStorageItem<Record<string, RulerLegitimacy>>('mmo_ruler_legitimacy', {});
+    legitimacyRecords[sid] = {
+      profile_id: sid,
       legitimacy: 100,
       last_validated_at: new Date().toISOString(),
       legitimacy_reasons: 'heir_clear',
@@ -2550,10 +2727,10 @@ export class MockGameRepository implements IGameRepository {
   }
 
   async designateHeir(dynastyId: number, heirProfileId: string, heirTitle: 'King' | 'Queen' | 'Heir', successionLaw: 'hereditary' | 'elective' | 'appointed'): Promise<{ success: boolean; error: string | null }> {
-    this.ensureInitialized('player_1');
+    this.ensureInitialized(this.getSessionUserId());
 
     const dynastyMembers = this.getStorageItem<DynastyMember[]>('mmo_dynasty_members', []);
-    const dynasty = this.getStorageItem<Dynasty>('mmo_dynasties', [])?.find((d) => d.id === dynastyId);
+    const dynasty = this.getStorageItem<Dynasty[]>('mmo_dynasties', [])?.find((d) => d.id === dynastyId);
 
     if (!dynasty) {
       return { success: false, error: 'Dynasty not found.' };
@@ -2596,7 +2773,7 @@ export class MockGameRepository implements IGameRepository {
   async abdicateThrone(profileId: string, regentProfileId?: string): Promise<{ success: boolean; error: string | null }> {
     this.ensureInitialized(profileId);
 
-    const legitimacy = this.getStorageItem<RulerLegitimacy>('mmo_ruler_legitimacy', {});
+    const legitimacy = this.getStorageItem<Record<string, RulerLegitimacy>>('mmo_ruler_legitimacy', {});
     const legitimacyRecord = legitimacy[profileId];
 
     if (!legitimacyRecord) {
@@ -2628,18 +2805,18 @@ export class MockGameRepository implements IGameRepository {
   }
 
   async resolveSuccession(dynastyId: number, newRulerProfileId: string): Promise<{ success: boolean; newRulerTitle?: string; error: string | null }> {
-    this.ensureInitialized('player_1');
+    this.ensureInitialized(this.getSessionUserId());
 
-    const dynasty = this.getStorageItem<Dynasty>('mmo_dynasties', [])?.find((d) => d.id === dynastyId);
+    const dynasty = this.getStorageItem<Dynasty[]>('mmo_dynasties', [])?.find((d) => d.id === dynastyId);
     if (!dynasty) {
-      return { success: false, newRulerTitle: null, error: 'Dynasty not found.' };
+      return { success: false, newRulerTitle: undefined, error: 'Dynasty not found.' };
     }
 
     const dynastyMembers = this.getStorageItem<DynastyMember[]>('mmo_dynasty_members', []);
-    const legitimacyRecord = this.getStorageItem<RulerLegitimacy>('mmo_ruler_legitimacy', {})[newRulerProfileId];
+    const legitimacyRecord = this.getStorageItem<Record<string, RulerLegitimacy>>('mmo_ruler_legitimacy', {})[newRulerProfileId];
 
     if (!legitimacyRecord) {
-      return { success: false, newRulerTitle: null, error: 'No legitimacy record for new ruler.' };
+      return { success: false, newRulerTitle: undefined, error: 'No legitimacy record for new ruler.' };
     }
 
     // Determine the new ruler's title based on succession law
@@ -2653,7 +2830,7 @@ export class MockGameRepository implements IGameRepository {
           const sorted = eligibleHeirs.sort((a, b) => a.succession_order - b.succession_order);
           newRulerTitle = sorted[0].title;
         } else {
-          return { success: false, newRulerTitle: null, error: 'No eligible heirs in hereditary succession.' };
+          return { success: false, newRulerTitle: undefined, error: 'No eligible heirs in hereditary succession.' };
         }
         break;
 
@@ -2674,7 +2851,7 @@ export class MockGameRepository implements IGameRepository {
     legitimacyRecord.last_succession_event = `succession_resolved_via_${dynasty.succession_law}`;
     legitimacyRecord.legitimacy = legitimacyRecord.legitimacy; // keep existing
     legitimacyRecord.last_validated_at = new Date().toISOString();
-    const legitimacyRecords = this.getStorageItem<RulerLegitimacy[]>('mmo_ruler_legitimacy', {});
+    const legitimacyRecords = this.getStorageItem<Record<string, RulerLegitimacy>>('mmo_ruler_legitimacy', {});
     legitimacyRecords[newRulerProfileId] = legitimacyRecord;
     this.setStorageItem('mmo_ruler_legitimacy', legitimacyRecords);
 
@@ -2691,13 +2868,13 @@ export class MockGameRepository implements IGameRepository {
       return { success: false, error: 'Legitimacy must be between 0 and 100.' };
     }
 
-    let legitimacyRecords = this.getStorageItem<RulerLegitimacy[]>('mmo_ruler_legitimacy', {});
+    let legitimacyRecords = this.getStorageItem<Record<string, RulerLegitimacy>>('mmo_ruler_legitimacy', {});
     const record = legitimacyRecords[profileId] || {
       profile_id: profileId,
       legitimacy: 50,
       last_validated_at: new Date().toISOString(),
       legitimacy_reasons: 'heir_clear',
-      last_succession_event: null
+      last_succession_event: undefined
     };
 
     record.legitimacy = legitimacy;
@@ -2711,9 +2888,9 @@ export class MockGameRepository implements IGameRepository {
   }
 
   async getSuccessionOrder(dynastyId: number): Promise<DynastyMember[]> {
-    this.ensureInitialized('player_1');
+    this.ensureInitialized(this.getSessionUserId());
     const dynastyMembers = this.getStorageItem<DynastyMember[]>('mmo_dynasty_members', []);
-    return dynastyMembers.sort((a, b) => a.succession_order - b.succession_order);
+    return dynastyMembers.filter((m) => m.dynasty_id === dynastyId).sort((a, b) => a.succession_order - b.succession_order);
   }
 
   // End Phase 5 implementations
@@ -3300,7 +3477,7 @@ export class MockGameRepository implements IGameRepository {
   async getRegionalEconomies(): Promise<RegionalEconomy[]> {
     return this.getStorageItem<RegionalEconomy[]>('mmo_regional_economies', [
       { region_id: 1, region_name: 'Solitude Plains', population: 1250, employed: 1020, gdp: 12500.50, tax_reserves: 125.00, updated_at: new Date().toISOString() },
-      { region_id: 2, region_name: 'Steel Bastion', population: 890, employed: 780, gdp: 18900.20, tax_reserves: 340.50, updated_at: new Date().toISOString() },
+      { region_id: 2, region_name: 'Saragusta', population: 890, employed: 780, gdp: 18900.20, tax_reserves: 340.50, updated_at: new Date().toISOString() },
       { region_id: 3, region_name: 'Obsidian Peaks', population: 1420, employed: 1150, gdp: 24500.00, tax_reserves: 520.10, updated_at: new Date().toISOString() }
     ]);
   }
@@ -3332,7 +3509,7 @@ export class MockGameRepository implements IGameRepository {
   async getNPCLogs(): Promise<NPCActivityLog[]> {
     return this.getStorageItem<NPCActivityLog[]>('mmo_npc_activity_logs', [
       { id: 'npc-log-1', region_id: 1, actor_name: 'NPC Farmer Solitude Plains', action: 'factory.produce', details: 'Harvested and listed 10 raw materials on marketplace.', created_at: new Date().toISOString() },
-      { id: 'npc-log-2', region_id: 2, actor_name: 'Steel Smelter of Steel Bastion', action: 'factory.manufacture', details: 'Consumed inputs and listed 5 refined products on marketplace.', created_at: new Date().toISOString() }
+      { id: 'npc-log-2', region_id: 2, actor_name: 'Steel Smelter of Saragusta', action: 'factory.manufacture', details: 'Consumed inputs and listed 5 refined products on marketplace.', created_at: new Date().toISOString() }
     ]);
   }
 
@@ -3598,16 +3775,24 @@ export class MockGameRepository implements IGameRepository {
   // Phase 10 Warfare mock implementations
   async getWars(): Promise<War[]> {
     return this.getStorageItem<War[]>('mmo_wars', [
-      { id: 1, attacker_country_id: 1, defender_country_id: 2, status: 'active', started_at: new Date().toISOString(), attacker_name: 'Solitude Republic', defender_name: 'Steel Bastion' }
+      { id: 1, attacker_country_id: 1, defender_country_id: 2, status: 'active', started_at: new Date().toISOString(), attacker_name: 'Taifa of Qurtuba', defender_name: 'Saragusta' }
     ]);
   }
 
   async getMilitaryRegions(): Promise<MilitaryRegion[]> {
-    return this.getStorageItem<MilitaryRegion[]>('mmo_military_regions', [
-      { region_id: 1, owner_country_id: 1, occupier_country_id: 1, resistance_level: 0, supply_status: 'supplied', region_name: 'Genesis Capital', owner_name: 'Solitude Republic', occupier_name: 'Solitude Republic' },
-      { region_id: 2, owner_country_id: 2, occupier_country_id: 2, resistance_level: 0, supply_status: 'supplied', region_name: 'Plains of Devastation', owner_name: 'Steel Bastion', occupier_name: 'Steel Bastion' },
-      { region_id: 3, owner_country_id: 2, occupier_country_id: 1, resistance_level: 30, supply_status: 'unsupplied', region_name: 'Iron Mine Outpost', owner_name: 'Steel Bastion', occupier_name: 'Solitude Republic' }
+    this.ensureInitialized(this.getSessionUserId());
+    const rows = this.getStorageItem<MilitaryRegion[]>('mmo_military_regions', [
+      { region_id: 1, owner_country_id: 1, occupier_country_id: 1, resistance_level: 0, supply_status: 'supplied', region_name: 'Genesis Capital', owner_name: 'Taifa of Qurtuba', occupier_name: 'Taifa of Qurtuba' },
+      { region_id: 2, owner_country_id: 2, occupier_country_id: 2, resistance_level: 0, supply_status: 'supplied', region_name: 'Plains of Devastation', owner_name: 'Taifa of Ishbiliya', occupier_name: 'Taifa of Ishbiliya' },
+      { region_id: 3, owner_country_id: 2, occupier_country_id: 1, resistance_level: 30, supply_status: 'unsupplied', region_name: 'Iron Mine Outpost', owner_name: 'Taifa of Ishbiliya', occupier_name: 'Taifa of Qurtuba' }
     ]);
+    // Keep display names in step with ownership (conquest backfill)
+    for (const r of rows) {
+      const expected = r.owner_country_id === 1 ? 'Taifa of Qurtuba' : r.owner_country_id === 2 ? 'Taifa of Ishbiliya' : 'Taifa of Gharnata';
+      if (r.owner_name !== expected) r.owner_name = expected;
+    }
+    this.setStorageItem('mmo_military_regions', rows);
+    return rows;
   }
 
   async getArmyUnits(): Promise<ArmyUnit[]> {
@@ -3625,37 +3810,38 @@ export class MockGameRepository implements IGameRepository {
 
   async getPeaceTreaties(): Promise<PeaceTreaty[]> {
     return this.getStorageItem<PeaceTreaty[]>('mmo_peace_treaties', [
-      { id: 1, war_id: 1, proposer_country_id: 2, status: 'proposed', reparations_amount: 1500.00, territory_transfer_json: [2], created_at: new Date().toISOString(), proposer_name: 'Steel Bastion' }
+      { id: 1, war_id: 1, proposer_country_id: 2, status: 'proposed', reparations_amount: 1500.00, territory_transfer_json: [2], created_at: new Date().toISOString(), proposer_name: 'Saragusta' }
     ]);
   }
 
   async declareWar(defenderCountryId: number): Promise<{ success: boolean; warId?: number; error: string | null }> {
-    // Consume recruitment resources: 500 grain, 200 iron, 300 rations
+    const uid = this.getSessionUserId();
+    this.ensureInitialized(uid);
+    // Vertical-slice balance: a recruitable muster that fits starting stocks.
     const recruitmentCost = [
-      { resourceId: 5, quantity: 500 },  // Grain
-      { resourceId: 3, quantity: 200 },  // Iron Ore
-      { resourceId: 6, quantity: 300 },  // Rations (Fish)
+      { resourceId: 5, quantity: 5 },  // Grain
+      { resourceId: 3, quantity: 2 },  // Iron Ore
+      { resourceId: 6, quantity: 3 },  // Fish / rations
     ];
 
-    const resources = await this.getPlayerResources('user_1');
+    const all = this.getStorageItem<PlayerResource[]>('mmo_player_resources', []);
+    const resources = all.filter((r: any) => r.profile_id === uid);
     const hasEnough = recruitmentCost.every(({ resourceId, quantity }) => {
       const item = resources.find((r: any) => r.resource_id === resourceId);
       return (item?.quantity ?? 0) >= quantity;
     });
 
     if (!hasEnough) {
-      return { success: false, warId: null, error: 'Insufficient resources for army recruitment: need 500 Grain, 200 Iron Ore, 300 Rations' };
+      return { success: false, warId: undefined, error: 'Insufficient resources to muster: need 5 Grain, 2 Iron Ore, 3 Fish.' };
     }
 
-    // Consume the resources
     for (const { resourceId, quantity } of recruitmentCost) {
       const found = resources.find((r: any) => r.resource_id === resourceId);
       if (found) {
-        const resIndex = (resources as PlayerResource[]).indexOf(found as PlayerResource);
         (found as PlayerResource).quantity = ((found as PlayerResource).quantity ?? 0) - quantity;
       }
     }
-    await this.setStorageItem('mmo_player_resources', resources);
+    this.setStorageItem('mmo_player_resources', all);
 
     const wars = await this.getWars();
     const newId = wars.length + 1;
@@ -3665,39 +3851,40 @@ export class MockGameRepository implements IGameRepository {
       defender_country_id: defenderCountryId,
       status: 'active',
       started_at: new Date().toISOString(),
-      attacker_name: 'Solitude Republic',
-      defender_name: 'Foreign Adversary'
+      attacker_name: 'Taifa of Qurtuba',
+      defender_name: defenderCountryId === 2 ? 'Taifa of Ishbiliya' : defenderCountryId === 3 ? 'Taifa of Gharnata' : 'Foreign Adversary'
     });
     this.setStorageItem('mmo_wars', wars);
     return { success: true, warId: newId, error: null };
   }
 
   async mobilizeArmy(): Promise<{ success: boolean; armyId?: number; error: string | null }> {
-    // Mobilize costs: 300 grain, 100 iron, 150 rations
+    const uid = this.getSessionUserId();
+    this.ensureInitialized(uid);
     const mobilizationCost = [
-      { resourceId: 5, quantity: 300 },  // Grain
-      { resourceId: 3, quantity: 100 },  // Iron Ore
-      { resourceId: 6, quantity: 150 },  // Rations
+      { resourceId: 5, quantity: 3 },  // Grain
+      { resourceId: 3, quantity: 1 },  // Iron Ore
+      { resourceId: 6, quantity: 2 },  // Fish
     ];
 
-    const resources = await this.getPlayerResources('user_1');
+    const all = this.getStorageItem<PlayerResource[]>('mmo_player_resources', []);
+    const resources = all.filter((r: any) => r.profile_id === uid);
     const hasEnough = mobilizationCost.every(({ resourceId, quantity }) => {
       const item = resources.find((r: any) => r.resource_id === resourceId);
       return (item?.quantity ?? 0) >= quantity;
     });
 
     if (!hasEnough) {
-      return { success: false, armyId: null, error: 'Insufficient resources for mobilization: need 300 Grain, 100 Iron Ore, 150 Rations' };
+      return { success: false, armyId: undefined, error: 'Insufficient resources to mobilize: need 3 Grain, 1 Iron Ore, 2 Fish.' };
     }
 
-    // Consume mobilization resources
     for (const { resourceId, quantity } of mobilizationCost) {
       const found = resources.find((r: any) => r.resource_id === resourceId);
       if (found) {
         (found as PlayerResource).quantity = ((found as PlayerResource).quantity ?? 0) - quantity;
       }
     }
-    await this.setStorageItem('mmo_player_resources', resources);
+    this.setStorageItem('mmo_player_resources', all);
 
     const armies = await this.getArmyUnits();
     const newId = armies.length + 1;
@@ -3705,10 +3892,10 @@ export class MockGameRepository implements IGameRepository {
       id: newId,
       country_id: 1,
       current_region_id: 1,
-      size: 1000,
-      morale: 100,
-      ammo_qty: 100,
-      rations_qty: 100,
+      size: 120,
+      morale: 92,
+      ammo_qty: 80,
+      rations_qty: 80,
       status: 'idle',
       created_at: new Date().toISOString(),
       region_name: 'Genesis Capital'
@@ -3776,76 +3963,89 @@ export class MockGameRepository implements IGameRepository {
     const army = armies.find(a => a.id === armyId);
     if (!army) return { success: false, error: 'Army not found.' };
 
-    // Verify active war declaration exists
-    const wars = await this.getWars();
-    const atWar = wars.some(
-      (w: any) =>
-        (w.attacker_country_id === army.country_id && w.defender_country_id === 2) ||
-        (w.attacker_country_id === 2 && w.defender_country_id === army.country_id)
-    );
-
-    if (!atWar) {
-      return { success: false, error: 'Cannot engage in battle without active war declaration.' };
-    }
-
-    // Get target region defense info
     const milRegs = await this.getMilitaryRegions();
     const targetRegion = milRegs.find((r: any) => r.region_id === targetRegionId);
     if (!targetRegion) return { success: false, error: 'Target region not found.' };
 
-    // Determine attacker and defender stats
+    // Verify active war with the province owner (not a hardcoded country)
+    const wars = await this.getWars();
+    const atWar = wars.some(
+      (w: any) => w.status === 'active' && (
+        (w.attacker_country_id === army.country_id && w.defender_country_id === targetRegion.owner_country_id) ||
+        (w.attacker_country_id === targetRegion.owner_country_id && w.defender_country_id === army.country_id)
+      )
+    );
+
+    if (!atWar && targetRegion.owner_country_id !== army.country_id) {
+      return { success: false, error: 'Cannot engage without an active war declaration against this province.' };
+    }
+    if (targetRegion.owner_country_id === army.country_id) {
+      return { success: false, error: 'This province is already yours.' };
+    }
+
+    // Deterministic resolution (seeded by region+army for repeatability)
     const attackerSize = army.size;
     const attackerMorale = army.morale;
-    const defenderSize = targetRegion.resistance_level * 50; // region resistance contributes to defense
+    const defenderSize = targetRegion.resistance_level * 2; // smaller garrison so a mustered host can win the field battle
     const defenderMorale = Math.max(50, 100 - targetRegion.resistance_level);
 
-    // Determine combat outcome using deterministic logic
-    // Composition advantage: larger army has advantage, higher morale helps
     const sizeDifference = attackerSize - defenderSize;
     const moraleDifference = attackerMorale - defenderMorale;
 
     let outcome: string = 'retreat';
-    let sizeLoss = 100;
-    let moraleLoss = 15;
+    let sizeLoss = Math.min(40, Math.floor(attackerSize * 0.12));
+    let moraleLoss = 12;
 
-    if (sizeDifference > 50 && moraleDifference > 0) {
-      // Attacker wins
-      outcome = 'conquered';
-      sizeLoss = Math.max(100, Math.floor(attackerSize * 0.15)); // 15% size loss
-      moraleLoss = 10;
-    } else if (sizeDifference < -50 && moraleDifference < 0) {
-      // Defender wins (successful resistance)
-      outcome = 'repelled';
-      sizeLoss = Math.max(100, Math.floor(defenderSize * 0.10)); // 10% size loss
-      moraleLoss = 20;
-    } else if (Math.abs(sizeDifference) <= 50) {
-      // Pyrrhic victory or stalemate
+    if (sizeDifference > 10 && moraleDifference >= -5) {
       outcome = 'pyrrhic_victory';
-      sizeLoss = Math.max(100, Math.floor((attackerSize + defenderSize) * 0.08));
-      moraleLoss = 15;
+      sizeLoss = Math.max(12, Math.floor(attackerSize * 0.15));
+      moraleLoss = 10;
+    } else if (sizeDifference <= -10) {
+      outcome = 'repelled';
+      sizeLoss = Math.max(15, Math.floor(attackerSize * 0.2));
+      moraleLoss = 18;
+    } else {
+      outcome = 'pyrrhic_victory';
+      sizeLoss = Math.max(15, Math.floor(attackerSize * 0.18));
+      moraleLoss = 14;
     }
 
-    // Apply combat results
-    army.size = Math.max(100, attackerSize - sizeLoss);
+    const attackerAfter = Math.max(0, attackerSize - sizeLoss);
+    const defenderAfter = Math.max(0, defenderSize - Math.floor(sizeLoss * 0.6));
+    const casualties = sizeLoss;
+
+    army.size = attackerAfter;
     army.morale = Math.max(20, attackerMorale - moraleLoss);
     army.status = 'defending';
 
-    // Update occupation/ownership based on outcome
-    if (outcome === 'conquered') {
-      if (targetRegion) {
-        targetRegion.occupier_country_id = army.country_id;
-        targetRegion.occupier_name = 'Solitude Republic';
-        targetRegion.resistance_level = Math.max(0, targetRegion.resistance_level - 15);
-        // Check for siege progression - if resistance reaches 0, province is captured
-        if (targetRegion.resistance_level <= 0) {
-          targetRegion.owner_country_id = army.country_id;
-          targetRegion.resistance_level = 0;
-        }
-      }
-    } else if (outcome === 'repelled') {
-      // Defender retains ownership, attacker suffers additional penalties
-      army.size = Math.max(100, attackerSize - sizeLoss - 50);
-      army.morale = Math.max(20, army.morale - moraleLoss - 10);
+    // Field battle weakens resistance but NEVER captures — siege is required.
+    targetRegion.occupier_country_id = army.country_id;
+    targetRegion.occupier_name = 'Taifa of Qurtuba';
+    targetRegion.resistance_level = Math.max(15, targetRegion.resistance_level - 12);
+
+    const report: MilitaryBattleReport = {
+      outcome: outcome as any,
+      attackerSizeBefore: attackerSize,
+      defenderSizeBefore: defenderSize,
+      attackerSizeAfter: attackerAfter,
+      defenderSizeAfter: defenderAfter,
+      casualties,
+      moraleAfter: army.morale,
+      rounds: [
+        `Your host (${attackerSize}) meets the garrison (${defenderSize}) outside ${targetRegion.region_name}.`,
+        `Morale ${attackerMorale} against ${defenderMorale} decides the clash.`,
+        `Outcome: ${outcome}. The province holds — begin a siege to capture it.`,
+      ],
+      regionName: targetRegion.region_name || `Province ${targetRegionId}`,
+      resistanceAfter: targetRegion.resistance_level,
+      siegeRequired: true,
+      provinceCaptured: false,
+    };
+    this.setStorageItem('mmo_last_battle_report', report);
+
+    if (outcome === 'repelled') {
+      army.size = Math.max(10, attackerAfter - 10);
+      army.morale = Math.max(20, army.morale - 8);
     }
 
     this.setStorageItem('mmo_army_units', armies);
@@ -3876,7 +4076,7 @@ export class MockGameRepository implements IGameRepository {
       reparations_amount: reparations,
       territory_transfer_json: transfers,
       created_at: new Date().toISOString(),
-      proposer_name: 'Solitude Republic'
+      proposer_name: 'Taifa of Qurtuba'
     });
     this.setStorageItem('mmo_peace_treaties', treaties);
     return { success: true, treatyId: newId, error: null };
@@ -3937,13 +4137,11 @@ export class MockGameRepository implements IGameRepository {
       return { success: false, error: `Insufficient rations for siege. Required ${siegeRationCost}, have ${army.rations_qty}` };
     }
 
-    // Dedicate the army to siege status
+    // Dedicate the army to siege status (no resistance inflation — battle already lowered it)
     army.status = 'sieging';
-    army.rations_qty -= siegeRationCost;
-
-    // Initial resistance based on region development and garrison
-    // Resistance starts at 50 and decreases as siege progresses
-    targetRegion.resistance_level = Math.min(100, targetRegion.resistance_level + 20); // fortified regions have higher resistance
+    army.rations_qty -= 8;
+    targetRegion.occupier_country_id = army.country_id;
+    targetRegion.occupier_name = 'Taifa of Qurtuba';
 
     this.setStorageItem('mmo_army_units', armies);
     this.setStorageItem('mmo_military_regions', milRegs);
@@ -3951,7 +4149,7 @@ export class MockGameRepository implements IGameRepository {
     return { success: true, error: null };
   }
 
-  async progressSiege(armyId: number, targetRegionId: number): Promise<{ success: boolean; error: string | null; provinceCaptured?: boolean }> {
+  async progressSiege(armyId: number, targetRegionId: number): Promise<{ success: boolean; error: string | null; provinceCaptured?: boolean; report?: any }> {
     const armies = await this.getArmyUnits();
     const army = armies.find(a => a.id === armyId);
     if (!army) return { success: false, error: 'Army not found.' };
@@ -3965,16 +4163,13 @@ export class MockGameRepository implements IGameRepository {
       return { success: false, error: 'Army is not currently besieging.' };
     }
 
-    // Siege progression: resistance decreases based on army size and time
-    // Higher resistance = harder to capture
-    const siegeDamage = Math.max(1, Math.floor(army.size / 50)); // damage per tick
+    // A siege tick: capped damage so even the 850-strong host needs 3 ticks
+    const siegeDamage = Math.min(18, Math.max(10, Math.floor(army.size / 20)));
     targetRegion.resistance_level = Math.max(0, targetRegion.resistance_level - siegeDamage);
 
-    // Consume rations for siege maintenance
-    const siegeRationCost = 10;
+    const siegeRationCost = 8;
     if (army.rations_qty < siegeRationCost) {
-      // If out of rations, army takes damage instead
-      army.size = Math.max(100, army.size - 50);
+      army.size = Math.max(10, army.size - 12);
     } else {
       army.rations_qty -= siegeRationCost;
     }
@@ -3985,6 +4180,8 @@ export class MockGameRepository implements IGameRepository {
       provinceCaptured = true;
       targetRegion.owner_country_id = army.country_id;
       targetRegion.occupier_country_id = army.country_id;
+      targetRegion.owner_name = army.country_id === 1 ? 'Taifa of Qurtuba' : army.country_id === 2 ? 'Taifa of Ishbiliya' : 'Taifa of Gharnata';
+      targetRegion.occupier_name = targetRegion.owner_name;
       targetRegion.resistance_level = 0;
       // Army becomes garrison
       army.status = 'garrisoning';
@@ -4017,6 +4214,107 @@ export class MockGameRepository implements IGameRepository {
     this.setStorageItem('mmo_military_regions', milRegs);
 
     return { success: true, error: null };
+  }
+
+  // ---- Phase 6.5: onboarding character + vertical-slice warfare ----
+  async getPlayerCharacter(userId: string): Promise<PlayerCharacter | null> {
+    this.ensureInitialized(userId);
+    const chars = this.getStorageItem<PlayerCharacter[]>('mmo_player_characters', []);
+    return chars.find((c) => c.profile_id === userId) || null;
+  }
+
+  async savePlayerCharacter(userId: string, input: { name: string; epithet?: string; kingdom_id: number; profession: any; origin?: string; motto?: string; banner_seed?: number }): Promise<{ success: boolean; error: string | null }> {
+    this.ensureInitialized(userId);
+    const name = (input.name || '').trim();
+    if (name.length < 2) return { success: false, error: 'Your name must be at least 2 characters.' };
+    const chars = this.getStorageItem<PlayerCharacter[]>('mmo_player_characters', []);
+    const idx = chars.findIndex((c) => c.profile_id === userId);
+    const now = new Date().toISOString();
+    const row: PlayerCharacter = {
+      id: idx >= 0 ? chars[idx].id : 'char-' + Math.random().toString(36).slice(2, 10),
+      profile_id: userId,
+      name,
+      epithet: input.epithet || 'the Unwritten',
+      kingdom_id: input.kingdom_id,
+      profession: (input.profession || 'farmer') as ProfessionId,
+      profession_rank: idx >= 0 ? chars[idx].profession_rank : 1,
+      origin: input.origin || 'The open roads',
+      motto: input.motto || 'By hearth and sword',
+      banner_seed: input.banner_seed ?? Math.floor(Math.random() * 1000),
+      onboarding_completed: idx >= 0 ? chars[idx].onboarding_completed : false,
+      created_at: idx >= 0 ? chars[idx].created_at : now,
+      updated_at: now,
+    };
+    if (idx >= 0) chars[idx] = row; else chars.push(row);
+    this.setStorageItem('mmo_player_characters', chars);
+    // Align profile citizenship/region with chosen kingdom where possible
+    const profiles = this.getStorageItem<Record<string, Profile>>('mmo_profiles', {});
+    if (profiles[userId]) {
+      profiles[userId].citizenship_country_id = input.kingdom_id;
+      // starting region per kingdom: 1 -> 1, 2 -> 5, 3 -> 8
+      profiles[userId].current_region_id = input.kingdom_id === 2 ? 5 : input.kingdom_id === 3 ? 8 : 1;
+      profiles[userId].username = name;
+      this.setStorageItem('mmo_profiles', profiles);
+    }
+    return { success: true, error: null };
+  }
+
+  async completeOnboarding(userId: string): Promise<{ success: boolean; error: string | null }> {
+    this.ensureInitialized(userId);
+    const chars = this.getStorageItem<PlayerCharacter[]>('mmo_player_characters', []);
+    const idx = chars.findIndex((c) => c.profile_id === userId);
+    if (idx === -1) return { success: false, error: 'Create your character first.' };
+    chars[idx].onboarding_completed = true;
+    chars[idx].updated_at = new Date().toISOString();
+    this.setStorageItem('mmo_player_characters', chars);
+    return { success: true, error: null };
+  }
+
+  async upgradeProfession(userId: string, cost: number = 120): Promise<{ success: boolean; error: string | null; newRank?: number }> {
+    this.ensureInitialized(userId);
+    const chars = this.getStorageItem<PlayerCharacter[]>('mmo_player_characters', []);
+    const idx = chars.findIndex((c) => c.profile_id === userId);
+    if (idx === -1) return { success: false, error: 'No character found.', newRank: undefined };
+    const currencies = this.getStorageItem<Record<string, Currencies>>('mmo_currencies', {});
+    const wallet = currencies[userId];
+    if (!wallet || wallet.local_currency_balance < cost) return { success: false, error: `Need ${cost} LC to train.`, newRank: undefined };
+    wallet.local_currency_balance -= cost;
+    this.setStorageItem('mmo_currencies', currencies);
+    chars[idx].profession_rank += 1;
+    chars[idx].updated_at = new Date().toISOString();
+    this.setStorageItem('mmo_player_characters', chars);
+    return { success: true, error: null, newRank: chars[idx].profession_rank };
+  }
+
+  async recruitArmy(userId: string): Promise<{ success: boolean; armyId?: number; error: string | null }> {
+    this.ensureInitialized(userId);
+    const cost = [
+      { resourceId: 5, quantity: 5 },
+      { resourceId: 3, quantity: 2 },
+      { resourceId: 6, quantity: 3 },
+    ];
+    const all = this.getStorageItem<PlayerResource[]>('mmo_player_resources', []);
+    const mine = all.filter((r) => r.profile_id === userId);
+    const ok = cost.every(({ resourceId, quantity }) => (mine.find((r) => r.resource_id === resourceId)?.quantity ?? 0) >= quantity);
+    if (!ok) return { success: false, armyId: undefined, error: 'Need 5 Grain, 2 Iron Ore and 3 Fish to recruit.' };
+    for (const { resourceId, quantity } of cost) {
+      const row = mine.find((r) => r.resource_id === resourceId);
+      if (row) row.quantity -= quantity;
+    }
+    this.setStorageItem('mmo_player_resources', all);
+    const armies = await this.getArmyUnits();
+    const id = armies.length + 1;
+    const profiles = this.getStorageItem<Record<string, Profile>>('mmo_profiles', {});
+    const region = profiles[userId]?.current_region_id || 1;
+    armies.push({ id, country_id: profiles[userId]?.citizenship_country_id || 1, current_region_id: region, size: 120, morale: 92, ammo_qty: 80, rations_qty: 80, status: 'idle', created_at: new Date().toISOString(), region_name: 'Host' });
+    this.setStorageItem('mmo_army_units', armies);
+    return { success: true, armyId: id, error: null };
+  }
+
+  async getLastBattleReport(userId?: string): Promise<MilitaryBattleReport | null> {
+    const sid = userId || this.getSessionUserId();
+    this.ensureInitialized(sid);
+    return this.getStorageItem<MilitaryBattleReport | null>('mmo_last_battle_report', null);
   }
 
   // Phase 11 Social & Community Mock Implementations
@@ -4804,4 +5102,8 @@ export class MockGameRepository implements IGameRepository {
     return { success: true, error: null };
   }
 }
+
+
+
+
 

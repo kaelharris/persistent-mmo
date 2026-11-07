@@ -2543,4 +2543,27 @@ export class SupabaseGameRepository implements IGameRepository {
     if (error) return { success: false, error: error.message };
     return { success: true, error: null };
   }
+
+  // Phase 6.5 stubs — Supabase vertical slice paused; return safe empty results
+  async getNobleHouses(): Promise<any[]> { return []; }
+  async getDynasty(_profileId?: string): Promise<any | null> { return null; }
+  async getDynastyMembers(_dynastyId: number): Promise<any[]> { return []; }
+  async getRulerLegitimacy(_profileId: string): Promise<any | null> { return null; }
+  async getKingdomStability(_countryId: number): Promise<any | null> { return null; }
+  async establishDynasty(_a: any, _b: any, _c: any, _d: any, _e: any): Promise<{ success: boolean; dynastyId?: number; error: string | null }> { return { success: false, error: 'Supabase dynasty not wired in this build.' }; }
+  async designateHeir(_a: number, _b: string, _c: any, _d: any): Promise<{ success: boolean; error: string | null }> { return { success: false, error: 'Supabase dynasty not wired in this build.' }; }
+  async abdicateThrone(_a: string, _b?: string): Promise<{ success: boolean; error: string | null }> { return { success: false, error: 'Supabase dynasty not wired in this build.' }; }
+  async resolveSuccession(_a: number, _b: string): Promise<{ success: boolean; newRulerTitle?: string; error: string | null }> { return { success: false, error: 'Supabase dynasty not wired in this build.' }; }
+  async updateLegitimacy(_a: string, _b: number, _c: any): Promise<{ success: boolean; error: string | null }> { return { success: false, error: 'Supabase dynasty not wired in this build.' }; }
+  async getSuccessionOrder(_dynastyId: number): Promise<any[]> { return []; }
+  async getPlayerCharacter(_userId: string): Promise<any | null> { return null; }
+  async savePlayerCharacter(_userId: string, _input: any): Promise<{ success: boolean; error: string | null }> { return { success: false, error: 'Supabase onboarding not yet wired in this build.' }; }
+  async completeOnboarding(_userId: string): Promise<{ success: boolean; error: string | null }> { return { success: false, error: 'Supabase onboarding not yet wired in this build.' }; }
+  async upgradeProfession(_userId: string): Promise<{ success: boolean; error: string | null; newRank?: number }> { return { success: false, error: 'Not available via Supabase in this build.' }; }
+  async recruitArmy(_userId: string): Promise<{ success: boolean; armyId?: number; error: string | null }> { return { success: false, error: 'Not available via Supabase in this build.' }; }
+  async initiateSiege(_a: number, _r: number): Promise<{ success: boolean; error: string | null }> { return { success: false, error: 'Not available via Supabase in this build.' }; }
+  async progressSiege(_a: number, _r: number): Promise<{ success: boolean; error: string | null; provinceCaptured?: boolean; report?: any }> { return { success: false, error: 'Not available via Supabase in this build.' }; }
+  async liftSiege(_a: number, _r: number): Promise<{ success: boolean; error: string | null }> { return { success: false, error: 'Not available via Supabase in this build.' }; }
+  async getRegionEdges(): Promise<any[]> { return []; }
+  async getLastBattleReport(_userId?: string): Promise<any | null> { return null; }
 }

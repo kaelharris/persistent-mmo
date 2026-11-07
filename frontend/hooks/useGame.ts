@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { gameRepository, activeProvider } from '../services/repository/provider';
 import { supabase } from '../services/api/supabaseClient';
 import {
@@ -104,6 +104,13 @@ import {
   SeasonLeaderboard,
   FeatureFlag,
   DeveloperKey,
+  PlayerCharacter,
+  Dynasty,
+  DynastyMember,
+  RulerLegitimacy,
+  KingdomStability,
+  MilitaryBattleReport,
+  RegionEdge,
 } from '../types/entities';
 
 export function useGame(userId: string | null) {
@@ -214,6 +221,18 @@ export function useGame(userId: string | null) {
   const [featureFlags, setFeatureFlags] = useState<FeatureFlag[]>([]);
   const [closedAlphaInvites, setClosedAlphaInvites] = useState<any[]>([]);
 
+  // Phase 6.5 vertical slice
+  const [playerCharacter, setPlayerCharacter] = useState<PlayerCharacter | null>(null);
+  const [dynasty, setDynasty] = useState<Dynasty | null>(null);
+  const [dynastyMembers, setDynastyMembers] = useState<DynastyMember[]>([]);
+  const [successionOrder, setSuccessionOrder] = useState<DynastyMember[]>([]);
+  const [rulerLegitimacy, setRulerLegitimacy] = useState<RulerLegitimacy | null>(null);
+  const [kingdomStability, setKingdomStability] = useState<KingdomStability | null>(null);
+  const [lastBattleReport, setLastBattleReport] = useState<MilitaryBattleReport | null>(null);
+  const [regionEdges, setRegionEdges] = useState<RegionEdge[]>([]);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+  const [refreshCount, setRefreshCount] = useState(0);
+
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -221,7 +240,7 @@ export function useGame(userId: string | null) {
 
   const fetchStaticData = useCallback(async () => {
     try {
-      const [rList, cList, resList, spList, expList, tempCol, recCol, inCol, itemTemps] = await Promise.all([
+      const [rList, cList, resList, spList, expList, tempCol, recCol, inCol, itemTemps, edges] = await Promise.all([
         gameRepository.getRegions(),
         gameRepository.getCountries(),
         gameRepository.getResources(),
@@ -231,6 +250,7 @@ export function useGame(userId: string | null) {
         gameRepository.getProductionRecipes(),
         gameRepository.getProductionInputs(),
         gameRepository.getItemTemplates(),
+        (gameRepository as any).getRegionEdges?.() ?? Promise.resolve([]),
       ]);
       setRegions(rList);
       setCountries(cList);
@@ -241,6 +261,7 @@ export function useGame(userId: string | null) {
       setProductionRecipes(recCol);
       setProductionInputs(inCol);
       setItemTemplates(itemTemps);
+      setRegionEdges(edges as RegionEdge[]);
     } catch (err) {
       console.error('Failed to fetch static data:', err);
     }
@@ -437,6 +458,43 @@ export function useGame(userId: string | null) {
       setSupportTickets(ticketsList);
       setFeatureFlags(flagsList);
       setClosedAlphaInvites(invitesList);
+
+      // Phase 6.5: character, dynasty, battle report, edges
+      try {
+        const [char, dyn, report, edgesNow] = await Promise.all([
+          (gameRepository as any).getPlayerCharacter?.(userId) ?? Promise.resolve(null),
+          (gameRepository as any).getDynasty?.(userId) ?? Promise.resolve(null),
+          (gameRepository as any).getLastBattleReport?.(userId) ?? Promise.resolve(null),
+          (gameRepository as any).getRegionEdges?.() ?? Promise.resolve([]),
+        ]);
+        setPlayerCharacter(char as PlayerCharacter | null);
+        const d = dyn as Dynasty | null;
+        setDynasty(d);
+        if (d) {
+          const [members, order] = await Promise.all([
+            (gameRepository as any).getDynastyMembers?.(d.id) ?? Promise.resolve([]),
+            (gameRepository as any).getSuccessionOrder?.(d.id) ?? Promise.resolve([]),
+          ]);
+          setDynastyMembers(members as DynastyMember[]);
+          setSuccessionOrder(order as DynastyMember[]);
+          const countryId = (d.country_id as number) || (prof?.citizenship_country_id as number) || 1;
+          const [leg, stab] = await Promise.all([
+            (gameRepository as any).getRulerLegitimacy?.(userId) ?? Promise.resolve(null),
+            (gameRepository as any).getKingdomStability?.(countryId) ?? Promise.resolve(null),
+          ]);
+          setRulerLegitimacy(leg as RulerLegitimacy | null);
+          setKingdomStability(stab as KingdomStability | null);
+        } else {
+          setDynastyMembers([]);
+          setSuccessionOrder([]);
+        }
+        setLastBattleReport(report as MilitaryBattleReport | null);
+        if (Array.isArray(edgesNow) && edgesNow.length) setRegionEdges(edgesNow as RegionEdge[]);
+      } catch (e) {
+        console.warn('6.5 state load failed', e);
+      }
+      setHasLoadedOnce(true);
+      setRefreshCount((n) => n + 1);
 
       if (seasonsList.length > 0) {
         const activeS = (seasonsList as Season[]).find(s => s.status === 'active') || (seasonsList as Season[])[0];
@@ -806,15 +864,25 @@ export function useGame(userId: string | null) {
     };
   }, [userId, activeCompanyId]);
 
+  // Action lock: prevents overlapping mutations (expedition lock contract)
+  const actionLockRef = useRef(false);
+  const lockNow = () => { if (actionLockRef.current) return true; actionLockRef.current = true; return false; };
+  const unlockNow = () => { actionLockRef.current = false; };
+
   const travel = async (targetRegionId: number): Promise<{ success: boolean; error: string | null }> => {
     if (!userId) return { success: false, error: 'Not logged in.' };
+    if (lockNow()) return { success: false, error: 'Busy — action in progress.' };
     setActionLoading(true);
-    const res = await gameRepository.travelToRegion(userId, targetRegionId);
-    if (res.success) {
-      await fetchUserData();
+    try {
+      const res = await gameRepository.travelToRegion(userId, targetRegionId);
+      if (res.success) {
+        await fetchUserData();
+      }
+      return res;
+    } finally {
+      unlockNow();
+      setActionLoading(false);
     }
-    setActionLoading(false);
-    return res;
   };
 
   const work = async (companyId: string): Promise<{ success: boolean; earnedSalary: number; skillIncrease: number; expGained: number; error: string | null }> => {
@@ -861,13 +929,18 @@ export function useGame(userId: string | null) {
     error: string | null;
   }> => {
     if (!userId) return { success: false, gatheredQuantity: 0, energySpent: 0, experienceGained: 0, leveledUp: false, newLevel: 0, newEnergy: 0, error: 'Not logged in.' };
+    if (lockNow()) return { success: false, gatheredQuantity: 0, energySpent: 0, experienceGained: 0, leveledUp: false, newLevel: 0, newEnergy: 0, error: 'Busy — action in progress.' };
     setActionLoading(true);
-    const res = await gameRepository.gatherResource(userId, resourceId);
-    if (res.success) {
-      await fetchUserData();
+    try {
+      const res = await gameRepository.gatherResource(userId, resourceId);
+      if (res.success) {
+        await fetchUserData();
+      }
+      return res;
+    } finally {
+      unlockNow();
+      setActionLoading(false);
     }
-    setActionLoading(false);
-    return res;
   };
 
   const claimTicket = async (): Promise<{ success: boolean; error: string | null }> => {
@@ -1077,13 +1150,18 @@ export function useGame(userId: string | null) {
 
   const craftItem = async (recipeId: number): Promise<{ success: boolean; error: string | null }> => {
     if (!userId) return { success: false, error: 'Not logged in.' };
+    if (lockNow()) return { success: false, error: 'Busy — action in progress.' };
     setActionLoading(true);
-    const res = await gameRepository.craftItem(userId, recipeId);
-    if (res.success) {
-      await fetchUserData();
+    try {
+      const res = await gameRepository.craftItem(userId, recipeId);
+      if (res.success) {
+        await fetchUserData();
+      }
+      return res;
+    } finally {
+      unlockNow();
+      setActionLoading(false);
     }
-    setActionLoading(false);
-    return res;
   };
 
   const repairItem = async (itemId: string): Promise<{ success: boolean; costPaid?: number; error: string | null }> => {
@@ -1255,14 +1333,19 @@ export function useGame(userId: string | null) {
     return res;
   };
 
-  const executePvE = async (enemyTemplateId: number): Promise<{ success: boolean; isVictory?: boolean; xpGained?: number; currencyGained?: number; roundsLog?: CombatRoundLog[]; lootGained?: CombatRewardItem[]; playerHp?: number; error: string | null }> => {
+  const executePvE = async (enemyTemplateId: number, _idempotencyKey?: string): Promise<{ success: boolean; isVictory?: boolean; xpGained?: number; currencyGained?: number; roundsLog?: CombatRoundLog[]; lootGained?: CombatRewardItem[]; playerHp?: number; error: string | null }> => {
+    if (lockNow()) return { success: false, error: 'Busy — action in progress.' };
     setActionLoading(true);
-    const res = await gameRepository.executePvEBattle(enemyTemplateId);
-    if (res.success) {
-      await fetchUserData();
+    try {
+      const res = await gameRepository.executePvEBattle(enemyTemplateId);
+      if (res.success) {
+        await fetchUserData();
+      }
+      return res;
+    } finally {
+      unlockNow();
+      setActionLoading(false);
     }
-    setActionLoading(false);
-    return res;
   };
 
   const executePvP = async (opponentProfileId: string): Promise<{ success: boolean; isVictory?: boolean; roundsLog?: CombatRoundLog[]; ratingChange?: number; playerHp?: number; error: string | null }> => {
@@ -1634,6 +1717,62 @@ export function useGame(userId: string | null) {
     return res;
   };
 
+  // ---- Phase 6.5 vertical-slice mutations ----
+  const savePlayerCharacter = async (input: { name: string; epithet?: string; kingdom_id: number; profession: any; origin?: string; motto?: string; banner_seed?: number }) => {
+    if (!userId) return { success: false, error: 'Not logged in.' };
+    setActionLoading(true);
+    const res = await (gameRepository as any).savePlayerCharacter(userId, input);
+    if (res.success) await fetchUserData();
+    setActionLoading(false);
+    return res;
+  };
+  const completeOnboarding = async () => {
+    if (!userId) return { success: false, error: 'Not logged in.' };
+    setActionLoading(true);
+    const res = await (gameRepository as any).completeOnboarding(userId);
+    if (res.success) await fetchUserData();
+    setActionLoading(false);
+    return res;
+  };
+  const upgradeProfession = async (cost?: number) => {
+    if (!userId) return { success: false, error: 'Not logged in.' };
+    setActionLoading(true);
+    const res = await (gameRepository as any).upgradeProfession(userId, cost ?? 120);
+    if (res.success) await fetchUserData();
+    setActionLoading(false);
+    return res;
+  };
+  const recruitArmy = async () => {
+    if (!userId) return { success: false, error: 'Not logged in.' };
+    setActionLoading(true);
+    const res = await (gameRepository as any).recruitArmy(userId);
+    if (res.success) await fetchUserData();
+    setActionLoading(false);
+    return res;
+  };
+  const initiateSiege = async (armyId: number, targetRegionId: number) => {
+    setActionLoading(true);
+    const res = await (gameRepository as any).initiateSiege(armyId, targetRegionId);
+    if (res.success) await fetchUserData();
+    setActionLoading(false);
+    return res;
+  };
+  const progressSiege = async (armyId: number, targetRegionId: number) => {
+    setActionLoading(true);
+    const res = await (gameRepository as any).progressSiege(armyId, targetRegionId);
+    if (res.success) await fetchUserData();
+    setActionLoading(false);
+    return res;
+  };
+  const liftSiege = async (armyId: number, targetRegionId: number) => {
+    setActionLoading(true);
+    const res = await (gameRepository as any).liftSiege(armyId, targetRegionId);
+    if (res.success) await fetchUserData();
+    setActionLoading(false);
+    return res;
+  };
+  const refreshCharacterAndDynasty = async () => { await fetchUserData(); };
+
   return {
     profile,
     stats,
@@ -1728,7 +1867,18 @@ export function useGame(userId: string | null) {
     supportTickets,
     featureFlags,
     closedAlphaInvites,
+    // Phase 6.5 states
+    playerCharacter,
+    dynasty,
+    dynastyMembers,
+    successionOrder,
+    rulerLegitimacy,
+    kingdomStability,
+    lastBattleReport,
+    regionEdges,
     loading,
+    isInitialLoading: loading && !hasLoadedOnce,
+    isRefreshing: loading && hasLoadedOnce,
     actionLoading,
     error,
     travel,
@@ -1786,6 +1936,16 @@ export function useGame(userId: string | null) {
     engageBattle: handleEngageMilitaryBattle,
     proposePeace: handleProposePeace,
     acceptPeace: handleAcceptPeace,
+    // Phase 6.5 mutations
+    savePlayerCharacter,
+    completeOnboarding,
+    upgradeProfession,
+    recruitArmy,
+    initiateSiege,
+    progressSiege,
+    liftSiege,
+    refreshCharacterAndDynasty,
+    getLastBattleReport: async () => (gameRepository as any).getLastBattleReport?.(userId ?? undefined) ?? null,
     // Phase 11 mutations
     createGuild,
     applyToGuild,
