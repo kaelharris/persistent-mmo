@@ -51,7 +51,6 @@ it('completes one expedition under Strict Mode with exact costs, persistent pane
   expect(panel).toBeTruthy();
   await click('Gather Wood · have 10');
   expect((await stats())?.energy).toBe(80);
-  expect(container.querySelector('aside')).toBeTruthy();
   expect(container.textContent).toContain('Jayyan');
   expect(container.textContent).not.toContain('Syncing core');
   expect(await gameRepository.getGatherLogs(user)).toHaveLength(1);

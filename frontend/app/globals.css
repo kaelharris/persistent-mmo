@@ -1,12 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700;800;900&family=MedievalSharp&family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Marcellus+SC&family=Cinzel:wght@400;500;600;700&family=MedievalSharp&family=VT323&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #0d0d0f;
-  --foreground: #f4f4f5;
-  --font-sans: 'Inter', sans-serif;
-  --font-display: 'MedievalSharp', cursive;
-  --font-serif: 'Cinzel', serif;
+  --deep: #0A1019;
+  --panel: #111D28;
+  --panel-high: #1B2D39;
+  --paper: #F2E8D5;
+  --muted: #B6AE9B;
+  --gold: #D8AE68;
+  --red: #A54D4C;
+  --green: #6D9480;
+  --background: #0A1019;
+  --foreground: #F2E8D5;
+  --font-sans: 'Barlow', 'Inter', system-ui, sans-serif;
+  --font-display: 'Marcellus SC', 'Georgia', Georgia, serif;
+  --font-serif: 'Cinzel', Georgia, Georgia, serif;
   --font-pixel: 'VT323', monospace;
 }
 
@@ -19,19 +27,19 @@
   --font-pixel: var(--font-pixel);
   
   /* Game-Specific MMORPG Colors */
-  --color-game-gold: #e5c158;
+  --color-game-gold: var(--gold);
   --color-game-gold-dark: #b89030;
   --color-game-iron: #3a3b40;
   --color-game-iron-dark: #1e1f22;
   --color-game-bronze: #8c5a3c;
   --color-game-wood: #2a1810;
   --color-game-wood-light: #4a2c1d;
-  --color-game-stone: #24252a;
+  --color-game-stone: var(--panel);
   --color-game-stone-dark: #141518;
-  --color-game-parchment: #f4edd8;
+  --color-game-parchment: var(--paper);
   --color-game-parchment-dark: #dfd2b5;
-  --color-game-crimson: #991b1b;
-  --color-game-emerald: #065f46;
+  --color-game-crimson: var(--red);
+  --color-game-emerald: var(--green);
   
   --animate-glow-pulse: glow-pulse 2.5s infinite ease-in-out;
   --animate-float-embers: float-embers 20s infinite linear;
@@ -981,3 +989,51 @@ h1, h2, h3, h4, h5, h6 {
 }
 .world-map-frame { border: 6px solid #4a2c1d; box-shadow: inset 0 0 60px rgba(0,0,0,0.85), 0 20px 60px rgba(0,0,0,0.8); position: relative; }
 .province-marker { transform: translate(-50%, -50%); }
+
+/* === REIGNWARD GILDED RUIN === */
+.rw-panel {
+  background:
+    radial-gradient(ellipse at top, rgba(216,174,104,0.06), transparent 70%),
+    linear-gradient(160deg, var(--panel-high), var(--panel));
+  border: 1px solid #6b5836;
+  box-shadow: inset 0 0 0 2px rgba(216,174,104,0.18), inset 0 0 0 5px rgba(10,16,25,0.6), 0 12px 30px rgba(0,0,0,0.55);
+  position: relative;
+}
+.rw-panel::before { content:''; position:absolute; inset:5px; border:1px solid rgba(216,174,104,0.22); pointer-events:none; }
+.rw-btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  font-family: var(--font-display); font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  border:1px solid var(--gold); color:#0A1019;
+  background: linear-gradient(180deg, #e8c88a, #b89030);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -2px 0 rgba(0,0,0,.35), 0 4px 10px rgba(0,0,0,.45);
+  padding:10px 14px; font-size:11px; min-height:40px;
+  transition: filter .15s, transform .15s, box-shadow .15s;
+}
+.rw-btn:hover { filter:brightness(1.07); }
+.rw-btn:active { transform:translateY(1px); }
+.rw-btn:focus-visible { outline:2px solid #F2E8D5; outline-offset:2px; }
+.rw-btn:disabled { opacity:.55; filter:grayscale(.3); cursor:not-allowed; }
+.rw-btn[data-variant="bronze"] { background: linear-gradient(180deg, #5a6a7a, #1B2D39); color: var(--paper); border-color: #D8AE68; }
+.rw-btn[data-variant="dark"] { background: linear-gradient(180deg, #2a3a48, #111D28); color: var(--paper); border-color:#3a4a58; }
+.rw-btn[data-variant="green"] { background: linear-gradient(180deg, #7fa08d, #3e5a4d); color:#F2E8D5; border-color:#6D9480; }
+.rw-btn[data-variant="red"] { background: linear-gradient(180deg, #b45a58, #7a2f2e); color:#F2E8D5; border-color:#A54D4C; }
+.rw-btn[data-variant="icon"] { padding:8px; min-height:36px; min-width:36px; }
+.rw-dock {
+  position: fixed; left:50%; transform:translateX(-50%); bottom: max(10px, env(safe-area-inset-bottom));
+  z-index: 60; display:flex; gap:2px; padding:6px;
+  background: linear-gradient(180deg, rgba(27,45,57,.96), rgba(17,29,40,.98));
+  border:1px solid #6b5836; box-shadow: 0 14px 40px rgba(0,0,0,.7), inset 0 0 0 2px rgba(216,174,104,.18);
+  max-width: 96vw; overflow-x:auto; scrollbar-width:none;
+}
+.rw-dock::-webkit-scrollbar { display:none; }
+.rw-dock a { display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 10px; color:var(--muted); font-family:var(--font-display); font-size:9px; letter-spacing:.08em; text-transform:uppercase; min-width:56px; text-align:center; border:1px solid transparent; }
+.rw-dock a[aria-current="page"] { color:var(--gold); border-color:rgba(216,174,104,.6); background: linear-gradient(180deg, rgba(122,47,46,.35), rgba(27,45,57,.2)); }
+.rw-drawer {
+  transition: transform 260ms cubic-bezier(.2,.7,.2,1), opacity 260ms;
+}
+@media (prefers-reduced-motion: reduce) { .rw-drawer, .rw-btn { transition:none !important; } }
+.rw-banner {
+  position:relative; aspect-ratio:16/9; width:100%; overflow:hidden; border:1px solid #6b5836; background:#0A1019;
+}
+.rw-banner img { width:100%; height:100%; object-fit:contain; display:block; background:#0A1019; }
+@media (max-width:640px) { .rw-banner { max-height:220px; } .rw-dock a { min-width:48px; padding:6px 6px; font-size:8px; } }

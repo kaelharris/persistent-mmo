@@ -180,9 +180,11 @@ export default function WorldPage() {
             <text x="70" y="58" fill="#8fb4c5" fontSize="3.2" fontStyle="italic" opacity="0.85">Mare Internum</text>
             <text x="6" y="52" fill="#8fb4c5" fontSize="3" fontStyle="italic" opacity="0.7">Atlantikus</text>
 
-            {/* Landmass */}
+            {/* Landmass — illustrative map.webp terrain clipped to Iberia (interactive overlays stay native) */}
+            <defs><clipPath id="iberiaClip"><path d={toPath(IBERIA) + ' Z'} /></clipPath></defs>
             <path d={toPath(IBERIA) + ' Z'} fill="#cbbf9a" stroke="#5c4a2d" strokeWidth="0.5" />
-            <path d={toPath(IBERIA) + ' Z'} fill="#e8ddb8" opacity="0.35" />
+            <image href="/assets/reignward-wide/map.webp" x="0" y="0" width="100" height="65.4" preserveAspectRatio="xMidYMid slice" opacity="0.55" clipPath="url(#iberiaClip)" />
+            <path d={toPath(IBERIA) + ' Z'} fill="none" stroke="#5c4a2d" strokeWidth="0.7" />
 
             {/* Political layer: tiled province territories (not circles) */}
             {layer === 'political' && visibleRegions.map((r: any) => {
