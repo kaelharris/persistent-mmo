@@ -104,6 +104,20 @@ export function useAuth() {
     return { success: true, error: null };
   };
 
+  const startLocalPlayer = async (characterName: string = 'Kael the Bold') => {
+    setLoading(true);
+    setError(null);
+    if ((authRepository as any).startLocalSession) {
+      const user = (authRepository as any).startLocalSession(characterName);
+      setUserId(user.id);
+      setSessionUser(user);
+      setLoading(false);
+      return { success: true, user, error: null };
+    }
+    const res = await signUp(characterName, 'local@reignward.dev', 'LocalPass123!');
+    return res;
+  };
+
   return {
     userId,
     sessionUser,
@@ -112,6 +126,7 @@ export function useAuth() {
     signIn,
     signUp,
     signOut,
+    startLocalPlayer,
     signInWithOAuth,
     isAuthenticated: !!userId,
   };

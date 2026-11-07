@@ -121,6 +121,13 @@ const DEFAULT_COUNTRIES: Country[] = [
   { id: 1, name: 'Taifa of Qurtuba', gold_reserve: 5000.0, local_currency_reserve: 500000.0, vat_rate: 10.0, import_tax_rate: 10.0, income_tax_rate: 10.0, created_at: new Date().toISOString() },
   { id: 2, name: 'Taifa of Ishbiliya', gold_reserve: 8000.0, local_currency_reserve: 800000.0, vat_rate: 12.0, import_tax_rate: 15.0, income_tax_rate: 8.0, created_at: new Date().toISOString() },
   { id: 3, name: 'Taifa of Gharnata', gold_reserve: 4000.0, local_currency_reserve: 400000.0, vat_rate: 8.0, import_tax_rate: 8.0, income_tax_rate: 12.0, created_at: new Date().toISOString() },
+  { id: 4, name: 'Taifa of Tulaytula', gold_reserve: 4500.0, local_currency_reserve: 450000.0, vat_rate: 9.0, import_tax_rate: 10.0, income_tax_rate: 10.0, created_at: new Date().toISOString() },
+  { id: 5, name: 'Taifa of Saragusta', gold_reserve: 6000.0, local_currency_reserve: 600000.0, vat_rate: 11.0, import_tax_rate: 12.0, income_tax_rate: 9.0, created_at: new Date().toISOString() },
+  { id: 6, name: 'Taifa of Balansiya', gold_reserve: 5500.0, local_currency_reserve: 550000.0, vat_rate: 10.0, import_tax_rate: 11.0, income_tax_rate: 10.0, created_at: new Date().toISOString() },
+  { id: 7, name: 'Taifa of Almiriya', gold_reserve: 4800.0, local_currency_reserve: 480000.0, vat_rate: 9.5, import_tax_rate: 10.0, income_tax_rate: 10.0, created_at: new Date().toISOString() },
+  { id: 8, name: 'Kingdom of León', gold_reserve: 7000.0, local_currency_reserve: 700000.0, vat_rate: 10.0, import_tax_rate: 12.0, income_tax_rate: 10.0, created_at: new Date().toISOString() },
+  { id: 9, name: 'Kingdom of Navarre', gold_reserve: 5200.0, local_currency_reserve: 520000.0, vat_rate: 9.0, import_tax_rate: 10.0, income_tax_rate: 9.0, created_at: new Date().toISOString() },
+  { id: 10, name: 'County of Barcelona', gold_reserve: 6500.0, local_currency_reserve: 650000.0, vat_rate: 11.5, import_tax_rate: 14.0, income_tax_rate: 10.0, created_at: new Date().toISOString() },
 ];
 
 let DEFAULT_REGIONS: Region[] = [
@@ -4251,8 +4258,10 @@ export class MockGameRepository implements IGameRepository {
     const profiles = this.getStorageItem<Record<string, Profile>>('mmo_profiles', {});
     if (profiles[userId]) {
       profiles[userId].citizenship_country_id = input.kingdom_id;
-      // starting region per kingdom: 1 -> 1, 2 -> 5, 3 -> 8
-      profiles[userId].current_region_id = input.kingdom_id === 2 ? 5 : input.kingdom_id === 3 ? 8 : 1;
+      const capitalRegionMap: Record<number, number> = {
+        1: 1, 2: 6, 3: 8, 4: 3, 5: 5, 6: 10, 7: 9, 8: 1, 9: 5, 10: 10,
+      };
+      profiles[userId].current_region_id = capitalRegionMap[input.kingdom_id] || 1;
       profiles[userId].username = name;
       this.setStorageItem('mmo_profiles', profiles);
     }
@@ -4267,6 +4276,21 @@ export class MockGameRepository implements IGameRepository {
     chars[idx].onboarding_completed = true;
     chars[idx].updated_at = new Date().toISOString();
     this.setStorageItem('mmo_player_characters', chars);
+    return { success: true, error: null };
+  }
+
+  async resetPlayerCharacter(userId: string): Promise<{ success: boolean; error: string | null }> {
+    this.ensureInitialized(userId);
+    const chars = this.getStorageItem<PlayerCharacter[]>('mmo_player_characters', []);
+    const filtered = chars.filter((c) => c.profile_id !== userId);
+    this.setStorageItem('mmo_player_characters', filtered);
+
+    const profiles = this.getStorageItem<Record<string, Profile>>('mmo_profiles', {});
+    if (profiles[userId]) {
+      profiles[userId].citizenship_country_id = 1;
+      profiles[userId].current_region_id = 1;
+      this.setStorageItem('mmo_profiles', profiles);
+    }
     return { success: true, error: null };
   }
 

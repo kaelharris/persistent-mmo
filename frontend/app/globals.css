@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Marcellus+SC&family=Cinzel:wght@400;500;600;700&family=MedievalSharp&family=VT323&display=swap');
 @import "tailwindcss";
+@import "./reignward-prototype.css";
 
 :root {
   --deep: #0A1019;

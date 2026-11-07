@@ -2559,6 +2559,7 @@ export class SupabaseGameRepository implements IGameRepository {
   async getPlayerCharacter(_userId: string): Promise<any | null> { return null; }
   async savePlayerCharacter(_userId: string, _input: any): Promise<{ success: boolean; error: string | null }> { return { success: false, error: 'Supabase onboarding not yet wired in this build.' }; }
   async completeOnboarding(_userId: string): Promise<{ success: boolean; error: string | null }> { return { success: false, error: 'Supabase onboarding not yet wired in this build.' }; }
+  async resetPlayerCharacter(_userId: string): Promise<{ success: boolean; error: string | null }> { return { success: true, error: null }; }
   async upgradeProfession(_userId: string): Promise<{ success: boolean; error: string | null; newRank?: number }> { return { success: false, error: 'Not available via Supabase in this build.' }; }
   async recruitArmy(_userId: string): Promise<{ success: boolean; armyId?: number; error: string | null }> { return { success: false, error: 'Not available via Supabase in this build.' }; }
   async initiateSiege(_a: number, _r: number): Promise<{ success: boolean; error: string | null }> { return { success: false, error: 'Not available via Supabase in this build.' }; }

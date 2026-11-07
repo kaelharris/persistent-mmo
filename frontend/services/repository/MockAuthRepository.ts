@@ -120,7 +120,17 @@ export class MockAuthRepository implements IAuthRepository {
     if (!currentSessionId) return null;
 
     const users = this.getUsers();
-    const user = users.find((u) => u.id === currentSessionId);
+    let user = users.find((u) => u.id === currentSessionId);
+    if (!user && currentSessionId === 'local_player') {
+      user = {
+        id: 'local_player',
+        email: 'wanderer@reignward.local',
+        username: 'Kael the Bold',
+        passwordHash: 'local',
+      };
+      users.push(user);
+      this.saveUsers(users);
+    }
     if (!user) return null;
 
     return {
@@ -128,6 +138,29 @@ export class MockAuthRepository implements IAuthRepository {
       email: user.email,
       username: user.username,
     };
+  }
+
+  startLocalSession(characterName: string = 'Kael the Bold'): SessionUser {
+    if (typeof window === 'undefined') {
+      return { id: 'local_player', email: 'wanderer@reignward.local', username: characterName };
+    }
+    const users = this.getUsers();
+    let user = users.find((u) => u.id === 'local_player');
+    if (!user) {
+      user = {
+        id: 'local_player',
+        email: 'wanderer@reignward.local',
+        username: characterName,
+        passwordHash: 'local',
+      };
+      users.push(user);
+    } else if (characterName && characterName !== 'local_player') {
+      user.username = characterName;
+    }
+    this.saveUsers(users);
+    localStorage.setItem('mmo_auth_session', 'local_player');
+    this.notifyListeners('local_player');
+    return { id: 'local_player', email: user.email, username: user.username };
   }
 
   onAuthStateChange(callback: (userId: string | null) => void): () => void {

@@ -427,6 +427,7 @@ export interface IGameRepository {
   getPlayerCharacter(userId: string): Promise<any | null>;
   savePlayerCharacter(userId: string, input: { name: string; epithet?: string; kingdom_id: number; profession: any; origin?: string; motto?: string; banner_seed?: number }): Promise<{ success: boolean; error: string | null }>;
   completeOnboarding(userId: string): Promise<{ success: boolean; error: string | null }>;
+  resetPlayerCharacter(userId: string): Promise<{ success: boolean; error: string | null }>;
   upgradeProfession(userId: string, cost?: number): Promise<{ success: boolean; error: string | null; newRank?: number }>;
   recruitArmy(userId: string): Promise<{ success: boolean; armyId?: number; error: string | null }>;
   initiateSiege(armyId: number, targetRegionId: number): Promise<{ success: boolean; error: string | null }>;
