@@ -1,13 +1,15 @@
 'use client';
 
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useGame } from '../../hooks/useGame';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Map, User as UserIcon, Coins, Landmark, Swords, Shield, BookOpen, FileText, Compass, LogOut, MapPin, Play, Pause, SkipForward, Volume2, VolumeX } from 'lucide-react';
 import { useMusic, TRACKS } from '../../hooks/useMusic';
 import { useSFX } from '../../hooks/useSFX';
+import './reignward.css';
 
 export type GameContextType = ReturnType<typeof useGame> & {
   triggerFloatingText: (text: string, colorClass?: string, x?: number, y?: number) => void;
@@ -43,6 +45,7 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
   const sfx = useSFX();
   const [floatingTexts, setFloatingTexts] = useState<{ id: string; text: string; colorClass: string; x: number; y: number }[]>([]);
   const [error, setErrorState] = useState<string>('');
+  const dockRef = useRef<HTMLElement>(null);
 
   const triggerFloatingText = useCallback((text: string, colorClass: string = 'text-game-gold', x?: number, y?: number) => {
     const id = Math.random().toString(36).substring(2, 9);
@@ -51,6 +54,13 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
   }, []);
 
   useEffect(() => { if (!authLoading && !userId) router.push('/login'); }, [userId, authLoading, router]);
+  useEffect(() => {
+    const dock = dockRef.current;
+    const activeLink = dock?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (dock && activeLink) {
+      dock.scrollLeft = Math.max(0, activeLink.offsetLeft - (dock.clientWidth - activeLink.clientWidth) / 2);
+    }
+  }, [pathname, authLoading, game.loading]);
 
   if (authLoading || game.loading || !userId) {
     return (
@@ -65,21 +75,21 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
   const activeCountry = game.countries.find((c) => c.id === activeRegion?.country_id);
   const isWorld = pathname === '/world';
   const displayName = (game as any).playerCharacter?.name || game.profile?.username || '';
-  const BANNERS: Record<string, { src: string; alt: string }> = {
-    '/character': { src: '/assets/reignward-wide/character.webp', alt: 'Character parchment in the court at Qurtuba' },
-    '/economy': { src: '/assets/reignward-wide/economy.webp', alt: 'Workshop and granaries of Gharnata' },
-    '/marketplace': { src: '/assets/reignward-wide/market.webp', alt: 'Market ledger of Ishbiliya' },
-    '/military': { src: '/assets/reignward-wide/military.webp', alt: 'Army muster at Saragusta' },
-    '/kingdom': { src: '/assets/reignward-wide/council.webp', alt: 'The council of the Taifa' },
-    '/dynasty': { src: '/assets/reignward-wide/dynasty.webp', alt: 'House of Aegis — dynasty hall' },
-    '/quests': { src: '/assets/reignward-wide/quests.webp', alt: 'Commissions board at Qurtuba' },
-    '/profile': { src: '/assets/reignward-wide/chronicle.webp', alt: 'Chronicle of the chronicler' },
+  const BANNERS: Record<string, { src: string; alt: string; detail: string }> = {
+    '/character': { src: '/assets/reignward-wide/character.webp', alt: 'Character parchment in the court at Qurtuba', detail: 'The character record' },
+    '/economy': { src: '/assets/reignward-wide/economy.webp', alt: 'Workshop and granaries of Gharnata', detail: 'The realm treasury' },
+    '/marketplace': { src: '/assets/reignward-wide/market.webp', alt: 'Market ledger of Ishbiliya', detail: 'The trading ledger' },
+    '/military': { src: '/assets/reignward-wide/military.webp', alt: 'Army muster at Saragusta', detail: 'The war room' },
+    '/kingdom': { src: '/assets/reignward-wide/council.webp', alt: 'The council of the Taifa', detail: 'The royal council' },
+    '/dynasty': { src: '/assets/reignward-wide/dynasty.webp', alt: 'House of Aegis — dynasty hall', detail: 'The house archives' },
+    '/quests': { src: '/assets/reignward-wide/quests.webp', alt: 'Commissions board at Qurtuba', detail: 'The commission board' },
+    '/profile': { src: '/assets/reignward-wide/chronicle.webp', alt: 'Chronicle of the chronicler', detail: 'The realm chronicle' },
   };
   const banner = pathname ? BANNERS[pathname] : undefined;
 
   return (
     <GameContext.Provider value={{ ...game, triggerFloatingText, setError: setErrorState }}>
-      <div className="min-h-screen bg-[#0A1019] text-[#F2E8D5] font-sans pb-24">
+      <div className="min-h-screen bg-[#0A1019] text-[#F2E8D5] font-sans pb-28">
         <header className="sticky top-0 z-40 h-14 border-b border-[#6b5836] bg-[#111D28]/95 backdrop-blur flex items-center justify-between px-3 md:px-5">
           <Link href="/world" className="flex items-center gap-2">
             <span className="font-display tracking-widest text-[#D8AE68] text-sm">REIGNWARD</span>
@@ -103,17 +113,26 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
           </div>
         </header>
 
-        <main className={isWorld ? 'h-[calc(100vh-56px)] relative overflow-hidden' : 'mx-auto max-w-[1100px] px-3 md:px-6 py-5'}>
+        <main className={isWorld ? 'h-[calc(100vh-56px)] relative overflow-hidden' : 'mx-auto max-w-[1180px] px-3 md:px-6 py-3 md:py-4'}>
           {isWorld ? children : (
-            <div className="rw-panel rw-drawer p-4 md:p-6" style={{ animation: 'rwSlide .26s ease-out' }}>
-              <style>{`@keyframes rwSlide{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}} @media (prefers-reduced-motion: reduce){ .rw-drawer{animation:none!important} }`}</style>
-              {banner && <div className="rw-banner mb-4"><img src={banner.src} alt={banner.alt} style={{ width:'100%', height:'100%', objectFit:'contain', background:'#0A1019' }} /></div>}
+            <div key={pathname} className="rw-panel rw-drawer p-3 md:p-5">
+              {banner && (
+                <div className="rw-scene mb-4">
+                  <div className="rw-banner"><Image src={banner.src} alt={banner.alt} fill sizes="(max-width: 700px) 100vw, 380px" /></div>
+                  <div className="rw-scene-caption" aria-hidden="true">
+                    <span className="rw-scene-kicker">REIGNWARD · REALM RECORD</span>
+                    <span className="rw-scene-label">{banner.detail}</span>
+                    <span className="rw-scene-line" />
+                    <span className="rw-scene-foot">{activeRegion?.name || 'The realm'} · {activeCountry?.name || 'Unclaimed lands'}</span>
+                  </div>
+                </div>
+              )}
               {children}
             </div>
           )}
         </main>
 
-        <nav className="rw-dock" aria-label="Primary">
+        <nav ref={dockRef} className="rw-dock" aria-label="Primary">
           {NAV.map((item) => {
             const Icon = item.icon;
             const active = pathname === item.href || (item.href === '/world' && pathname?.startsWith('/world'));

@@ -19,6 +19,7 @@ export default function MilitaryPage() {
   const myArmies = useMemo(() => (armyUnits || []).filter((a: any) => a.country_id === profile?.citizenship_country_id), [armyUnits, profile]);
   const selectedArmy = myArmies.find((a: any) => a.id === selectedArmyId) || myArmies[0];
   const neighborsOf = selectedArmy ? getNeighbors(regionEdges || [], selectedArmy.current_region_id) : [];
+  const validMoveTarget = neighborsOf.includes(moveTarget) ? moveTarget : (neighborsOf[0] ?? 0);
   const myMil = selectedArmy ? (militaryRegions || []).find((m: any) => m.region_id === selectedArmy.current_region_id) : undefined;
   const isForeign = myMil && myMil.owner_country_id !== profile?.citizenship_country_id;
   const siegePct = myMil ? Math.min(100, Math.max(0, 100 - myMil.resistance_level)) : 0;
@@ -28,14 +29,14 @@ export default function MilitaryPage() {
   const doRecruit = async () => { const r = await recruitArmy(); flash(r.success, r.success ? `Host #${r.armyId} recruited (5 grain, 2 iron, 3 fish).` : r.error); if (r.success) setSelectedArmyId(r.armyId); };
   const doDeclare = async () => { const r = await declareWar(targetCountry); flash(r.success, r.success ? `War declared on ${countries?.find((c:any)=>c.id===targetCountry)?.name}.` : r.error); };
   const doMobilize = async () => { const r = await mobilizeArmy(); flash(r.success, r.success ? `Host #${r.armyId} mobilised.` : r.error); };
-  const doMove = async () => { if (!selectedArmy) return; const r = await moveArmy(selectedArmy.id, moveTarget); flash(r.success, r.success ? `March to ${PROVINCE_MAP[moveTarget]?.name || moveTarget} complete.` : r.error); };
+  const doMove = async () => { if (!selectedArmy || !neighborsOf.length) return; const r = await moveArmy(selectedArmy.id, validMoveTarget); flash(r.success, r.success ? `March to ${PROVINCE_MAP[validMoveTarget]?.name || validMoveTarget} complete.` : r.error); };
   const doEngage = async () => { if (!selectedArmy) return; const r = await engageBattle(selectedArmy.id, selectedArmy.current_region_id); flash(r.success, r.success ? `Battle: ${r.outcome}. Now besiege.` : r.error); await refreshData(); };
   const doSiegeStart = async () => { if (!selectedArmy) return; const r = await initiateSiege(selectedArmy.id, selectedArmy.current_region_id); flash(r.success, r.success ? 'Siege begun.' : r.error); };
   const doSiegeProgress = async () => { if (!selectedArmy) return; const r = await progressSiege(selectedArmy.id, selectedArmy.current_region_id); flash(r.success, r.success ? (r.provinceCaptured ? 'The province has fallen!' : 'The siege presses on.') : r.error); await refreshData(); };
   const doLift = async () => { if (!selectedArmy) return; const r = await liftSiege(selectedArmy.id, selectedArmy.current_region_id); flash(r.success, r.success ? 'Siege lifted.' : r.error); };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <header>
         <h1 className="text-2xl font-display text-game-gold">The Military</h1>
         <p className="font-serif text-sm text-zinc-400">Recruit → Mobilize → March → Engage → Besiege → Conquer. Field victory never captures — only a siege does.</p>
@@ -43,25 +44,25 @@ export default function MilitaryPage() {
       {msg && <div className="p-3 border-l-4 border-emerald-600 bg-emerald-950/30 text-emerald-300 text-xs font-display">{msg}</div>}
       {err && <div className="p-3 border-l-4 border-red-600 bg-red-950/30 text-red-300 text-xs font-display">{err}</div>}
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <section className="rpg-panel-stone p-5 space-y-3">
+      <div className="grid lg:grid-cols-3 gap-3 lg:gap-4">
+        <section className="rw-command-card p-4 space-y-3">
           <h2 className="font-display text-game-gold">Raise hosts</h2>
-          <button disabled={actionLoading} onClick={doRecruit} className="rpg-button w-full py-3 text-xs">Recruit host — 5 grain, 2 iron, 3 fish</button>
-          <button disabled={actionLoading} onClick={doMobilize} className="rpg-button w-full py-3 text-xs">Mobilise host — 3 grain, 1 iron, 2 fish</button>
+          <button disabled={actionLoading} onClick={doRecruit} className="rw-btn w-full">Recruit host — 5 grain, 2 iron, 3 fish</button>
+          <button disabled={actionLoading} onClick={doMobilize} className="rw-btn w-full" data-variant="bronze">Mobilise host — 3 grain, 1 iron, 2 fish</button>
           <div>
             <label className="text-[10px] uppercase tracking-widest">Adversary realm</label>
-            <select value={targetCountry} onChange={(e) => setTargetCountry(Number(e.target.value))} className="rpg-input w-full px-3 py-3 mt-1">
+            <select value={targetCountry} onChange={(e) => setTargetCountry(Number(e.target.value))} className="rw-control px-3 py-3 mt-1">
               {(countries || []).filter((c:any)=>c.id!==profile?.citizenship_country_id).map((c:any)=><option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
-          <button disabled={actionLoading} onClick={doDeclare} className="rpg-button rpg-button-crimson w-full py-3 text-xs">Declare war</button>
+          <button disabled={actionLoading} onClick={doDeclare} className="rw-btn w-full" data-variant="red">Declare war</button>
           <p className="text-xs font-serif text-zinc-500">Active wars: {(activeWars||[]).filter((w:any)=>w.status==='active').length}.</p>
         </section>
 
-        <section className="rpg-panel-stone p-5 space-y-3">
+        <section className="rw-command-card p-4 space-y-3">
           <h2 className="font-display text-game-gold">Command thy host</h2>
           <label className="text-[10px] uppercase tracking-widest">Host</label>
-          <select value={selectedArmy?.id ?? ''} onChange={(e) => setSelectedArmyId(Number(e.target.value))} className="rpg-input w-full px-3 py-3">
+          <select value={selectedArmy?.id ?? ''} onChange={(e) => setSelectedArmyId(Number(e.target.value))} className="rw-control px-3 py-3">
             {myArmies.map((a:any)=><option key={a.id} value={a.id}>Host #{a.id} · {a.size} spears · {a.status} · {PROVINCE_MAP[a.current_region_id]?.name || a.current_region_id}</option>)}
           </select>
           {selectedArmy ? (
@@ -84,22 +85,22 @@ export default function MilitaryPage() {
               )}
               <div>
                 <label className="text-[10px] uppercase tracking-widest">March to (roads only)</label>
-                <select value={moveTarget} onChange={(e) => setMoveTarget(Number(e.target.value))} className="rpg-input w-full px-3 py-3 mt-1">
+                <select value={validMoveTarget || ''} onChange={(e) => setMoveTarget(Number(e.target.value))} className="rw-control px-3 py-3 mt-1">
                   {neighborsOf.map((n:number)=><option key={n} value={n}>{PROVINCE_MAP[n]?.name || `Province ${n}`}</option>)}
                 </select>
               </div>
-              <button disabled={actionLoading || !neighborsOf.length || selectedArmy.status === 'sieging'} onClick={doMove} title={selectedArmy.status === 'sieging' ? 'Lift the siege before marching' : 'March along a road'} className="rpg-button w-full py-2 text-xs">March</button>
+              <button disabled={actionLoading || !neighborsOf.length || selectedArmy.status === 'sieging'} onClick={doMove} title={selectedArmy.status === 'sieging' ? 'Lift the siege before marching' : 'March along a road'} className="rw-btn w-full">March</button>
               <div className="grid grid-cols-2 gap-2 pt-2">
-                <button disabled={actionLoading || !isForeign || selectedArmy.status === 'sieging'} onClick={doEngage} title={!isForeign ? 'Thine own province — nothing to engage' : selectedArmy.status === 'sieging' ? 'Already besieging' : 'Engage the garrison'} className="rpg-button rpg-button-crimson py-2 text-[10px]">Engage in battle</button>
-                <button disabled={actionLoading || !isForeign || selectedArmy.status === 'sieging' || (myMil?.resistance_level ?? 0) === 0} onClick={doSiegeStart} title={!isForeign ? 'Thine own province' : selectedArmy.status === 'sieging' ? 'Already besieging' : 'Begin siege after engagement'} className="rpg-button py-2 text-[10px]">Begin siege</button>
-                <button disabled={actionLoading || selectedArmy.status !== 'sieging'} onClick={doSiegeProgress} title={selectedArmy.status !== 'sieging' ? 'Begin a siege first' : 'Press the siege'} className="rpg-button rpg-button-emerald py-2 text-[10px]">Press siege</button>
-                <button disabled={actionLoading || selectedArmy.status !== 'sieging'} onClick={doLift} title={selectedArmy.status !== 'sieging' ? 'No siege to lift' : 'Lift siege'} className="rpg-button py-2 text-[10px]">Lift siege</button>
+                <button disabled={actionLoading || !isForeign || selectedArmy.status === 'sieging'} onClick={doEngage} title={!isForeign ? 'Thine own province — nothing to engage' : selectedArmy.status === 'sieging' ? 'Already besieging' : 'Engage the garrison'} className="rw-btn" data-variant="red">Engage in battle</button>
+                <button disabled={actionLoading || !isForeign || selectedArmy.status === 'sieging' || (myMil?.resistance_level ?? 0) === 0} onClick={doSiegeStart} title={!isForeign ? 'Thine own province' : selectedArmy.status === 'sieging' ? 'Already besieging' : 'Begin siege after engagement'} className="rw-btn" data-variant="bronze">Begin siege</button>
+                <button disabled={actionLoading || selectedArmy.status !== 'sieging'} onClick={doSiegeProgress} title={selectedArmy.status !== 'sieging' ? 'Begin a siege first' : 'Press the siege'} className="rw-btn" data-variant="green">Press siege</button>
+                <button disabled={actionLoading || selectedArmy.status !== 'sieging'} onClick={doLift} title={selectedArmy.status !== 'sieging' ? 'No siege to lift' : 'Lift siege'} className="rw-btn" data-variant="dark">Lift siege</button>
               </div>
             </div>
           ) : <p className="font-serif text-sm text-zinc-400">Recruit a host first.</p>}
         </section>
 
-        <section className="rpg-panel-stone p-5 space-y-3">
+        <section className="rw-command-card p-4 space-y-3">
           <h2 className="font-display text-game-gold">The field report</h2>
           {lastBattleReport ? (
             <div className="rpg-panel-parchment p-4 text-zinc-900 space-y-2">
