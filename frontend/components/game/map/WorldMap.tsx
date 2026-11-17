@@ -1,16 +1,19 @@
 'use client';
 
+/* The atlas consumes loosely-typed repository snapshots by design; the gameplay
+   repository presents many shapes that are normalised at this boundary. */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react';
 import {
-  Anchor, Castle, Coins, Compass, Flag, Home, Landmark, Layers,
-  Minus, Mountain, Navigation, Pickaxe, Plus, Swords, Trees, Wheat, X,
+  Coins, Compass, Flag, Layers, Minus, Mountain, Navigation, Plus, Swords,
 } from 'lucide-react';
 import {
   IBERIA_COAST, MAP_VIEW, PROVINCE_MAP, REALMS, TERRITORIES,
   getNeighbors, lonLatToWorld, type MapLayer,
 } from '../../../lib/worldLore';
-import { RealmFlag, RealmFlagArt, REALM_FLAGS, realmFlagFor } from './heraldry';
+import { RealmFlag, RealmFlagArt, REALM_FLAGS } from './heraldry';
 
 const VIEW = MAP_VIEW;
 const VIEW_CENTER: [number, number] = [VIEW.width / 2, VIEW.height / 2];
@@ -45,9 +48,10 @@ const RANGES: { name: string; points: [number, number][]; count: number; size: n
 ];
 
 const FORESTS: { center: [number, number]; spread: [number, number]; count: number; scale: number }[] = [
-  { center: [-4.3, 38.18], spread: [1.5, 0.22], count: 16, scale: 0.9 },
-  { center: [-3.6, 38.05], spread: [1.0, 0.2], count: 10, scale: 0.82 },
-  { center: [-8.0, 42.35], spread: [1.2, 0.34], count: 15, scale: 1.0 },
+  { center: [-4.3, 38.18], spread: [1.5, 0.22], count: 22, scale: 0.9 },
+  { center: [-3.6, 38.05], spread: [1.0, 0.2], count: 14, scale: 0.82 },
+  { center: [-6.85, 38.05], spread: [0.8, 0.16], count: 8, scale: 0.76 },
+  { center: [-8.0, 42.35], spread: [1.2, 0.34], count: 16, scale: 1.0 },
   { center: [-1.1, 42.35], spread: [1.1, 0.24], count: 12, scale: 0.9 },
   { center: [-0.35, 39.55], spread: [0.7, 0.3], count: 9, scale: 0.78 },
   { center: [-6.5, 40.15], spread: [0.9, 0.35], count: 10, scale: 0.75 },
@@ -68,6 +72,13 @@ const SEA_LABELS: { text: string; lon: number; lat: number; size: number; rotate
   { text: 'MARE INTERNUM', lon: 2.15, lat: 37.2, size: 17, rotate: -8 },
   { text: 'OCEANUS ATLANTICUS', lon: -9.05, lat: 39.9, size: 11, rotate: -78 },
 ];
+
+// Small manual offsets keep the crowded southern province names legible while
+// every label remains tied to its real settlement seat.
+const LABEL_OFFSET: Record<number, [number, number]> = {
+  4: [-30, -24],
+  7: [6, -26],
+};
 
 function worldPath(points: [number, number][], close = true) {
   const d = points
@@ -131,7 +142,7 @@ function MountainChain({ points, count, size, seed }: { points: [number, number]
         const t = (i + 0.5) / count;
         const p = pointAlong(projected, t);
         const jitter = (hash(seed + i * 1.73) - 0.5) * 7;
-        const s = size * (0.78 + hash(seed + i * 4.17) * 0.42);
+        const s = size * (0.86 + hash(seed + i * 4.17) * 0.48);
         return (
           <g key={i} transform={`translate(${(p.x + jitter).toFixed(1)} ${(p.y + (hash(seed + i) - 0.5) * 4).toFixed(1)}) scale(${s.toFixed(2)})`}>
             <path d="M-8 4 L-2.4 -5.2 L3.8 4Z" fill="#77705a" stroke="#4b432f" strokeWidth="0.55" />
@@ -187,10 +198,6 @@ function SettlementGlyph({ kind }: { kind: string }) {
   }
 }
 
-function Coast({ d, stroke, width, opacity = 1, extra = '' }: { d: string; stroke: string; width: number; opacity?: number; extra?: string }) {
-  return <path d={d} fill="none" stroke={stroke} strokeWidth={width} opacity={opacity} strokeLinecap="round" strokeLinejoin="round" {...(extra ? { style: { filter: extra } } : {})} />;
-}
-
 export interface WorldMapProps {
   regions: any[];
   militaryRegions: any[];
@@ -205,16 +212,18 @@ export interface WorldMapProps {
   onLayerChange: (layer: MapLayer) => void;
   selectedId: number;
   onSelect: (id: number) => void;
+  panelOpen?: boolean;
 }
 
 export default function WorldMap({
   regions, militaryRegions, countries, regionEdges = [], armyUnits = [], activeWars = [],
-  profile, layer, onLayerChange, selectedId, onSelect,
+  profile, layer, onLayerChange, selectedId, onSelect, panelOpen = false,
 }: WorldMapProps) {
   const shellRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [panning, setPanning] = useState(false);
   const [hoverId, setHoverId] = useState<number | null>(null);
   const [tooltip, setTooltip] = useState<{ id: number; x: number; y: number } | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -283,7 +292,6 @@ export default function WorldMap({
   const myCountryId = profile?.citizenship_country_id;
   const currentRegionId = profile?.current_region_id;
   const selectedOwner = selected ? ownerIdFor(selected.id) : 0;
-  const hoveredOwner = hovered ? ownerIdFor(hovered.id) : 0;
   const flagId = hoverId ?? selectedId;
   const flagRegion = flagId ? PROVINCE_MAP[flagId] : null;
   const flagOwner = flagId ? ownerIdFor(flagId) : 0;
@@ -295,17 +303,18 @@ export default function WorldMap({
 
   const borderWidth = 1.05 / screenScale;
   const labelScale = markerScale;
-  const hoverLift = 3.2 / screenScale;
-  const selectedLift = compact ? 2.6 / screenScale : 1.8 / screenScale;
-  const shadowDy = 2.8 / screenScale;
-  const shadowBlur = 3.4 / screenScale;
+  const hoverLift = 3.6 / screenScale;
+  const selectedLift = compact ? 2.6 / screenScale : 2.2 / screenScale;
+  const shadowDy = 3.2 / screenScale;
+  const shadowBlur = 4.1 / screenScale;
 
   const clampPan = useCallback((next: { x: number; y: number }, nextZoom: number) => {
     const rect = shellRef.current?.getBoundingClientRect();
     const w = rect?.width || sizeRef.current.w;
     const h = rect?.height || sizeRef.current.h;
-    const maxX = (w * (nextZoom - 1)) / 2 + 30;
-    const maxY = (h * (nextZoom - 1)) / 2 + 30;
+    const extra = (sizeRef.current.w || 9999) < 640 ? 160 : 30;
+    const maxX = (w * (nextZoom - 1)) / 2 + extra;
+    const maxY = (h * (nextZoom - 1)) / 2 + extra;
     return { x: clamp(next.x, -maxX, maxX), y: clamp(next.y, -maxY, maxY) };
   }, []);
 
@@ -354,12 +363,64 @@ export default function WorldMap({
     setPan(clampPan(nextPan, targetZoom));
   }, [visibleRegions, fitScale, clampPan]);
 
+  // On phones the full-Iberia fit letterboxes the playable taifas into a thin band.
+  // Open framed on the south, where every gameplay province actually is.
+  const frameHome = useCallback(() => {
+    if (!sizeRef.current.w) return;
+    if (sizeRef.current.w < 640) {
+      const z = 1.62;
+      const [px, py] = lonLatToWorld(-4.3, 37.5);
+      const nextPan = {
+        x: -(px - VIEW_CENTER[0]) * fitScale * z,
+        y: -(py - VIEW_CENTER[1]) * fitScale * z,
+      };
+      setZoom(z);
+      setPan(clampPan(nextPan, z));
+    } else {
+      setZoom(1);
+      setPan({ x: 0, y: 0 });
+    }
+  }, [fitScale, clampPan]);
+
+  const framedHome = useRef(false);
+  useEffect(() => {
+    if (framedHome.current || !size.w || !size.h) return;
+    framedHome.current = true;
+    frameHome();
+  }, [size.w, size.h, frameHome]);
+
+  // Mobile bottom-sheet behaviour: keep the selected province and its flag in the
+  // map band above the ledger instead of letting the card cover its own subject.
+  const centredForPanel = useRef<number | null>(null);
+  useEffect(() => {
+    if (!compact || !size.w || !size.h) return;
+    if (panelOpen && selectedId) {
+      if (centredForPanel.current === selectedId) return;
+      centredForPanel.current = selectedId;
+      const lore = PROVINCE_MAP[selectedId];
+      if (!lore) return;
+      const z = Math.max(1.62, zoomRef.current);
+      const [px, py] = lonLatToWorld(lore.lon, lore.lat);
+      const targetY = size.h * 0.3;
+      const nextPan = {
+        x: -(px - VIEW_CENTER[0]) * fitScale * z,
+        y: targetY - size.h / 2 - (py - VIEW_CENTER[1]) * fitScale * z,
+      };
+      setZoom(z);
+      setPan(clampPan(nextPan, z));
+    } else if (!panelOpen && centredForPanel.current !== null) {
+      centredForPanel.current = null;
+      frameHome();
+    }
+  }, [compact, panelOpen, selectedId, size.w, size.h, fitScale, clampPan, frameHome]);
+
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
     const rect = shellRef.current?.getBoundingClientRect();
     if (!rect) return;
     const p = { x: event.clientX - rect.left, y: event.clientY - rect.top };
     pointersRef.current.set(event.pointerId, p);
+    setPanning(true);
     if (pointersRef.current.size === 1) {
       dragRef.current = {
         mode: 'pan', startX: p.x, startY: p.y, panX: panRef.current.x, panY: panRef.current.y,
@@ -413,6 +474,7 @@ export default function WorldMap({
         clearSuppressTimer.current = window.setTimeout(() => { suppressClickRef.current = false; }, 240);
       }
       dragRef.current.mode = null;
+      setPanning(false);
     } else if (pointersRef.current.size === 1) {
       const [[, p]] = Array.from(pointersRef.current.entries());
       dragRef.current = {
@@ -424,6 +486,8 @@ export default function WorldMap({
 
   const selectProvince = (id: number) => {
     if (suppressClickRef.current) return;
+    setHoverId(null);
+    setTooltip(null);
     onSelect(id);
   };
 
@@ -448,43 +512,47 @@ export default function WorldMap({
     if (!tooltip || !size.w) return {};
     const tw = compact ? 220 : 260;
     const th = 132;
+    // Sit beside the cursor rather than over it: the hovered province, its label
+    // and the owner banner all stay visible while the card is open.
+    const gap = compact ? 14 : 54;
+    const placeRight = tooltip.x + gap + tw < size.w - 8;
+    const left = placeRight ? tooltip.x + gap : tooltip.x - tw - gap;
+    const top = tooltip.y - th / 2;
     return {
-      left: clamp(tooltip.x + 16, 8, Math.max(8, size.w - tw - 8)),
-      top: clamp(tooltip.y + 16, 8, Math.max(8, size.h - th - 8)),
+      left: clamp(left, 8, Math.max(8, size.w - tw - 8)),
+      top: clamp(top, 8, Math.max(8, size.h - th - 8)),
     };
   }, [tooltip, size, compact]);
 
-  const layerTint = layer === 'political' ? 0.24 : layer === 'geography' ? 0.08 : layer === 'economy' ? 0.14 : 0.18;
-  const terrainOpacity = layer === 'geography' ? 1 : layer === 'political' ? 0.9 : 0.68;
+  const layerTint = layer === 'political' ? 0.4 : layer === 'geography' ? 0.11 : layer === 'economy' ? 0.27 : 0.35;
+  const terrainOpacity = layer === 'geography' ? 1 : layer === 'political' ? 0.92 : 0.7;
 
   const provinceLabel = (region: any) => {
     const lore = PROVINCE_MAP[region.id];
     if (!lore) return null;
     const isActive = region.id === selectedId || region.id === hoverId || region.id === currentRegionId;
     if (compact && !isActive) return null;
-    const [x, y] = lonLatToWorld(lore.lon, lore.lat);
-    const owner = ownerIdFor(region.id);
+    const [baseX, baseY] = lonLatToWorld(lore.lon, lore.lat);
+    const [dx, dy] = LABEL_OFFSET[region.id] || [0, 25];
+    const x = baseX + dx;
+    const y = baseY + dy;
+    const longName = lore.name.length > 9;
     return (
-      <g key={`label-${region.id}`} transform={`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${labelScale})`} pointerEvents="none">
+      <g key={`label-${region.id}`} data-province-label={region.id} transform={`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${labelScale})`} pointerEvents="none">
         <text
-          y={compact ? 22 : 25}
+          y={0}
           textAnchor="middle"
-          fontSize={compact ? 8.5 : 9.5}
+          fontSize={longName ? (compact ? 8 : 8.8) : (compact ? 8.5 : 9.5)}
           fontFamily="Marcellus SC, Georgia, serif"
           letterSpacing="0.08em"
-          fill={isActive ? '#f0d49a' : '#2f2618'}
+          fill={isActive ? '#f6e3b4' : '#2c2315'}
           stroke={isActive ? '#0a1019' : '#e9dcbc'}
-          strokeWidth={isActive ? 2.6 : 2.2}
+          strokeWidth={isActive ? 2.7 : 2.2}
           paintOrder="stroke"
-          opacity={isActive ? 1 : 0.9}
+          opacity={isActive ? 1 : 0.92}
         >
           {lore.name.toUpperCase()}
         </text>
-        {isActive && (
-          <text y={compact ? 33 : 37} textAnchor="middle" fontSize="7.5" fontFamily="Barlow, sans-serif" letterSpacing="0.06em" fill={ownerColor(owner)} stroke="#0a1019" strokeWidth="2.4" paintOrder="stroke">
-            {ownerName(owner)}
-          </text>
-        )}
       </g>
     );
   };
@@ -502,7 +570,7 @@ export default function WorldMap({
     const color = ownerColor(owner);
     const active = isSelected || isHover;
     return (
-      <g key={`marker-${region.id}`} transform={`translate(${x.toFixed(1)} ${y.toFixed(1)})`} pointerEvents="none" className={`atlas-marker${active ? ' is-active' : ''}`}>
+      <g key={`marker-${region.id}`} data-province-marker={region.id} transform={`translate(${x.toFixed(1)} ${y.toFixed(1)})`} pointerEvents="none" className={`atlas-marker${active ? ' is-active' : ''}`}>
         <g transform={`scale(${markerScale})`}>
           {active && <circle r="15" fill="none" stroke="#d8ae68" strokeWidth="0.8" opacity="0.6" />}
           <circle r={active ? 11 : 9.6} fill="#071018" fillOpacity="0.92" stroke={active ? '#f0d49a' : color} strokeWidth={active ? 1.8 : 1.4} />
@@ -535,18 +603,25 @@ export default function WorldMap({
     if (!d) return null;
     const owner = ownerIdFor(region.id);
     return (
-      <path
-        key={`fill-${region.id}`}
-        d={d}
-        fill={ownerColor(owner)}
-        fillOpacity={layerTint}
-        stroke="#4c3a22"
-        strokeOpacity="0.82"
-        strokeWidth={borderWidth}
-        strokeLinejoin="round"
-        pointerEvents="none"
-        data-province-fill={region.id}
-      />
+      <g key={`fill-${region.id}`} pointerEvents="none" data-province-fill={region.id}>
+        <path
+          d={d}
+          fill={ownerColor(owner)}
+          fillOpacity={layerTint}
+          stroke="#3a2a16"
+          strokeOpacity="0.8"
+          strokeWidth={1.75 / screenScale}
+          strokeLinejoin="round"
+        />
+        <path
+          d={d}
+          fill="none"
+          stroke="#f4dfad"
+          strokeOpacity="0.3"
+          strokeWidth={0.55 / screenScale}
+          strokeLinejoin="round"
+        />
+      </g>
     );
   });
 
@@ -566,9 +641,9 @@ export default function WorldMap({
       >
         <g clipPath={`url(#${clipId})`}>
           <use href="#terrainDetail" />
-          <rect width={VIEW.width} height={VIEW.height} fill={ownerColor(owner)} opacity={variant === 'hover' ? 0.22 : 0.16} />
-          <path d={d} fill="none" stroke="#f4dfad" strokeWidth={1.75 / screenScale} strokeLinejoin="round" />
-          <path d={d} fill="none" stroke="#573d1d" strokeWidth={3.2 / screenScale} strokeOpacity="0.28" strokeLinejoin="round" />
+          <rect width={VIEW.width} height={VIEW.height} fill={ownerColor(owner)} opacity={variant === 'hover' ? 0.24 : 0.17} />
+          <path d={d} fill="none" stroke="#5b3d18" strokeWidth={3 / screenScale} strokeOpacity="0.32" strokeLinejoin="round" />
+          <path d={d} fill="none" stroke="#f4dfad" strokeWidth={1.55 / screenScale} strokeLinejoin="round" />
         </g>
       </g>
     );
@@ -594,7 +669,7 @@ export default function WorldMap({
         className="atlas-stage"
         style={{
           transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-          transition: dragRef.current.mode ? 'none' : reducedMotion ? 'none' : 'transform 140ms ease-out',
+          transition: panning ? 'none' : reducedMotion ? 'none' : 'transform 140ms ease-out',
         }}
       >
         <div className="sr-only" aria-label="Accessible province list">
@@ -642,14 +717,14 @@ export default function WorldMap({
               <stop offset="55%" stopColor="#c7a064" stopOpacity="0.2" />
               <stop offset="100%" stopColor="#8c7a4e" stopOpacity="0" />
             </radialGradient>
-            <radialGradient id="textureFade" cx="50%" cy="48%" r="63%">
-              <stop offset="0%" stopColor="#fff" stopOpacity="1" />
-              <stop offset="72%" stopColor="#fff" stopOpacity="0.75" />
-              <stop offset="100%" stopColor="#fff" stopOpacity="0" />
-            </radialGradient>
-            <mask id="textureMask">
-              <rect width={VIEW.width} height={VIEW.height} fill="url(#textureFade)" />
-            </mask>
+            <pattern id="landMottle" width="240" height="240" patternUnits="userSpaceOnUse">
+              <circle cx="28" cy="42" r="30" fill="#6b4a22" opacity="0.032" />
+              <circle cx="152" cy="128" r="44" fill="#f5e5bf" opacity="0.04" />
+              <circle cx="208" cy="34" r="18" fill="#4f3a1c" opacity="0.028" />
+              <circle cx="86" cy="206" r="24" fill="#7c5a2e" opacity="0.025" />
+              <path d="M8 190q42-16 84 0t96 0" fill="none" stroke="#7a5a2e" strokeWidth="0.6" opacity="0.05" />
+              <path d="M0 96q60 20 120 0t120 0" fill="none" stroke="#fff0cf" strokeWidth="0.7" opacity="0.05" />
+            </pattern>
             <pattern id="seaWaves" width="34" height="24" patternUnits="userSpaceOnUse">
               <path d="M0 12q8.5-5 17 0t17 0" fill="none" stroke="#a7c7c4" strokeOpacity="0.13" strokeWidth="0.8" />
             </pattern>
@@ -660,6 +735,9 @@ export default function WorldMap({
             </pattern>
             <filter id="coastGlow" x="-12%" y="-12%" width="124%" height="124%">
               <feGaussianBlur stdDeviation="4.5" />
+            </filter>
+            <filter id="reliefBlur" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="7" />
             </filter>
             <filter id="provinceLift" x="-40%" y="-40%" width="180%" height="180%">
               <feDropShadow dx="0" dy={shadowDy} stdDeviation={shadowBlur} floodColor="#020609" floodOpacity="0.78" />
@@ -711,17 +789,20 @@ export default function WorldMap({
           <g clipPath="url(#landClip)">
             <path d={LAND_D} fill="url(#landGrad)" />
             <rect width={VIEW.width} height={VIEW.height} fill="url(#landWarm)" />
-            <g mask="url(#textureMask)" style={{ mixBlendMode: 'soft-light' }} opacity={Math.max(0.06, 0.26 - Math.max(0, zoom - 1) * 0.1)}>
-              <image
-                href="/assets/reignward-wide/map-texture-3200.webp"
-                x="0" y="0" width={VIEW.width} height={VIEW.height}
-                preserveAspectRatio="xMidYMid slice"
-                style={{ pointerEvents: 'none' }}
-              />
-            </g>
-            <rect width={VIEW.width} height={VIEW.height} fill="url(#paperGrain)" opacity={0.35 + Math.min(0.3, Math.max(0, zoom - 1) * 0.12)} />
+            <rect width={VIEW.width} height={VIEW.height} fill="url(#landMottle)" />
+            <rect width={VIEW.width} height={VIEW.height} fill="url(#paperGrain)" opacity={0.42 + Math.min(0.3, Math.max(0, zoom - 1) * 0.12)} />
 
             <g id="terrainDetail" opacity={terrainOpacity}>
+              <g filter="url(#reliefBlur)" opacity="0.3" pointerEvents="none">
+                {RANGES.map((range) => (
+                  <path key={`relief-${range.name}`} d={worldPath(range.points, false)} fill="none" stroke="#4f402a" strokeWidth={range.size * 24} strokeLinecap="round" strokeLinejoin="round" />
+                ))}
+              </g>
+              <g filter="url(#reliefBlur)" opacity="0.18" pointerEvents="none">
+                {RANGES.map((range) => (
+                  <path key={`relief-light-${range.name}`} d={worldPath(range.points, false)} fill="none" stroke="#f6e7c4" strokeWidth={range.size * 10} strokeLinecap="round" strokeLinejoin="round" transform="translate(0 -4)" />
+                ))}
+              </g>
               {RANGES.map((range, i) => (
                 <MountainChain key={range.name} points={range.points} count={range.count} size={range.size} seed={i * 13 + 3} />
               ))}
@@ -828,24 +909,21 @@ export default function WorldMap({
           <path d={LAND_D} fill="none" stroke="#d9c89e" strokeOpacity="0.55" strokeWidth={0.9 / screenScale} pointerEvents="none" />
 
           {/* Raised selected piece, then raised hovered piece (hover wins) */}
-          {selected && selected.id !== hoverId ? overlayPath(selected.id, selectedLift, 'selected') : null}
-          {hovered ? overlayPath(hovered.id, hoverLift, 'hover') : null}
+          {panelOpen && selected ? overlayPath(selected.id, selectedLift, 'selected') : null}
+          {hovered && (!panelOpen || hovered.id !== selectedId) ? overlayPath(hovered.id, hoverLift, 'hover') : null}
 
           {/* Markers, labels and owner flags */}
           <g>{visibleRegions.map((region: any) => provinceLabel(region))}</g>
           <g>{visibleRegions.map((region: any) => settlementMarker(region))}</g>
 
           {flagRegion && (
-            <g transform={`translate(${lonLatToWorld(flagRegion.lon, flagRegion.lat)[0].toFixed(1)} ${lonLatToWorld(flagRegion.lon, flagRegion.lat)[1].toFixed(1)})`} pointerEvents="none" className="atlas-flag">
+            <g data-owner-flag={flagId} transform={`translate(${lonLatToWorld(flagRegion.lon, flagRegion.lat)[0].toFixed(1)} ${lonLatToWorld(flagRegion.lon, flagRegion.lat)[1].toFixed(1)})`} pointerEvents="none" className="atlas-flag">
               <g transform={`scale(${markerScale})`}>
                 <line x1="0" y1="-13" x2="0" y2="-45" stroke="#d8ae68" strokeWidth="1.3" strokeLinecap="round" />
                 <circle cx="0" cy="-13" r="2.1" fill="#d8ae68" stroke="#0a1019" strokeWidth="0.7" />
                 <g transform="translate(1.5 -45)" className="atlas-flag-cloth">
                   <RealmFlagArt realmId={flagOwner} scale={0.78} />
                 </g>
-                <text x="0" y="-49" textAnchor="middle" fontFamily="Marcellus SC, serif" fontSize="7.2" letterSpacing="0.12em" fill="#f0d49a" stroke="#0a1019" strokeWidth="2.2" paintOrder="stroke">
-                  {ownerName(flagOwner).toUpperCase()}
-                </text>
               </g>
             </g>
           )}
@@ -911,7 +989,7 @@ export default function WorldMap({
         <button className="rw-btn" data-variant="icon" aria-label="Zoom out" onClick={() => setZoomAt(zoomRef.current - 0.2)}><Minus className="h-4 w-4" /></button>
         <button className="rw-btn" data-variant="icon" aria-label="Zoom in" onClick={() => setZoomAt(zoomRef.current + 0.2)}><Plus className="h-4 w-4" /></button>
         <button className="rw-btn" data-variant="icon" aria-label="Centre on my province" onClick={() => focusRegion(selectedId || currentRegionId || 1)}><Navigation className="h-4 w-4" /></button>
-        <button className="rw-btn" data-variant="icon" aria-label="Reset map" onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}><Compass className="h-4 w-4" /></button>
+        <button className="rw-btn" data-variant="icon" aria-label="Reset map" onClick={frameHome}><Compass className="h-4 w-4" /></button>
       </div>
 
       <div className="atlas-legend" aria-label="Realm legend">
@@ -930,7 +1008,7 @@ export default function WorldMap({
       </div>
 
       {tooltipRegion && !compact && (
-        <div className="atlas-tooltip" style={tooltipStyle} role="status">
+        <div className="atlas-tooltip" data-atlas-tooltip={tooltipRegion.id} style={tooltipStyle} role="status">
           <div className="atlas-tooltip-head">
             <RealmFlag realmId={ownerIdFor(tooltipRegion.id)} className="h-6 w-9 shrink-0" />
             <div>

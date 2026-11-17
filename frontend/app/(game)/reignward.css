@@ -185,3 +185,13 @@
   .rw-btn { transition: none; }
 }
 
+/* Phase 7: this stylesheet is imported after globals on every game route, so the
+   shared .rw-panel position would otherwise pull the atlas overlays back into
+   normal flow. Keep the map overlays absolutely anchored to the world screen. */
+.world-screen .map-cartouche,
+.world-screen .map-tutorial,
+.world-screen .map-selected-hint,
+.world-screen .province-ledger {
+  position: absolute;
+}
+

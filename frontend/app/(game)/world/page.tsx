@@ -1,9 +1,12 @@
 'use client';
 
+/* World commands bridge several loosely typed gameplay snapshots. */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGameContext } from '../layout';
-import { PROVINCE_MAP, REALMS, MapLayer, getNeighbors } from '../../../lib/worldLore';
+import { PROVINCE_MAP, MapLayer, getNeighbors } from '../../../lib/worldLore';
 import {
   Anchor, Castle, Trees, Pickaxe, Home, Mountain, Wheat, Landmark, CupSoda,
   Navigation, Axe, Swords, Flag, Shield, Coins, X, Calendar, Bell, ScrollText,
@@ -41,7 +44,7 @@ export default function WorldPage() {
   const sfx = useSFX();
 
   const [layer, setLayer] = useState<MapLayer>('political');
-  const [selectedId, setSelectedId] = useState<number>(profile?.current_region_id || 1);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -65,8 +68,6 @@ export default function WorldPage() {
     }
   }, [isInitialLoading, profile, playerCharacter, router]);
 
-  useEffect(() => { if (profile?.current_region_id) setSelectedId(profile.current_region_id); }, [profile?.current_region_id]);
-
   // State-derived tutorial: advances from real game state, survives reload.
   const tutorial = useMemo(() => {
     if (typeof window !== 'undefined' && localStorage.getItem('aegis_world_tutorial_seen')) return null;
@@ -77,7 +78,8 @@ export default function WorldPage() {
   }, [profile, gatherLogs]);
 
   const visibleRegions = useMemo(() => (regions || []).filter((r: any) => r.id <= 10), [regions]);
-  const selected = visibleRegions.find((r: any) => r.id === selectedId) || visibleRegions[0];
+  const activeProvinceId = selectedId ?? profile?.current_region_id ?? 1;
+  const selected = visibleRegions.find((r: any) => r.id === activeProvinceId) || visibleRegions[0];
   const lore = selected ? PROVINCE_MAP[selected.id] : undefined;
   const mil = selected ? (militaryRegions || []).find((m: any) => m.region_id === selected.id) : undefined;
   const neighbors = selected ? getNeighbors(regionEdges || [], selected.id) : [];
@@ -149,8 +151,9 @@ export default function WorldPage() {
         playerCharacter={playerCharacter}
         layer={layer}
         onLayerChange={(next) => { setLayer(next); sfx.playClick(); }}
-        selectedId={selectedId}
+        selectedId={selected?.id ?? activeProvinceId}
         onSelect={(id) => { setSelectedId(id); setPanelOpen(true); sfx.playClick(); }}
+        panelOpen={panelOpen}
       />
 
       {/* Identity cartouche */}
@@ -185,7 +188,7 @@ export default function WorldPage() {
           <RealmFlag realmId={effectiveCountryId} className="h-5 w-7 shrink-0" />
           <span className="min-w-0 text-left">
             <span className="block text-[9px] uppercase tracking-widest text-[#D8AE68] font-display">{selected.name}</span>
-            <span className="block font-serif text-[11px] text-[#B6AE9B] truncate">{lore?.subtitle} — open the province ledger</span>
+            <span className="block font-serif text-[11px] text-[#B6AE9B] truncate">{lore?.subtitle} — open ledger</span>
           </span>
         </button>
       )}
@@ -199,14 +202,14 @@ export default function WorldPage() {
                 <RealmFlag realmId={effectiveCountryId} className="h-8 w-12 shrink-0 mt-1" />
                 <div className="min-w-0">
                   <p className="text-[9px] uppercase tracking-[0.26em] text-[#D8AE68] font-display truncate">{ownerName} province</p>
-                  <h2 className="text-2xl font-display text-[#D8AE68] leading-tight">{selected.name}</h2>
+                  <h2 className="text-2xl font-display text-[#D8AE68] leading-tight flex items-center gap-2"><IconFor icon={lore.icon} /> {selected.name}</h2>
                   <p className="font-serif italic text-[#B6AE9B] text-xs">{lore.subtitle} · {lore.terrain}</p>
                 </div>
               </div>
               <button onClick={() => setPanelOpen(false)} className="rw-btn shrink-0" data-variant="dark" aria-label="Close province panel"><X className="h-4 w-4" /></button>
             </div>
 
-            <p className="font-serif text-sm leading-relaxed text-[#F2E8D5] mt-3">{lore.description}</p>
+            <p className="ledger-description font-serif text-sm leading-relaxed text-[#F2E8D5] mt-3">{lore.description}</p>
 
             <div className="grid grid-cols-2 gap-2 text-xs mt-4">
               <div className="ledger-stat"><span>Terrain</span><strong>{lore.terrain}</strong></div>
@@ -224,15 +227,6 @@ export default function WorldPage() {
             )}
 
             <p className="text-[11px] text-[#B6AE9B] mt-3">Marching roads to: {neighbors.map((n) => PROVINCE_MAP[n]?.name || `Province ${n}`).join(', ')}.</p>
-
-            <div className="mt-4">
-              <p className="ledger-heading"><Axe className="h-3.5 w-3.5" /> Gather here</p>
-              <div className="flex flex-wrap gap-2">
-                {spawnOptions.map((rid) => (
-                  <button key={rid} disabled={actionLoading} onClick={() => handleGather(rid)} className="rw-btn" data-variant="bronze">Gather {resourceName(rid)} · have {qty(rid)}</button>
-                ))}
-              </div>
-            </div>
 
             <div className="ledger-divider">
               <p className="ledger-heading">Thy commands</p>
@@ -273,6 +267,15 @@ export default function WorldPage() {
               )}
 
               <p className="text-[10px] text-[#B6AE9B]/70 font-serif italic mt-3 flex items-center gap-2"><Bell className="h-3 w-3" /> Wars live: {(activeWars || []).filter((w: any) => w.status === 'active').length} · Hosts: {(armyUnits || []).filter((a: any) => a.country_id === profile?.citizenship_country_id).length}</p>
+            </div>
+
+            <div className="ledger-divider">
+              <p className="ledger-heading"><Axe className="h-3.5 w-3.5" /> Gather here</p>
+              <div className="flex flex-wrap gap-2">
+                {spawnOptions.map((rid) => (
+                  <button key={rid} disabled={actionLoading} onClick={() => handleGather(rid)} className="rw-btn" data-variant="bronze">Gather {resourceName(rid)} · have {qty(rid)}</button>
+                ))}
+              </div>
             </div>
           </div>
         </aside>

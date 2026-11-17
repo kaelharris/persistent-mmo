@@ -46,7 +46,7 @@ it('completes one expedition under Strict Mode with exact costs, persistent pane
   await click('Travel');
   await tick(1200);
   expect((await stats())?.energy).toBe(90);
-  await click('JayyanSierra Morena march — open the province ledger');
+  await click('JayyanSierra Morena march — open ledger');
   const panel = container.querySelector('aside');
   expect(panel).toBeTruthy();
   await click('Gather Wood · have 10');
